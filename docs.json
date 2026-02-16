@@ -38,10 +38,39 @@
         "openapi": "openapi.json",
         "groups": [
           {
-            "group": "Overview",
+            "group": "API Reference",
             "pages": [
+              "api-reference/overview",
               "api-reference/authentication",
               "api-reference/rate-limits"
+            ]
+          },
+          {
+            "group": "User Operations",
+            "pages": [
+              "GET /v1/credits",
+              "GET /v1/new-api-key"
+            ]
+          },
+          {
+            "group": "Email Verification",
+            "pages": [
+              "api-reference/email-verification-overview",
+              "POST /v1/process-email",
+              "POST /v1/batch-upload",
+              "POST /v1/batch-process-email",
+              "POST /v1/batch-process-email-status",
+              "GET /v1/queued-process",
+              "POST /v1/cancel-process",
+              "POST /v1/batch-download"
+            ]
+          },
+          {
+            "group": "Company Match",
+            "pages": [
+              "api-reference/company-match-overview",
+              "POST /v2/company-resolver/resolve",
+              "POST /v2/company-resolver/discovery"
             ]
           }
         ]

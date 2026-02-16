@@ -1,0 +1,27 @@
+---
+title: "Overview"
+description: "Introduction to RevenueBase email verification"
+---
+
+## Email Verification overview
+
+Use the Email Verification API to validate email addresses in real time or in batch. You can check a single email instantly or upload a file of addresses and process them asynchronously.
+
+### What you can do
+
+- **Real-time verification** — Send one email at a time and get an immediate result (deliverability, role, risk, and more).
+- **Batch processing** — Upload a file of email addresses; the API queues the job and returns a process ID. Poll for status and download results when ready.
+- **Queue management** — List queued or in-progress batch jobs and cancel them if needed.
+
+### Typical flow
+
+1. **Single email** — Call the real-time endpoint with the email; use the response in your app.
+2. **Batch** — Upload a file or submit a batch request to get a `process_id`. Poll the status endpoint until the job completes, then call the download endpoint to retrieve the results.
+
+### Endpoints in this section
+
+The pages below cover each endpoint in detail. Use the API playground on any page to send live requests with your API key.
+
+<Note>
+Placeholder: Replace this overview with your product’s email verification behavior, response fields, and any limits or best practices.
+</Note>
