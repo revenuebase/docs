@@ -1,48 +1,62 @@
 ---
 title: "Accessing your data"
-description: "Ways to access Dynamic Data Feeds: Snowflake, S3, GCS, Azure Blob"
+description: "How to get access to Dynamic Data Feeds via S3, Azure Blob, Google Cloud, or Snowflake"
 ---
 
 ## Accessing your data
 
-RevenueBase Dynamic Data Feeds can be accessed through multiple channels. Choose the option that fits your stack: Snowflake Marketplace, AWS S3, Google Cloud Storage, or Azure Blob Storage.
+You can access RevenueBase Dynamic Data Feeds in two ways: **cloud object storage** (AWS S3, Azure Blob, or Google Cloud Storage) or **Snowflake** (marketplace share). You provide the required account information to RevenueBase; we then grant you access to the data you’ve licensed.
 
-## Snowflake Marketplace access
+## What we need from you
 
-Access Dynamic Data Feeds directly in Snowflake via the Snowflake Marketplace.
+### Cloud storage (S3, Azure Blob, Google Cloud)
 
-1. In Snowflake, go to **Marketplace** and search for RevenueBase (or the listing name provided to you).
-2. Request access to the RevenueBase data product and complete any approval steps.
-3. After access is granted, the shared database (or share) appears in your Snowflake account. Query the tables using standard SQL in your worksheets or from connected tools.
+For AWS S3, Azure Blob, or Google Cloud Storage access, we need:
 
-You can join RevenueBase tables with your own Snowflake data in the same account. Billing and consumption are handled through Snowflake; refer to your RevenueBase and Snowflake agreements for details.
+- **Account ID** (or equivalent identifier for your cloud account).
+- **Role ARN** (optional) — If you want to limit access to a specific IAM role (e.g., S3) or its equivalent in Azure/GCP, provide the role ARN or role details so we can grant access only to that identity.
 
-## AWS S3 bucket access
+Once we have this information, we grant your account (or role) access to the location where we publish your data.
 
-RevenueBase can deliver data to an AWS S3 bucket you control.
+### Snowflake
 
-1. In the RevenueBase dashboard, open **Settings** → **Data Feeds** (or **Access**).
-2. Choose **AWS S3** and provide your bucket name, region, and optional prefix. Configure IAM credentials (access key and secret) or an IAM role that RevenueBase can use to write to the bucket.
-3. Once configured, files are delivered to the bucket on the agreed schedule (e.g., daily or weekly). File format is typically Parquet, CSV, or another format you’ve selected.
+For Snowflake, we use a **marketplace share**. We need the appropriate Snowflake account information from you (e.g., account identifier, region if relevant) so we can add you to the share. Once the share is set up, you’ll have access to the database and schemas you’ve licensed.
 
-Ensure your bucket policy and IAM permissions allow RevenueBase to write to the specified path. Use the same bucket for incremental and full refreshes as per your contract.
+## What you get access to
 
-## Google Cloud Storage access
+### In Snowflake
 
-Access data via Google Cloud Storage (GCS) by having RevenueBase deliver files to a GCS bucket you own.
+After access is granted, you’ll see the shared database and schemas in your Snowflake account. Use standard SQL to query the views and tables you’re licensed for.
 
-1. In the RevenueBase dashboard, go to **Settings** → **Data Feeds** (or **Access**) and select **Google Cloud Storage**.
-2. Provide your GCS bucket name and optional path prefix. Authenticate using a service account key (JSON) or workload identity that has write access to the bucket.
-3. RevenueBase writes files to the bucket on the agreed schedule. You can then load the data into BigQuery, Databricks, or other tools that read from GCS.
+| Placeholder | Description |
+| ----------- | ----------- |
+| `&lt;database&gt;` | Shared database name provided to you. |
+| `&lt;schema&gt;` | Schema(s) for the data products you’ve licensed. |
+| Views / tables | Tables and views for Companies, Contacts, Insights, Historical Experience, and other feeds as per your agreement. |
 
-Restrict the service account to the minimum permissions needed (e.g., write to a single bucket or prefix). Keep the key or identity credentials secure and rotate them according to your security policy.
+### In cloud storage (S3, Azure, GCP)
 
-## Azure Blob access
+You get access to a **directory (bucket/container path)** where RevenueBase publishes updates. Each update is published in a **subdirectory whose name includes the date** of the release. Inside, you’ll find files in **CSV, JSON, and Parquet**. Each data feed has its own subdirectory.
 
-Access data via Azure Blob Storage by having RevenueBase deliver files to a container in your Azure storage account.
+Example folder structure (placeholders):
 
-1. In the RevenueBase dashboard, go to **Settings** → **Data Feeds** (or **Access**) and select **Azure Blob**.
-2. Provide your storage account name, container name, and optional path. Authenticate using a connection string or a service principal (client ID, secret, and tenant ID) with write access to the container.
-3. RevenueBase writes files to the container on the agreed schedule. You can then ingest the data into Synapse, Databricks, or other services that read from Blob storage.
+```
+<bucket-or-container>/
+  <base-path>/
+    2025-01-01/           ← date of this update
+      Companies/
+      Contacts/
+      Insights/
+      Historical_Experience/
+      ...
+    2025-02-01/           ← next monthly update
+      Companies/
+      Contacts/
+      ...
+```
 
-Use a dedicated container or path for RevenueBase deliveries and limit permissions to that scope. Rotate keys or secrets according to your security policy.
+You’ll see only the feeds you’ve licensed. The exact path and naming (e.g., `2025-01-01` vs `20250101`) will be provided when we set up your access.
+
+<Tip>
+Provide your account ID (and optional role ARN) or Snowflake account info to RevenueBase so we can grant you access to what you’ve licensed. Contact your RevenueBase representative or use the dashboard to submit the details.
+</Tip>

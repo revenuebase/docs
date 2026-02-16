@@ -1,24 +1,146 @@
 ---
-title: "Overview"
-description: "Introduction to joining Dynamic Data Feeds tables"
+title: "Joining Tables"
+sidebarTitle: "Joining Tables"
+description: "How RevenueBase tables relate to each other and how to join them correctly."
 ---
 
-## Joining tables overview
+# Joining Tables
 
-RevenueBase Dynamic Data Feeds tables are designed to be joined so you can combine people, companies, insights, and historical experience in a single query. This section explains how tables relate and how to get started.
+RevenueBase data is organized into separate tables that link together through shared keys. This page explains how the tables relate and how to join them correctly.
 
-### Why join?
+## Entity relationship overview
 
-- **Contacts** link to **Companies** via `company_id` — get contact and company attributes together.
-- **Insights** and **Historical Experience** link to Contacts and/or Companies — add scores, signals, or job history to your analysis.
+{/* TODO: If you have an ER diagram, add it as an image here */}
+{/* <Frame><img src="/images/er-diagram.png" alt="Entity relationship diagram" /></Frame> */}
 
-### Quick reference
+Here's how the main tables connect:
 
-- **Companies** — Primary entity table (organizations).
-- **Contacts** — People; join to Companies on `contacts.company_id = companies.id`.
-- **Insights** — Join on `contact_id` and/or `company_id`.
-- **Historical Experience** — Join on `contact_id` (and optionally `company_id`).
+```
+companies (1) ──── (many) contacts
+    │                        │
+    │                        │
+    └──── (many) emails ─────┘
+```
 
-### Next steps
+{/* TODO: Update this diagram to reflect your actual table relationships */}
 
-For full join keys, example SQL, and gotchas, see [Joining tables](/data-feeds/joining-tables). For pre-built combined views, see [Pre-Joined Tables](/data-feeds/pre-joined-overview).
+## Join keys reference
+
+{/* TODO: Fill in with your actual join keys */}
+
+| From table | To table | Join key | Join type | Notes |
+|-----------|----------|----------|-----------|-------|
+| `contacts` | `companies` | `contacts.company_id = companies.company_id` | LEFT JOIN | Not all contacts have a company |
+| `contacts` | `emails` | `contacts.contact_id = emails.contact_id` | LEFT JOIN | A contact may have multiple emails |
+| `companies` | `emails` | `companies.company_id = emails.company_id` | LEFT JOIN | All emails associated with a company |
+| _TODO: Add more joins_ | | | | |
+
+## Common join patterns
+
+### Contacts with company info
+
+The most common join — enriching contacts with their company's firmographic data:
+
+```sql
+SELECT
+    c.first_name,
+    c.last_name,
+    c.email,
+    c.title,
+    co.company_name,
+    co.industry,
+    co.employee_count,
+    co.city,
+    co.state
+FROM contacts c
+LEFT JOIN companies co ON c.company_id = co.company_id
+WHERE c.email_verified = TRUE;
+```
+
+{/* TODO: Update column names to match your schema */}
+
+<Note>
+  Use `LEFT JOIN` (not `INNER JOIN`) if you want to include contacts that don't have a company record. Use `INNER JOIN` if you only want contacts with a known company.
+</Note>
+
+### Contacts with their primary email verification details
+
+```sql
+SELECT
+    c.first_name,
+    c.last_name,
+    e.email_address,
+    e.verification_status,
+    e.last_verified_at,
+    e.bounce_risk
+FROM contacts c
+JOIN emails e ON c.contact_id = e.contact_id
+WHERE e.is_primary = TRUE
+  AND e.verification_status = 'valid';
+```
+
+{/* TODO: Update column names */}
+
+### Full join: contacts + companies + emails
+
+```sql
+SELECT
+    c.first_name,
+    c.last_name,
+    c.title,
+    co.company_name,
+    co.industry,
+    co.employee_count,
+    e.email_address,
+    e.verification_status,
+    e.last_verified_at
+FROM contacts c
+LEFT JOIN companies co ON c.company_id = co.company_id
+LEFT JOIN emails e ON c.contact_id = e.contact_id AND e.is_primary = TRUE
+WHERE e.verification_status = 'valid'
+ORDER BY e.last_verified_at DESC;
+```
+
+{/* TODO: Update column names */}
+
+## Gotchas and tips
+
+{/* TODO: Fill these in based on what you've seen customers struggle with */}
+
+<Accordion title="Duplicate rows from one-to-many joins">
+  If a contact has multiple email records, joining `contacts` to `emails` will produce one row per email. To avoid duplicates, filter on `e.is_primary = TRUE` or use a subquery to pick one email per contact.
+</Accordion>
+
+<Accordion title="NULL company_id">
+  Not every contact has a linked company. If you use `INNER JOIN` on `companies`, you'll silently drop those contacts. Use `LEFT JOIN` unless you specifically want to exclude unmatched contacts.
+</Accordion>
+
+<Accordion title="Performance on large joins">
+  When joining across large tables, always include filter conditions (`WHERE` clauses) to reduce the working set before the join. Filtering on `email_verified`, `last_verified_at`, or `industry` early will significantly speed up queries.
+</Accordion>
+
+<Accordion title="TODO: Add more gotchas">
+  _Fill in based on common support questions and customer mistakes._
+</Accordion>
+
+## Joining with your own data
+
+You can also join RevenueBase tables with your own internal data in Snowflake. The most common approach is matching on `domain`:
+
+```sql
+-- Match your account list against RevenueBase companies by domain
+SELECT
+    your_accounts.account_name,
+    co.company_name,
+    co.employee_count,
+    co.industry
+FROM your_database.your_schema.accounts your_accounts
+JOIN revenuebase.core.companies co
+  ON LOWER(your_accounts.website_domain) = LOWER(co.domain);
+```
+
+{/* TODO: Update schema/database names and column names */}
+
+<Tip>
+  Always normalize domains when joining — use `LOWER()` and strip `www.` prefixes to avoid mismatches.
+</Tip>

@@ -42,7 +42,6 @@
             "group": "Dynamic Data Feeds",
             "pages": [
               "data-feeds/overview",
-              "data-feeds/getting-started-feeds",
               "data-feeds/verification-summaries",
               "data-feeds/accessing-your-data"
             ]
@@ -68,6 +67,12 @@
             "group": "Joining Tables",
             "pages": [
               "data-feeds/joining-overview"
+            ]
+          },
+          {
+            "group": "Building Lists",
+            "pages": [
+              "data-feeds/company-keyword-search"
             ]
           }
         ]

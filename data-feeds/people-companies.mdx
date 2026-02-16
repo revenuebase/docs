@@ -1,44 +1,126 @@
 ---
 title: "People + Companies"
-description: "Pre-joined view of contacts and companies"
+sidebarTitle: "People + Companies"
+description: "Contacts combined with company firmographics in a single flat table."
 ---
 
-## People + Companies
+# People + Companies
 
-**People + Companies** is a pre-joined table that combines [Contacts](/data-feeds/contacts) (people) and [Companies](/data-feeds/companies) in one view. Each row represents one contact with their associated company attributes already joined.
+The `people_companies` view combines every contact record with its associated company firmographic data in a single flat table. No joins required — just query directly.
 
-### What it is
+## What's included
 
-Instead of joining `contacts` and `companies` yourself, you query this view and get contact and company columns on the same row. Useful for lists, exports, and reporting where you need both person and company fields.
-
-### Key columns (placeholder)
-
-| Column           | Type     | Description                    |
-| ---------------- | -------- | ------------------------------ |
-| contact_id       | bigint   | Unique contact identifier.     |
-| company_id       | bigint   | Unique company identifier.     |
-| email            | string   | Contact email.                 |
-| company_name     | string   | Company name.                  |
-| _..._            | _..._    | Other contact/company fields.  |
-
-Exact columns depend on your schema. Use the [Data dictionary](/data-feeds/data-dictionary) for the full list.
-
-### Example query
+This view is equivalent to:
 
 ```sql
-SELECT contact_id, email, company_name
-FROM people_companies
-WHERE company_name ILIKE '%Tech%'
-LIMIT 100;
+SELECT c.*, co.*
+FROM contacts c
+LEFT JOIN companies co ON c.company_id = co.company_id
 ```
 
-Replace `people_companies` and column names with your actual view name and schema.
+Every contact field plus every company field, joined for you.
 
-### See also
+{/* TODO: Fill in actual numbers */}
 
-- [People + Companies + Insights](/data-feeds/people-companies-insights) when you need insight fields on the same row.
-- [Pre-Joined Tables overview](/data-feeds/pre-joined-overview) for when to use each view.
+| Metric | Value |
+|--------|-------|
+| **Total records** | _TODO_ (one row per contact) |
+| **Primary key** | `contact_id` |
+| **Source tables** | `contacts` LEFT JOIN `companies` |
+
+## Data dictionary & fill rates
+
+{/* TODO: Replace with your actual fields and fill rates. Below is a representative subset — the full view will include all fields from both source tables. */}
+
+### Contact fields
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `contact_id` | VARCHAR | 100% | Unique contact identifier |
+| `first_name` | VARCHAR | _TODO_% | First name |
+| `last_name` | VARCHAR | _TODO_% | Last name |
+| `email` | VARCHAR | _TODO_% | Primary email address |
+| `email_verified` | BOOLEAN | _TODO_% | Whether the email passed verification |
+| `verification_status` | VARCHAR | _TODO_% | `valid`, `invalid`, `catch_all`, `unknown`, `disposable` |
+| `last_verified_at` | TIMESTAMP | _TODO_% | When the email was last verified |
+| `title` | VARCHAR | _TODO_% | Job title |
+| `seniority_level` | VARCHAR | _TODO_% | `c_suite`, `vp`, `director`, `manager`, `senior`, `entry` |
+| `department` | VARCHAR | _TODO_% | Functional department |
+| `direct_phone` | VARCHAR | _TODO_% | Direct phone number |
+| `mobile_phone` | VARCHAR | _TODO_% | Mobile phone number |
+| `linkedin_url` | VARCHAR | _TODO_% | LinkedIn profile URL |
+| `location_city` | VARCHAR | _TODO_% | Contact's city |
+| `location_state` | VARCHAR | _TODO_% | Contact's state/province |
+| `location_country` | VARCHAR | _TODO_% | Contact's country |
+
+### Company fields
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `company_id` | VARCHAR | _TODO_% | Company identifier (NULL if no company match) |
+| `company_name` | VARCHAR | _TODO_% | Company name |
+| `domain` | VARCHAR | _TODO_% | Company primary domain |
+| `industry` | VARCHAR | _TODO_% | Industry |
+| `sub_industry` | VARCHAR | _TODO_% | Sub-industry / vertical |
+| `employee_count` | INTEGER | _TODO_% | Estimated employee count |
+| `employee_range` | VARCHAR | _TODO_% | Employee range bucket |
+| `revenue_estimate` | FLOAT | _TODO_% | Estimated annual revenue (USD) |
+| `revenue_range` | VARCHAR | _TODO_% | Revenue range bucket |
+| `hq_city` | VARCHAR | _TODO_% | HQ city |
+| `hq_state` | VARCHAR | _TODO_% | HQ state/province |
+| `hq_country` | VARCHAR | _TODO_% | HQ country |
+| `founded_year` | INTEGER | _TODO_% | Year founded |
+| `company_type` | VARCHAR | _TODO_% | `public`, `private`, `nonprofit`, etc. |
+| `tech_stack` | ARRAY | _TODO_% | Detected technologies |
 
 <Note>
-Placeholder: Replace with your actual view name, column list, and sample queries.
+  Since this is a LEFT JOIN from contacts, every contact appears even if they don't have a matched company. Company fields will be NULL for unmatched contacts.
 </Note>
+
+## Example queries
+
+### Prospect list — no joins needed
+
+```sql
+SELECT
+    first_name,
+    last_name,
+    email,
+    title,
+    company_name,
+    industry,
+    employee_count,
+    hq_state
+FROM people_companies
+WHERE email_verified = TRUE
+  AND verification_status = 'valid'
+  AND seniority_level IN ('vp', 'director', 'c_suite')
+  AND industry = 'Software'
+  AND employee_count BETWEEN 100 AND 1000
+  AND hq_country = 'US'
+ORDER BY last_verified_at DESC
+LIMIT 500;
+```
+
+### Export for a campaign
+
+```sql
+SELECT
+    first_name,
+    last_name,
+    email,
+    title,
+    company_name,
+    employee_range,
+    industry,
+    hq_city,
+    hq_state
+FROM people_companies
+WHERE email_verified = TRUE
+  AND department = 'marketing'
+  AND employee_count >= 200
+  AND last_verified_at >= DATEADD(day, -30, CURRENT_DATE())
+ORDER BY company_name, last_name;
+```
+
+{/* TODO: Update table name and column names to match your actual schema */}

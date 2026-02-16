@@ -1,35 +1,156 @@
 ---
 title: "Historical Experience"
-description: "What the Historical Experience table is and what's in it"
+sidebarTitle: "Historical Experience"
+description: "Career history and job change data — past roles, tenure, and professional trajectory."
 ---
 
-## Historical Experience
+# Historical Experience Table
 
-The **Historical Experience** table holds historical job or experience records — for example, employment history or role changes you can link to contacts and companies.
+The `historical_experience` table tracks career history for contacts in the RevenueBase database. Each row represents one position a contact has held. Use it to understand career trajectories, identify recent job changers, find alumni of specific companies, and build more personalized outreach.
 
-### What it is
+## Quick stats
 
-Historical Experience adds a time dimension to people and companies: past roles, tenure, or experience attributes. Each row typically links to a contact and optionally to a company, with start/end or effective dates.
+{/* TODO: Fill in actual numbers */}
 
-### What's in it
+| Metric | Value |
+|--------|-------|
+| **Total records** | _TODO_ |
+| **Unique contacts with history** | _TODO_ |
+| **Average positions per contact** | _TODO_ |
+| **Update frequency** | _TODO_ |
+| **Primary key** | `experience_id` |
+| **Main foreign keys** | `contact_id → contacts.contact_id`, `company_id → companies.company_id` |
 
-| Column       | Type     | Description                         |
-| ------------ | -------- | ----------------------------------- |
-| id           | bigint   | Unique primary key.                 |
-| contact_id   | bigint   | Foreign key to Contacts.            |
-| company_id   | bigint   | Foreign key to Companies (optional).|
-| role_title   | string   | Job title or role.                  |
-| start_date   | date     | Start of the experience.            |
-| end_date     | date     | End of the experience (nullable).  |
-| updated_at   | timestamp| Last update time (UTC).             |
+## Data dictionary & fill rates
 
-Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full definitions.
+{/* TODO: Replace ALL fields with your actual schema. */}
 
-### How to use it
+### Identifiers
 
-- **Joining** — Join to [Contacts](/data-feeds/contacts) and [Companies](/data-feeds/companies) on the ID columns. See [Joining tables](/data-feeds/joining-tables).
-- **Filtering** — Filter by contact, company, date range, or role as needed.
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `experience_id` | VARCHAR | 100% | Unique identifier for this experience record |
+| `contact_id` | VARCHAR | 100% | Foreign key to `contacts` table |
+| `company_id` | VARCHAR | _TODO_% | Foreign key to `companies` table (NULL if company not in our database) |
 
-<Note>
-Placeholder: Replace with your actual Historical Experience schema and use cases.
-</Note>
+### Position details
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `title` | VARCHAR | _TODO_% | Job title held during this position |
+| `seniority_level` | VARCHAR | _TODO_% | Normalized seniority at this role: `c_suite`, `vp`, `director`, `manager`, `senior`, `entry`, `other` |
+| `department` | VARCHAR | _TODO_% | Functional department during this role |
+| `is_current` | BOOLEAN | _TODO_% | Whether this is the contact's current position |
+
+### Company context
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `company_name` | VARCHAR | _TODO_% | Company name for this position |
+| `company_domain` | VARCHAR | _TODO_% | Company domain for this position |
+| `company_industry` | VARCHAR | _TODO_% | Industry of the company at this position |
+| `company_employee_count` | INTEGER | _TODO_% | Employee count of the company (at time of record) |
+
+### Dates & tenure
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `start_date` | DATE | _TODO_% | When the contact started this position |
+| `end_date` | DATE | _TODO_% | When the contact left this position (NULL if current) |
+| `tenure_months` | INTEGER | _TODO_% | Calculated tenure in months (NULL if current) |
+
+### Metadata
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `created_at` | TIMESTAMP | 100% | When this record was first added |
+| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
+
+<Warning>
+  **Fill rates for historical data are inherently lower** than current-position data. Older positions, smaller companies, and non-US contacts tend to have less complete records. `start_date` and `end_date` may only have year or year-month precision in some cases.
+</Warning>
+
+## Common use cases
+
+<AccordionGroup>
+  <Accordion title="Find recent job changers">
+    People who just started a new role are 3–5x more likely to buy new tools. Target contacts whose most recent position started within the last 90 days.
+  </Accordion>
+  <Accordion title="Company alumni targeting">
+    Find everyone who used to work at a specific company — great for selling to former champions who already know your product.
+  </Accordion>
+  <Accordion title="Career trajectory analysis">
+    Understand whether a contact is trending toward more senior roles (likely a decision-maker) or has been lateral (likely an evaluator/user).
+  </Accordion>
+  <Accordion title="Tenure-based signals">
+    Short average tenure can indicate a company with high turnover. Long tenure at the current role can indicate stability and buying authority.
+  </Accordion>
+</AccordionGroup>
+
+## Example queries
+
+### Recent job changers (last 90 days)
+
+```sql
+SELECT
+    c.first_name,
+    c.last_name,
+    c.email,
+    he.title as new_title,
+    he.company_name as new_company,
+    he.start_date,
+    prev.title as previous_title,
+    prev.company_name as previous_company
+FROM historical_experience he
+JOIN contacts c ON he.contact_id = c.contact_id
+LEFT JOIN historical_experience prev
+  ON prev.contact_id = he.contact_id
+  AND prev.is_current = FALSE
+  AND prev.end_date = (
+    SELECT MAX(end_date)
+    FROM historical_experience
+    WHERE contact_id = he.contact_id AND is_current = FALSE
+  )
+WHERE he.is_current = TRUE
+  AND he.start_date >= DATEADD(day, -90, CURRENT_DATE())
+  AND c.email_verified = TRUE
+ORDER BY he.start_date DESC;
+```
+
+### Alumni of a specific company
+
+```sql
+SELECT
+    c.first_name,
+    c.last_name,
+    c.email,
+    c.title as current_title,
+    c.company_name as current_company,
+    he.title as former_title,
+    he.start_date,
+    he.end_date,
+    he.tenure_months
+FROM historical_experience he
+JOIN contacts c ON he.contact_id = c.contact_id
+WHERE he.company_domain = 'salesforce.com'  -- change to your target
+  AND he.is_current = FALSE
+  AND c.email_verified = TRUE
+ORDER BY he.end_date DESC;
+```
+
+### Average tenure by seniority level
+
+```sql
+SELECT
+    seniority_level,
+    COUNT(*) as positions,
+    ROUND(AVG(tenure_months), 1) as avg_tenure_months,
+    ROUND(MEDIAN(tenure_months), 1) as median_tenure_months
+FROM historical_experience
+WHERE tenure_months IS NOT NULL
+  AND is_current = FALSE
+GROUP BY seniority_level
+ORDER BY avg_tenure_months DESC;
+```
+
+{/* TODO: Update all column names to match your actual schema */}

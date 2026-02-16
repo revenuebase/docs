@@ -1,45 +1,137 @@
 ---
 title: "Companies"
-description: "What the Companies table is and what's in it"
+sidebarTitle: "Companies"
+description: "Company-level firmographic data — industry, size, revenue, location, and more."
 ---
 
-## Introduction
+# Companies Table
 
-The **Companies** table holds organization records — businesses you can link to contacts, insights, and other tables. Each row is one company with a unique identifier and firmographic attributes. Use this table for company-level analytics and as the main join target across Dynamic Data Feeds.
+The `companies` table contains organization-level records with firmographic data. Use it for account targeting, ICP filtering, segmentation, and enriching your CRM with company-level attributes.
 
-## What it is
+## Quick stats
 
-Companies are the primary entity table for organizations. Each row has a unique ID and attributes such as name, location, and industry. [Contacts](/data-feeds/contacts) and other tables reference Companies via `company_id`. Use this table when you need organization-level data or when joining people and insights to companies.
+{/* TODO: Fill in actual numbers */}
 
-## Data coverage
+| Metric | Value |
+|--------|-------|
+| **Total records** | _TODO_ |
+| **Update frequency** | _TODO_ |
+| **Primary key** | `company_id` |
+| **Most common join** | `contacts.company_id → companies.company_id` |
 
-Companies data covers organizations in the RevenueBase universe. Coverage varies by region and industry; the map below illustrates geographic availability.
+## Data dictionary & fill rates
 
-<img src="/images/companies-data-coverage.png" alt="Map or chart showing Companies data coverage by region" />
+Fill rate indicates the percentage of records where this field is populated (non-null). Higher fill rates mean more complete data for that attribute.
 
-<Note>
-Replace the image path with your actual data coverage asset. Add the file under an `images` folder in your docs repo (e.g. `images/companies-data-coverage.png`).
-</Note>
+{/* TODO: Replace ALL field names, types, descriptions, and fill rates with your actual schema. The fields below are illustrative — update to match reality. */}
 
-## Data updates
+### Identifiers
 
-Companies data is updated on a regular schedule. New and changed records are reflected in the feed according to your plan’s refresh cadence. Historical snapshots are not retained by default; contact support or check your agreement for retention and update frequency details.
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `company_id` | VARCHAR | 100% | Unique RevenueBase identifier for the company |
+| `domain` | VARCHAR | _TODO_% | Primary web domain (e.g., `acme.com`) |
+| `linkedin_url` | VARCHAR | _TODO_% | Company LinkedIn page URL |
+| `crunchbase_url` | VARCHAR | _TODO_% | Crunchbase profile URL |
+| `ticker` | VARCHAR | _TODO_% | Stock ticker symbol (public companies only) |
 
-## Data dictionary
+### Company basics
 
-The following table lists all columns in the Companies table: name, type, description, and an example value.
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `company_name` | VARCHAR | _TODO_% | Legal or common company name |
+| `description` | TEXT | _TODO_% | Short company description |
+| `founded_year` | INTEGER | _TODO_% | Year the company was founded |
+| `company_type` | VARCHAR | _TODO_% | `public`, `private`, `nonprofit`, `government`, `education` |
+| `website` | VARCHAR | _TODO_% | Full website URL |
+| `logo_url` | VARCHAR | _TODO_% | URL to company logo image |
 
-| Column       | Type     | Description                                | Example                    |
-| ------------ | -------- | ------------------------------------------ | -------------------------- |
-| id           | bigint   | Unique primary key for the company.        | `12345678`                 |
-| name         | string   | Legal or display name of the company.      | `Acme Corp`                |
-| domain       | string   | Primary website domain.                    | `acme.com`                 |
-| industry     | string   | Industry or sector classification.         | `Technology`               |
-| employee_count | string | Employee count band or range.              | `51-200`                   |
-| headquarters_city   | string | City of headquarters.           | `San Francisco`            |
-| headquarters_state  | string | State or region of headquarters. | `CA`                       |
-| headquarters_country | string | Country of headquarters.       | `US`                       |
-| created_at   | timestamp| When the record was first added (UTC).     | `2024-01-15T12:00:00Z`     |
-| updated_at   | timestamp| When the record was last updated (UTC).     | `2024-06-01T08:30:00Z`     |
+### Industry & classification
 
-Add, remove, or edit rows to match your actual schema. Use this table as the source of truth for column names, types, and usage.
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `industry` | VARCHAR | _TODO_% | Primary industry (e.g., `Software`, `Financial Services`) |
+| `sub_industry` | VARCHAR | _TODO_% | Sub-industry or vertical |
+| `sic_code` | VARCHAR | _TODO_% | Standard Industrial Classification code |
+| `naics_code` | VARCHAR | _TODO_% | North American Industry Classification code |
+| `sector` | VARCHAR | _TODO_% | High-level sector grouping |
+
+### Size & financials
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `employee_count` | INTEGER | _TODO_% | Estimated number of employees |
+| `employee_range` | VARCHAR | _TODO_% | Bucketed range: `1-10`, `11-50`, `51-200`, `201-500`, `501-1000`, `1001-5000`, `5001-10000`, `10000+` |
+| `revenue_estimate` | FLOAT | _TODO_% | Estimated annual revenue in USD |
+| `revenue_range` | VARCHAR | _TODO_% | Bucketed range: `$0-1M`, `$1-10M`, `$10-50M`, `$50-100M`, `$100-500M`, `$500M-1B`, `$1B+` |
+| `funding_total` | FLOAT | _TODO_% | Total known funding raised (USD) |
+| `last_funding_round` | VARCHAR | _TODO_% | Most recent funding round type (e.g., `Series B`) |
+| `last_funding_date` | DATE | _TODO_% | Date of most recent funding round |
+
+### Location
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `hq_street` | VARCHAR | _TODO_% | Headquarters street address |
+| `hq_city` | VARCHAR | _TODO_% | Headquarters city |
+| `hq_state` | VARCHAR | _TODO_% | Headquarters state/province |
+| `hq_zip` | VARCHAR | _TODO_% | Headquarters postal code |
+| `hq_country` | VARCHAR | _TODO_% | Headquarters country (ISO 2-letter code) |
+| `hq_country_name` | VARCHAR | _TODO_% | Headquarters country (full name) |
+| `hq_region` | VARCHAR | _TODO_% | Geographic region (e.g., `North America`, `EMEA`) |
+
+### Technology
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `tech_stack` | ARRAY | _TODO_% | Detected technologies used by the company |
+| `primary_language` | VARCHAR | _TODO_% | Primary programming language (tech companies) |
+| `cloud_provider` | VARCHAR | _TODO_% | Primary cloud provider: `aws`, `azure`, `gcp`, `other` |
+
+### Metadata
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `created_at` | TIMESTAMP | 100% | When this record was first added to RevenueBase |
+| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
+| `data_source` | VARCHAR | _TODO_% | Primary data source for this record |
+
+<Warning>
+  **Fill rates are approximate** and reflect the current state of the dataset. They may vary by segment — for example, fill rates for US-based software companies will generally be higher than for international companies in niche industries.
+</Warning>
+
+## Example queries
+
+### Find target accounts by ICP
+
+```sql
+SELECT
+    company_name,
+    domain,
+    industry,
+    employee_count,
+    revenue_range,
+    hq_city,
+    hq_state
+FROM companies
+WHERE industry IN ('Software', 'Information Technology')
+  AND employee_count BETWEEN 50 AND 500
+  AND hq_country = 'US'
+  AND revenue_range IN ('$10-50M', '$50-100M')
+ORDER BY employee_count DESC;
+```
+
+### Check fill rates yourself
+
+```sql
+-- Calculate actual fill rates for any field
+SELECT
+    COUNT(*) as total_records,
+    ROUND(COUNT(domain) * 100.0 / COUNT(*), 1) as domain_fill_pct,
+    ROUND(COUNT(industry) * 100.0 / COUNT(*), 1) as industry_fill_pct,
+    ROUND(COUNT(employee_count) * 100.0 / COUNT(*), 1) as employee_count_fill_pct,
+    ROUND(COUNT(revenue_estimate) * 100.0 / COUNT(*), 1) as revenue_fill_pct
+FROM companies;
+```
+
+{/* TODO: Update all column names to match your actual schema */}

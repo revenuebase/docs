@@ -1,34 +1,122 @@
 ---
 title: "Insights"
-description: "What the Insights table is and what's in it"
+sidebarTitle: "Insights"
+description: "Enrichment signals — technographics, hiring indicators, funding events, and engagement signals."
 ---
 
-## Insights
+# Insights Table
 
-The **Insights** table holds derived or aggregated insight data you can join to people and companies. Use it for scoring, signals, or other analytical attributes.
+The `insights` table contains enrichment signals and derived intelligence about companies and contacts. Use it to prioritize accounts based on buying signals, identify companies going through growth or change, and layer intent-like signals into your targeting.
 
-### What it is
+## Quick stats
 
-Insights provide additional dimensions for contacts and companies — for example, intent scores, engagement signals, or segment flags. Each row typically links to a contact and/or company and carries one or more insight fields.
+{/* TODO: Fill in actual numbers */}
 
-### What's in it
+| Metric | Value |
+|--------|-------|
+| **Total records** | _TODO_ |
+| **Update frequency** | _TODO_ |
+| **Primary key** | `insight_id` |
+| **Main foreign keys** | `company_id → companies.company_id`, `contact_id → contacts.contact_id` |
 
-| Column       | Type     | Description                         |
-| ------------ | -------- | ----------------------------------- |
-| id           | bigint   | Unique primary key.                 |
-| contact_id   | bigint   | Foreign key to Contacts (optional).|
-| company_id   | bigint   | Foreign key to Companies (optional).|
-| insight_type | string   | Type or category of insight.       |
-| value        | string   | Insight value or score.             |
-| updated_at   | timestamp| Last update time (UTC).             |
+## Data dictionary & fill rates
 
-Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full definitions.
+{/* TODO: Replace ALL fields with your actual schema. The fields below are illustrative. */}
 
-### How to use it
+### Identifiers
 
-- **Joining** — Join to [Contacts](/data-feeds/contacts) and [Companies](/data-feeds/companies) on the ID columns. See [Joining tables](/data-feeds/joining-tables) and [Pre-Joined Tables](/data-feeds/pre-joined-overview) for combined views.
-- **Filtering** — Filter by `insight_type`, entity IDs, or date as needed.
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `insight_id` | VARCHAR | 100% | Unique identifier for this insight record |
+| `company_id` | VARCHAR | _TODO_% | Foreign key to `companies` table |
+| `contact_id` | VARCHAR | _TODO_% | Foreign key to `contacts` table (NULL for company-level insights) |
+| `insight_type` | VARCHAR | _TODO_% | Category of insight: `technographic`, `hiring`, `funding`, `growth`, `engagement` |
 
-<Note>
-Placeholder: Replace with your actual Insights schema and use cases.
-</Note>
+### Technographic signals
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `technologies_detected` | ARRAY | _TODO_% | List of technologies detected on the company's website/stack |
+| `tech_category` | VARCHAR | _TODO_% | Technology category (e.g., `CRM`, `marketing_automation`, `analytics`) |
+| `tech_added_date` | DATE | _TODO_% | When the technology was first detected |
+| `tech_removed_date` | DATE | _TODO_% | When the technology was last detected (NULL if still active) |
+
+### Hiring signals
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `is_hiring` | BOOLEAN | _TODO_% | Whether the company currently has open roles |
+| `open_roles_count` | INTEGER | _TODO_% | Number of open job postings |
+| `hiring_departments` | ARRAY | _TODO_% | Departments with open roles (e.g., `['engineering', 'sales']`) |
+| `headcount_growth_6m` | FLOAT | _TODO_% | Headcount growth rate over the last 6 months (as decimal, e.g., 0.15 = 15%) |
+| `headcount_growth_12m` | FLOAT | _TODO_% | Headcount growth rate over the last 12 months |
+
+### Funding & financial signals
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `recent_funding` | BOOLEAN | _TODO_% | Whether the company raised funding in the last 12 months |
+| `funding_round_type` | VARCHAR | _TODO_% | Most recent round: `seed`, `series_a`, `series_b`, `series_c`, `growth`, `other` |
+| `funding_amount` | FLOAT | _TODO_% | Amount raised in the most recent round (USD) |
+| `funding_date` | DATE | _TODO_% | Date of the most recent funding round |
+| `total_funding` | FLOAT | _TODO_% | Total funding raised to date (USD) |
+
+### Growth indicators
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `web_traffic_trend` | VARCHAR | _TODO_% | Website traffic trend: `growing`, `stable`, `declining` |
+| `web_traffic_rank` | INTEGER | _TODO_% | Relative traffic rank (lower = more traffic) |
+| `social_presence_score` | FLOAT | _TODO_% | Composite social media presence score (0–100) |
+| `news_mentions_30d` | INTEGER | _TODO_% | Number of news mentions in the last 30 days |
+
+### Metadata
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `observed_at` | TIMESTAMP | 100% | When this insight was captured |
+| `created_at` | TIMESTAMP | 100% | When this record was first added |
+| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
+
+<Warning>
+  **Fill rates vary significantly by insight type.** Technographic data is available for companies with a web presence. Funding data is primarily available for venture-backed companies. Hiring signals depend on whether the company posts jobs publicly.
+</Warning>
+
+## Example queries
+
+### Find companies showing growth signals
+
+```sql
+SELECT
+    co.company_name,
+    co.domain,
+    co.employee_count,
+    i.headcount_growth_6m,
+    i.open_roles_count,
+    i.recent_funding,
+    i.funding_round_type
+FROM insights i
+JOIN companies co ON i.company_id = co.company_id
+WHERE i.headcount_growth_6m > 0.20  -- 20%+ headcount growth
+  AND i.is_hiring = TRUE
+  AND co.employee_count BETWEEN 50 AND 500
+ORDER BY i.headcount_growth_6m DESC;
+```
+
+### Companies that recently adopted a specific technology
+
+```sql
+SELECT
+    co.company_name,
+    co.domain,
+    i.technologies_detected,
+    i.tech_added_date
+FROM insights i
+JOIN companies co ON i.company_id = co.company_id
+WHERE i.insight_type = 'technographic'
+  AND ARRAY_CONTAINS('Snowflake'::VARIANT, i.technologies_detected)
+  AND i.tech_added_date >= DATEADD(month, -6, CURRENT_DATE())
+ORDER BY i.tech_added_date DESC;
+```
+
+{/* TODO: Update all column names to match your actual schema */}

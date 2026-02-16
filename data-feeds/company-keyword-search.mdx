@@ -1,0 +1,90 @@
+---
+title: "Company keyword search"
+description: "Powerful keyword searches on company about us, keywords, and industry fields."
+---
+
+# Company keyword search
+
+Building lists often starts with finding companies that match specific themes, technologies, or use cases. RevenueBase gives you several fields that are well suited to keyword and semantic search.
+
+## Fields for keyword searching
+
+Use these fields to run powerful company searches:
+
+- **Company about us** — Free-text company description. Search for phrases that indicate product focus, mission, or market (e.g., "cloud-native", "AI-powered", "B2B SaaS").
+- **Company keywords** — Normalized or tagged keywords associated with the company. Good for technology names, verticals, and use-case terms.
+- **Industry fields** — `industry`, `sub_industry`, and related classification fields. Combine with keyword conditions to narrow by vertical and theme.
+
+Combine these with firmographic filters (employee count, revenue, location) to build precise company lists without writing complex joins.
+
+## Example searches
+
+The following are placeholder examples for complex company keyword searches. Replace the field names and logic with your actual schema.
+
+### Search 1
+
+```sql
+-- TODO: Complex company search 1 — e.g., about_us + industry
+SELECT company_id, company_name, domain, industry, employee_count
+FROM companies
+WHERE 1=1
+  -- AND <about_us_field> ILIKE '%<keyword>%'
+  -- AND industry IN ('Software', 'Information Technology')
+  -- AND employee_count BETWEEN 50 AND 500
+LIMIT 100;
+```
+
+### Search 2
+
+```sql
+-- TODO: Complex company search 2 — e.g., company keywords + location
+SELECT company_id, company_name, domain, industry, hq_city, hq_state
+FROM companies
+WHERE 1=1
+  -- AND <company_keywords_field> ILIKE '%<keyword>%'
+  -- AND hq_country = 'US'
+  -- AND <sub_industry_field> = '<value>'
+LIMIT 100;
+```
+
+### Search 3
+
+```sql
+-- TODO: Complex company search 3 — e.g., multi-keyword about us
+SELECT company_id, company_name, domain, industry, employee_range
+FROM companies
+WHERE 1=1
+  -- AND (<about_us_field> ILIKE '%<keyword1>%' OR <about_us_field> ILIKE '%<keyword2>%')
+  -- AND employee_range IN ('51-200', '201-500')
+LIMIT 100;
+```
+
+### Search 4
+
+```sql
+-- TODO: Complex company search 4 — e.g., keywords + revenue + sector
+SELECT company_id, company_name, domain, industry, revenue_range, sector
+FROM companies
+WHERE 1=1
+  -- AND <company_keywords_field> ILIKE '%<keyword>%'
+  -- AND revenue_range IN ('$10-50M', '$50-100M')
+  -- AND sector = '<value>'
+LIMIT 100;
+```
+
+### Search 5
+
+```sql
+-- TODO: Complex company search 5 — e.g., about us + industry + founded year
+SELECT company_id, company_name, domain, industry, founded_year, employee_count
+FROM companies
+WHERE 1=1
+  -- AND <about_us_field> ILIKE '%<keyword>%'
+  -- AND industry = '<value>'
+  -- AND founded_year >= 2010
+LIMIT 100;
+```
+
+<Tip>
+Replace placeholder field names (e.g., `<about_us_field>`, `<company_keywords_field>`) and filter values with your actual [Companies](/data-feeds/companies) table schema. Use `ILIKE` for case-insensitive text search; for full-text or semantic search, use your platform’s native search features if available.
+</Tip>

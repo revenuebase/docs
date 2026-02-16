@@ -1,36 +1,43 @@
 ---
 title: "Overview"
-description: "Introduction to RevenueBase data feeds"
+description: "Introduction to RevenueBase Dynamic Data Feeds"
 ---
 
-## Data Feeds overview
+## Dynamic Data Feeds overview
 
-RevenueBase data feeds give you access to bulk and streaming datasets you can query with SQL or load into your own warehouse. Use feeds for analytics, enrichment, and reporting.
+RevenueBase Dynamic Data Feeds give you access to bulk datasets you can load into your warehouse or query in Snowflake. The feeds are updated and pushed **monthly**, usually on the **1st of the month** (or the 2nd if the 1st falls on a weekend or holiday). You’ll receive an **email alert** when the feed is updated.
 
-### What are data feeds?
+### Data feeds we offer
 
-Data feeds are structured datasets exposed over a secure connection. You connect with a supported client (e.g., JDBC, ODBC, or our recommended tools), then query tables using standard SQL. Data is updated on a schedule or in near real time depending on the feed.
+Our feeds include:
+
+- **Companies** — Organization records and firmographics.
+- **Contacts** — People linked to companies, with verification summaries.
+- **Insights** — Derived insight data (scores, signals).
+- **Historical Experience** — Job and experience history for contacts.
+
+Additional feeds may be available depending on your agreement. Each feed has its own tables or subdirectories; see [Getting started with feeds](/data-feeds/getting-started-feeds) and [Accessing your data](/data-feeds/accessing-your-data) for how to connect.
 
 ### Key concepts
 
-- **Tables** — Each feed is organized into tables (e.g., companies, contacts). See [Tables & Schema](/data-feeds/tables-schema) for the full list.
-- **Schema** — Column names, types, and descriptions are documented in the [Data dictionary](/data-feeds/data-dictionary) and per-table pages.
-- **Joins** — Tables share common keys so you can join them. See [Joining tables](/data-feeds/joining-tables) for relationships and best practices.
+- **Tables** — Each feed is organized into tables (e.g., Companies, Contacts). See the Tables & Schema section in this doc set for the full list and column definitions.
+- **Joins** — Tables share common keys so you can join them. See [Joining Tables](/data-feeds/joining-overview) for relationships and best practices.
+- **Updates** — Feeds are refreshed monthly; you get an email when a new release is available.
 
 ### Getting access
 
-1. Ensure your plan includes Data Feeds.
-2. In the dashboard, open **Settings** → **Data Feeds** to get connection details and credentials.
-3. Follow [Getting started with feeds](/data-feeds/getting-started-feeds) to connect and run your first query.
+1. Ensure your plan includes Dynamic Data Feeds.
+2. Provide RevenueBase with your account details (cloud account ID and optional role ARN for S3/Azure/GCP, or Snowflake account info for marketplace share). See [Accessing your data](/data-feeds/accessing-your-data).
+3. Once access is granted, connect and run your first query or download. See [Getting started with feeds](/data-feeds/getting-started-feeds).
 
 ### Next steps
 
 <Card title="Getting started with feeds" icon="play" href="/data-feeds/getting-started-feeds">
   Connect and run sample queries.
 </Card>
-<Card title="Data dictionary" icon="book" href="/data-feeds/data-dictionary">
-  Field definitions and types.
+<Card title="Accessing your data" icon="key" href="/data-feeds/accessing-your-data">
+  What we need from you and what you get access to.
 </Card>
-<Card title="Tables & Schema" icon="table" href="/data-feeds/tables-schema">
-  List of tables and what's in each.
+<Card title="Companies" icon="building" href="/data-feeds/companies">
+  Companies table and schema.
 </Card>

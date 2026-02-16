@@ -1,41 +1,142 @@
 ---
 title: "Contacts"
-description: "What the Contacts table is and what's in it"
+sidebarTitle: "Contacts"
+description: "Individual contact records — verified emails, titles, seniority, direct dials."
 ---
 
-## Contacts
+# Contacts Table
 
-The **Contacts** table holds people records — individuals you can link to companies. Each row is one contact with a unique identifier, contact details, and a foreign key to the Companies table.
+The `contacts` table contains individual person records with professional contact information and email verification data. This is the primary table for building prospect lists, outbound campaigns, and enrichment workflows.
 
-### What it is
+## Quick stats
 
-Contacts represent people (e.g., decision-makers, leads). Each row typically links to one company via `company_id`. Use this table for contact-level analytics, enrichment, or joining to company attributes.
+{/* TODO: Fill in actual numbers */}
 
-### What's in it
+| Metric | Value |
+|--------|-------|
+| **Total records** | _TODO_ |
+| **Verified emails** | _TODO_ |
+| **Update frequency** | _TODO_ |
+| **Primary key** | `contact_id` |
+| **Main foreign key** | `company_id → companies.company_id` |
 
-| Column      | Type     | Description                    |
-| ----------- | -------- | ------------------------------ |
-| id          | bigint   | Unique primary key.            |
-| company_id  | bigint   | Foreign key to Companies.      |
-| email       | string   | Email address.                 |
-| created_at  | timestamp| When the record was created.   |
-| updated_at  | timestamp| Last update time (UTC).        |
+## Data dictionary & fill rates
 
-Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full field definitions.
+{/* TODO: Replace ALL fields, types, descriptions, and fill rates with your actual schema. */}
 
-### How to use it
+### Identifiers
 
-- **Filtering** — Use `WHERE` on id, company_id, or date columns as needed.
-- **Joining** — Join to [Companies](/data-feeds/companies) on `contacts.company_id = companies.id`. See [Joining tables](/data-feeds/joining-tables).
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `contact_id` | VARCHAR | 100% | Unique RevenueBase identifier for this contact |
+| `company_id` | VARCHAR | _TODO_% | Foreign key to `companies` table |
+| `linkedin_url` | VARCHAR | _TODO_% | Personal LinkedIn profile URL |
 
-### Example query
+### Name & demographics
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `first_name` | VARCHAR | _TODO_% | First name |
+| `last_name` | VARCHAR | _TODO_% | Last name |
+| `full_name` | VARCHAR | _TODO_% | Combined full name |
+| `gender` | VARCHAR | _TODO_% | Inferred gender: `male`, `female`, `unknown` |
+| `location_city` | VARCHAR | _TODO_% | Contact's city (may differ from company HQ) |
+| `location_state` | VARCHAR | _TODO_% | Contact's state/province |
+| `location_country` | VARCHAR | _TODO_% | Contact's country (ISO 2-letter code) |
+
+### Professional info
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `title` | VARCHAR | _TODO_% | Current job title |
+| `seniority_level` | VARCHAR | _TODO_% | Normalized seniority: `c_suite`, `vp`, `director`, `manager`, `senior`, `entry`, `other` |
+| `department` | VARCHAR | _TODO_% | Functional department: `engineering`, `sales`, `marketing`, `finance`, `hr`, `operations`, `legal`, `other` |
+| `title_role` | VARCHAR | _TODO_% | Normalized role from title (e.g., `ceo`, `cto`, `vp_sales`, `sdr`) |
+
+### Contact information
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `email` | VARCHAR | _TODO_% | Primary professional email address |
+| `email_verified` | BOOLEAN | _TODO_% | Whether the email has passed verification |
+| `verification_status` | VARCHAR | _TODO_% | Detailed status: `valid`, `invalid`, `catch_all`, `unknown`, `disposable` |
+| `last_verified_at` | TIMESTAMP | _TODO_% | When the email was most recently verified |
+| `bounce_risk` | VARCHAR | _TODO_% | Deliverability risk: `low`, `medium`, `high` |
+| `direct_phone` | VARCHAR | _TODO_% | Direct dial phone number |
+| `mobile_phone` | VARCHAR | _TODO_% | Mobile phone number |
+
+### Company context (denormalized)
+
+These fields are copied from the `companies` table for convenience. For the full set of company attributes, join to `companies` on `company_id` — or use the [People + Companies](/data-feeds/people-companies) pre-joined table.
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `company_name` | VARCHAR | _TODO_% | Company name (from `companies` table) |
+| `company_domain` | VARCHAR | _TODO_% | Company primary domain |
+| `company_industry` | VARCHAR | _TODO_% | Company industry |
+| `company_employee_count` | INTEGER | _TODO_% | Company employee count |
+
+### Metadata
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `created_at` | TIMESTAMP | 100% | When this record was first added |
+| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
+| `data_source` | VARCHAR | _TODO_% | Primary data source for this record |
+
+<Warning>
+  **Fill rates are approximate** and vary by segment. Contacts at larger, US-based companies tend to have higher fill rates for direct dials, seniority, and department. International and SMB records may have lower fill rates on some fields.
+</Warning>
+
+## Understanding verification fields
+
+| `verification_status` | What it means | Safe to send? |
+|-----------------------|---------------|---------------|
+| `valid` | Email confirmed deliverable via SMTP verification | ✅ Yes |
+| `invalid` | Email confirmed undeliverable | ❌ No |
+| `catch_all` | Domain accepts all emails — specific address unverifiable | ⚠️ Proceed with caution |
+| `unknown` | Verification inconclusive (server timeout, etc.) | ⚠️ Proceed with caution |
+| `disposable` | Temporary / throwaway email address | ❌ No |
+
+<Tip>
+  For the safest outbound sends, filter on `verification_status = 'valid'` AND `last_verified_at >= DATEADD(day, -30, CURRENT_DATE())`. This gives you recently verified, confirmed-deliverable addresses.
+</Tip>
+
+## Example queries
+
+### Build a prospect list
 
 ```sql
-SELECT c.id, c.email, co.name AS company_name
-FROM contacts c
-JOIN companies co ON co.id = c.company_id
-WHERE c.updated_at >= CURRENT_DATE - INTERVAL '7 days'
-LIMIT 100;
+SELECT
+    first_name,
+    last_name,
+    email,
+    title,
+    seniority_level,
+    company_name,
+    company_employee_count
+FROM contacts
+WHERE email_verified = TRUE
+  AND seniority_level IN ('c_suite', 'vp', 'director')
+  AND department IN ('engineering', 'sales')
+  AND company_industry = 'Software'
+  AND company_employee_count BETWEEN 100 AND 1000
+ORDER BY last_verified_at DESC
+LIMIT 500;
 ```
 
-Adjust table and column names to your real schema.
+### Check fill rates yourself
+
+```sql
+SELECT
+    COUNT(*) as total_records,
+    ROUND(COUNT(email) * 100.0 / COUNT(*), 1) as email_fill_pct,
+    ROUND(COUNT(CASE WHEN email_verified THEN 1 END) * 100.0 / COUNT(*), 1) as verified_pct,
+    ROUND(COUNT(direct_phone) * 100.0 / COUNT(*), 1) as phone_fill_pct,
+    ROUND(COUNT(title) * 100.0 / COUNT(*), 1) as title_fill_pct,
+    ROUND(COUNT(seniority_level) * 100.0 / COUNT(*), 1) as seniority_fill_pct,
+    ROUND(COUNT(department) * 100.0 / COUNT(*), 1) as department_fill_pct
+FROM contacts;
+```
+
+{/* TODO: Update all column names to match your actual schema */}
