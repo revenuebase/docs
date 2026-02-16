@@ -28,6 +28,7 @@
             "group": "Getting Started",
             "pages": [
               "index",
+              "getting-started/platform-overview",
               "getting-started/quickstart-api",
               "getting-started/quickstart-data-feeds"
             ]
@@ -42,6 +43,7 @@
             "pages": [
               "data-feeds/overview",
               "data-feeds/getting-started-feeds",
+              "data-feeds/verification-summaries",
               "data-feeds/accessing-your-data"
             ]
           },

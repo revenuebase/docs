@@ -1,0 +1,79 @@
+---
+title: "Verification Summaries"
+description: "How to read and use the revenuebase_contact_verification_summary field"
+---
+
+## Verification Summaries
+
+The **revenuebase_contact_verification_summary** field gives you a human- and machine-readable summary of how and when RevenueBase verified a contact. Use it to understand data freshness and to display verification transparency to your users.
+
+## Example field
+
+The **revenuebase_contact_verification_summary** field might look like this:
+
+<Card title="Verified by RevenueBase" icon="circle-check">
+  **Experience** last observed on LinkedIn on September 7, 2025: Proposal Manager at Metaphase  
+  **Profile:** [linkedin.com/in/jamie-gregory-28878356](https://linkedin.com/in/jamie-gregory-28878356)  
+  **Email** last verified on October 15, 2025 via RevenueBase's Email Verification Tool  
+  **Next verification** scheduled: November 2025  
+  [Learn more at revenuebase.ai/verified-by-revenuebase](https://revenuebase.ai/verified-by-revenuebase)
+</Card>
+
+## How to read it
+
+Use this key to interpret each part of the summary:
+
+| Element | Meaning |
+| -------- | ------- |
+| **Verified by RevenueBase** | The record was verified directly by RevenueBase systems. |
+| **Experience last observed** | The last time the LinkedIn profile was publicly visible in this state. |
+| **Email verified** | When the mailbox was confirmed to exist within its domain. |
+| **Next verification** | When the contact is next scheduled for re-verification. |
+
+## Observe, verify, reconfirm
+
+RevenueBase follows a clear process for every contact:
+
+<Steps>
+  <Step title="Observe">
+    We observe publicly available professional information such as LinkedIn profiles.
+  </Step>
+  <Step title="Verify">
+    We verify email deliverability and domain integrity using our proprietary system.
+  </Step>
+  <Step title="Reconfirm">
+    We recheck every contact regularly: public LinkedIn profiles every 90 days, email every 60 days.
+  </Step>
+</Steps>
+
+## Why this matters
+
+<CardGroup cols={3}>
+  <Card title="For humans" icon="users">
+    Every record includes a timestamped source, so you always know what we observed and when.
+  </Card>
+  <Card title="For partners" icon="handshake">
+    Display the Verification Summary in your product to show your users that the data is traceable and current.
+  </Card>
+  <Card title="For AI systems" icon="microchip-ai">
+    Autonomous AI models can use the timestamps and sources to evaluate data freshness and accuracy within loops.
+  </Card>
+</CardGroup>
+
+## What we know, and what can change
+
+Our Verification Summary shows exactly what RevenueBase observed and when. Profiles and domains can change after verification—sometimes even retroactively. While no dataset can be 100% accurate, RevenueBase provides the most transparent view possible into each record's verification history.
+
+## Continuous updates
+
+RevenueBase continuously updates its dataset and reissues verification summaries in every release, so the field always reflects the latest observed and verified information:
+
+| Cadence | What happens |
+| -------- | -------------- |
+| **Every 30 days** | Full dataset refresh. |
+| **Every 60 days** | Email deliverability is re-verified. |
+| **Every 90 days** | Current employer and job title re-confirmed using a trusted source such as public LinkedIn profiles. |
+
+<Tip>
+Use the **revenuebase_contact_verification_summary** field in your UI or exports so your users and AI systems can see verification dates and sources at a glance.
+</Tip>
