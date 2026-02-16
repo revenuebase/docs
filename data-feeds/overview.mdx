@@ -1,0 +1,36 @@
+---
+title: "Overview"
+description: "Introduction to RevenueBase data feeds"
+---
+
+## Data Feeds overview
+
+RevenueBase data feeds give you access to bulk and streaming datasets you can query with SQL or load into your own warehouse. Use feeds for analytics, enrichment, and reporting.
+
+### What are data feeds?
+
+Data feeds are structured datasets exposed over a secure connection. You connect with a supported client (e.g., JDBC, ODBC, or our recommended tools), then query tables using standard SQL. Data is updated on a schedule or in near real time depending on the feed.
+
+### Key concepts
+
+- **Tables** — Each feed is organized into tables (e.g., companies, contacts). See [Tables & Schema](/data-feeds/tables-schema) for the full list.
+- **Schema** — Column names, types, and descriptions are documented in the [Data dictionary](/data-feeds/data-dictionary) and per-table pages.
+- **Joins** — Tables share common keys so you can join them. See [Joining tables](/data-feeds/joining-tables) for relationships and best practices.
+
+### Getting access
+
+1. Ensure your plan includes Data Feeds.
+2. In the dashboard, open **Settings** → **Data Feeds** to get connection details and credentials.
+3. Follow [Getting started with feeds](/data-feeds/getting-started-feeds) to connect and run your first query.
+
+### Next steps
+
+<Card title="Getting started with feeds" icon="play" href="/data-feeds/getting-started-feeds">
+  Connect and run sample queries.
+</Card>
+<Card title="Data dictionary" icon="book" href="/data-feeds/data-dictionary">
+  Field definitions and types.
+</Card>
+<Card title="Tables & Schema" icon="table" href="/data-feeds/tables-schema">
+  List of tables and what's in each.
+</Card>

@@ -1,0 +1,35 @@
+---
+title: "Authentication"
+description: "How to authenticate with the RevenueBase API"
+---
+
+## Authentication
+
+All RevenueBase API requests are authenticated with an API key sent in a header.
+
+You can try any endpoint in the **API playground** on each endpoint page: enter your API key when prompted, then send requests and view responses directly in the docs.
+
+### API key (header)
+
+Send your API key in the **x-key** header on every request:
+
+```bash
+curl -X GET "https://api.revenuebase.ai/v1/credits" \
+  -H "x-key: YOUR_API_KEY"
+```
+
+### Getting an API key
+
+1. Sign in to the [RevenueBase dashboard](https://dashboard.mintlify.com).
+2. Go to **Settings** → **API Keys**.
+3. Click **Create API key** and copy the value. You cannot view it again after creation.
+
+### Security practices
+
+- **Keep keys secret** — Do not commit API keys to version control or expose them in client-side or mobile apps.
+- **Use server-side only** — Call the API from your backend or trusted environment.
+- **Rotate if exposed** — If a key may be compromised, create a new key and revoke the old one in the dashboard.
+
+### Multiple keys
+
+You can create multiple API keys (for example, per environment or service). Each key has its own rate limits and usage. Revoke keys you no longer need from the dashboard.

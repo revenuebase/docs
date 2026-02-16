@@ -1,0 +1,39 @@
+---
+title: "Table A"
+description: "What Table A is and what's in it"
+---
+
+## Table A
+
+**Table A** is a sample table in the RevenueBase data feeds. Replace this description with your real table (e.g., companies or another core entity).
+
+### What it is
+
+Table A holds core entity records — for example, companies or organizations. Each row is one entity with a unique identifier and attributes such as name, location, and metadata.
+
+### What's in it
+
+| Column      | Type     | Description                    |
+| ----------- | -------- | ------------------------------ |
+| id          | bigint   | Unique primary key.            |
+| name        | string   | Display name of the entity.    |
+| created_at  | timestamp| When the record was created.   |
+| updated_at  | timestamp| Last update time (UTC).       |
+
+Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full field definitions.
+
+### How to use it
+
+- **Filtering** — Use `WHERE` on id, name, or date columns as needed.
+- **Joining** — Other tables (e.g., Table B) may reference `table_a.id`. See [Joining tables](/data-feeds/joining-tables).
+
+### Example query
+
+```sql
+SELECT id, name, created_at
+FROM table_a
+WHERE updated_at >= CURRENT_DATE - INTERVAL '7 days'
+LIMIT 100;
+```
+
+Adjust table and column names to your real schema.

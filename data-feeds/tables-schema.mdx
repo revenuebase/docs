@@ -1,0 +1,33 @@
+---
+title: "Tables & Schema"
+description: "List of data feed tables and what's in each"
+---
+
+## Tables & Schema
+
+RevenueBase data feeds are organized into tables. This page lists the main tables and what they contain. Use the linked table pages for column-level detail.
+
+### Available tables
+
+| Table      | Description                                      | Link        |
+| ---------- | ------------------------------------------------ | ----------- |
+| Table A    | Sample table A — companies or core entities.     | [Table A](/data-feeds/table-a) |
+| Table B    | Sample table B — contacts or related entities.   | [Table B](/data-feeds/table-b) |
+
+Add more rows here as you add table pages. Each table page should describe:
+
+- What the table represents.
+- Key columns and how to use them.
+- How it relates to other tables (join keys).
+- Any filters or conventions (e.g., active-only flags).
+
+### Schema conventions
+
+- **Primary keys** — Each table has a unique identifier column (e.g., `id`). Use it for joins and deduplication.
+- **Foreign keys** — Columns that reference another table’s primary key are documented on the table pages and in [Joining tables](/data-feeds/joining-tables).
+- **Timestamps** — Many tables include `created_at` and/or `updated_at` in UTC.
+
+### Next steps
+
+- Open a table page (e.g., [Table A](/data-feeds/table-a), [Table B](/data-feeds/table-b)) for full column lists and examples.
+- Read [Joining tables](/data-feeds/joining-tables) to see how tables relate and recommended join patterns.

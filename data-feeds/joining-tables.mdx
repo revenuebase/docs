@@ -1,0 +1,59 @@
+---
+title: "Joining tables"
+description: "How tables relate, join keys, and gotchas"
+---
+
+## Joining tables
+
+This page explains how RevenueBase data feed tables relate to each other, which keys to use for joins, and common pitfalls.
+
+### Relationship overview
+
+- **Table A** (e.g., companies) is the primary entity table.
+- **Table B** (e.g., contacts) references Table A via a foreign key (e.g., `table_a_id`).
+
+Other tables may reference Table A or Table B similarly. Document each relationship on the relevant table pages and summarize here.
+
+### Join keys
+
+| From table | To table   | Join key              | Relationship   |
+| ---------- | ---------- | --------------------- | -------------- |
+| Table B    | Table A    | `table_b.table_a_id = table_a.id` | Many-to-one   |
+
+Use these keys in your `JOIN` conditions. Column names may differ in your real schema; adjust accordingly.
+
+### Example joins
+
+**Table B to Table A (many-to-one):**
+
+```sql
+SELECT a.id, a.name, b.id AS contact_id, b.email
+FROM table_a a
+JOIN table_b b ON b.table_a_id = a.id;
+```
+
+**Only rows that have a match in both tables (INNER JOIN):**
+
+```sql
+SELECT a.name, COUNT(b.id) AS contact_count
+FROM table_a a
+JOIN table_b b ON b.table_a_id = a.id
+GROUP BY a.id, a.name;
+```
+
+**Include Table A rows with no Table B rows (LEFT JOIN):**
+
+```sql
+SELECT a.name, b.email
+FROM table_a a
+LEFT JOIN table_b b ON b.table_a_id = a.id;
+```
+
+### Gotchas and best practices
+
+1. **Cardinality** — Table B may have many rows per Table A row. Aggregating or limiting per entity can avoid duplicates in reporting.
+2. **Nulls** — Foreign key columns are usually non-null when the relationship is required; optional relationships may allow nulls. Check the [Data dictionary](/data-feeds/data-dictionary) and table pages.
+3. **Performance** — Join on indexed columns (typically primary and foreign keys). Large tables may require filters or limits during development.
+4. **Naming** — Table and column names may be case-sensitive depending on the engine; use the exact names from the schema.
+
+For table-specific details, see [Table A](/data-feeds/table-a) and [Table B](/data-feeds/table-b).

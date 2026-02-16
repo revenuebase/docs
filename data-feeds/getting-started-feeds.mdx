@@ -1,0 +1,61 @@
+---
+title: "Getting started with feeds"
+description: "Connect to RevenueBase data feeds and run queries"
+---
+
+## Getting started with feeds
+
+This page walks you through connecting to RevenueBase data feeds and running your first queries.
+
+### Prerequisites
+
+- A RevenueBase account with Data Feeds enabled.
+- Connection details from the dashboard (**Settings** → **Data Feeds**).
+- A SQL client or tool that supports your connection type (e.g., JDBC, ODBC, or a BI tool).
+
+### Step 1: Get connection details
+
+From the dashboard you will see:
+
+- **Host** — Feed server hostname.
+- **Port** — Usually 443 for TLS.
+- **Database** — Your assigned database name.
+- **Username** and **Password** — Feed-specific credentials (separate from your API key).
+
+<Note>
+Feed credentials are different from your API key. Use the feed username and password only for data feed connections.
+</Note>
+
+### Step 2: Configure your client
+
+Use the host, port, database, and credentials in your client. Example connection string pattern:
+
+```
+jdbc:postgresql://feed.revenuebase.ai:443/your_database?user=feed_user&password=***
+```
+
+Exact format depends on your driver or tool. Refer to your client’s documentation for SSL/TLS options.
+
+### Step 3: Run a test query
+
+After connecting, list tables or run a simple query:
+
+```sql
+-- List tables (syntax may vary by engine)
+SELECT * FROM information_schema.tables WHERE table_schema = 'public';
+
+-- Sample query (adjust table name to one you have access to)
+SELECT * FROM companies LIMIT 5;
+```
+
+### Step 4: Explore the schema
+
+Use the [Data dictionary](/data-feeds/data-dictionary) and [Tables & Schema](/data-feeds/tables-schema) to see available tables and columns. Then use [Joining tables](/data-feeds/joining-tables) to combine tables correctly.
+
+### Troubleshooting
+
+- **Connection refused** — Check host, port, and firewall; ensure you use TLS where required.
+- **Authentication failed** — Confirm you are using the feed username and password, not the API key.
+- **Table or column not found** — Verify table names and schemas; they may be case-sensitive.
+
+For more help, see [FAQ / Troubleshooting](/faq).

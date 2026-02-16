@@ -1,68 +1,81 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "RevenueBase",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
+  "api": {
+    "playground": {
+      "display": "interactive"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Getting Started",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "getting-started/quickstart-api",
+              "getting-started/quickstart-data-feeds"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
+        "openapi": "openapi.json",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/authentication",
+              "api-reference/rate-limits"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Data Feeds",
+        "groups": [
+          {
+            "group": "Data Feeds",
+            "pages": [
+              "data-feeds/overview",
+              "data-feeds/getting-started-feeds",
+              "data-feeds/data-dictionary",
+              "data-feeds/data-coverage"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Tables & Schema",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "data-feeds/tables-schema",
+              "data-feeds/table-a",
+              "data-feeds/table-b"
+            ]
+          },
+          {
+            "group": "Joining tables",
+            "pages": [
+              "data-feeds/joining-tables"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "FAQ",
+        "groups": [
+          {
+            "group": "FAQ / Troubleshooting",
+            "pages": [
+              "faq"
             ]
           }
         ]
@@ -101,16 +114,7 @@
     }
   },
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
   },
   "footer": {
     "socials": {

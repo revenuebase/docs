@@ -1,0 +1,44 @@
+---
+title: "Quickstart (Data Feeds)"
+description: "Get started with RevenueBase data feeds"
+---
+
+## Quickstart (Data Feeds)
+
+This guide gets you connected to RevenueBase data feeds so you can query tables and join data.
+
+### Step 1: Enable data feeds access
+
+1. Sign in to the [RevenueBase dashboard](https://dashboard.mintlify.com).
+2. Ensure your plan includes **Data Feeds**.
+3. Note your feed credentials (host, database, and auth) from **Settings** → **Data Feeds**.
+
+### Step 2: Connect your client
+
+Use the connection details from the dashboard. Example (replace placeholders with your values):
+
+```bash
+# Example: connect via provided client or JDBC/ODBC
+# Host: feed.revenuebase.ai
+# Port: 443
+# Database: your_database
+# Auth: your_feed_username / your_feed_password
+```
+
+<Note>
+Credentials are unique per account. Do not share them or commit them to version control.
+</Note>
+
+### Step 3: Run a sample query
+
+Once connected, try a simple query against a core table (see [Tables & Schema](/data-feeds/tables-schema) for exact table names):
+
+```sql
+SELECT * FROM companies LIMIT 10;
+```
+
+### Next steps
+
+- Read the [Data Feeds overview](/data-feeds/overview).
+- Follow [Getting started with feeds](/data-feeds/getting-started-feeds) for more detail.
+- Use the [Data dictionary](/data-feeds/data-dictionary) and [Joining tables](/data-feeds/joining-tables) when building queries.

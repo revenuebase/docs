@@ -1,0 +1,53 @@
+---
+title: "Rate limits and error codes"
+description: "API rate limits and error responses"
+---
+
+## Rate limits
+
+The RevenueBase API uses rate limits to ensure fair usage. Limits are applied per API key.
+
+| Limit type        | Default  | Notes                    |
+| ----------------- | -------- | ------------------------ |
+| Requests per minute | 60    | Per API key              |
+| Requests per day    | 10,000  | Resets at midnight UTC   |
+
+When you exceed a limit, the API returns `429 Too Many Requests`. Include a short delay or use exponential backoff before retrying.
+
+### Rate limit headers
+
+Responses may include:
+
+- **X-RateLimit-Limit** — Max requests allowed in the window.
+- **X-RateLimit-Remaining** — Requests left in the current window.
+- **X-RateLimit-Reset** — Unix timestamp when the window resets.
+
+## Error codes
+
+| HTTP status | Meaning           | What to do                                      |
+| ----------- | ----------------- | ----------------------------------------------- |
+| 400         | Bad Request       | Check request body and parameters.               |
+| 401         | Unauthorized      | Verify your API key and `x-key` header.          |
+| 403         | Forbidden         | Key valid but not allowed for this resource.     |
+| 404         | Not Found         | Endpoint or resource does not exist.             |
+| 422         | Validation Error  | Fix the fields listed in the response `detail`. |
+| 429         | Too Many Requests | Respect rate limits; retry after backoff.       |
+| 500         | Server Error      | Retry with backoff; contact support if it persists. |
+
+### Validation errors (422)
+
+Validation errors return a JSON body with a `detail` array describing each issue:
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "email"],
+      "msg": "value is not a valid email address",
+      "type": "value_error.email"
+    }
+  ]
+}
+```
+
+Use `loc` and `msg` to fix the request and retry.

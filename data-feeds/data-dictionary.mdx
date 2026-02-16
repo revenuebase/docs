@@ -1,0 +1,44 @@
+---
+title: "Data dictionary"
+description: "Field definitions and data types for RevenueBase data feeds"
+---
+
+## Data dictionary
+
+The data dictionary defines the fields (columns) available across RevenueBase data feed tables. Use it to understand types, allowed values, and how fields are used.
+
+### How to use this page
+
+- **Table** — The table the field belongs to.
+- **Field** — Column name as it appears in queries.
+- **Type** — Data type (e.g., string, integer, timestamp).
+- **Description** — What the field represents and any constraints.
+
+### Common types
+
+| Type        | Description                    | Example        |
+| ----------- | ------------------------------ | -------------- |
+| string      | Text, often with max length    | `"Acme Corp"`  |
+| integer     | Whole number                   | `42`           |
+| bigint      | Large integer (e.g., IDs)       | `1234567890`   |
+| decimal     | Numeric with precision         | `99.99`        |
+| boolean     | True/false                     | `true`         |
+| timestamp   | Date and time (usually UTC)    | `2024-01-15T12:00:00Z` |
+| date        | Date only                      | `2024-01-15`   |
+
+### Sample fields (placeholder)
+
+Below are example entries. Replace with your real table and field list.
+
+| Table     | Field           | Type     | Description                    |
+| --------- | --------------- | -------- | ------------------------------ |
+| companies | id              | bigint   | Unique company identifier.     |
+| companies | name            | string   | Company name.                  |
+| companies | created_at      | timestamp| When the record was created.   |
+| contacts  | id              | bigint   | Unique contact identifier.     |
+| contacts  | company_id      | bigint   | Foreign key to companies.id.   |
+| contacts  | email           | string   | Email address.                 |
+
+### Table-specific details
+
+For full column lists and table-specific notes, see the individual table pages under [Tables & Schema](/data-feeds/tables-schema) (e.g., [Table A](/data-feeds/table-a), [Table B](/data-feeds/table-b)).
