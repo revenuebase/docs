@@ -9,17 +9,12 @@ RevenueBase data feeds are organized into tables. This page lists the main table
 
 ### Available tables
 
-| Table      | Description                                      | Link        |
-| ---------- | ------------------------------------------------ | ----------- |
-| Table A    | Sample table A — companies or core entities.     | [Table A](/data-feeds/table-a) |
-| Table B    | Sample table B — contacts or related entities.   | [Table B](/data-feeds/table-b) |
-
-Add more rows here as you add table pages. Each table page should describe:
-
-- What the table represents.
-- Key columns and how to use them.
-- How it relates to other tables (join keys).
-- Any filters or conventions (e.g., active-only flags).
+| Table                | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| [Companies](/data-feeds/companies) | Organizations — primary entity table.           |
+| [Contacts](/data-feeds/contacts)   | People — link to companies via `company_id`.     |
+| [Insights](/data-feeds/insights)   | Derived insight data (scores, signals).          |
+| [Historical Experience](/data-feeds/historical-experience) | Job/experience history for contacts. |
 
 ### Schema conventions
 
@@ -29,5 +24,6 @@ Add more rows here as you add table pages. Each table page should describe:
 
 ### Next steps
 
-- Open a table page (e.g., [Table A](/data-feeds/table-a), [Table B](/data-feeds/table-b)) for full column lists and examples.
+- Open a table page for full column lists and examples.
 - Read [Joining tables](/data-feeds/joining-tables) to see how tables relate and recommended join patterns.
+- Use [Pre-Joined Tables](/data-feeds/pre-joined-overview) for ready-made views that combine people, companies, and insights.

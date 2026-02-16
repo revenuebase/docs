@@ -1,0 +1,32 @@
+---
+title: "Overview"
+description: "Introduction to Pre-Joined Tables"
+---
+
+## Pre-Joined Tables overview
+
+Pre-Joined Tables are ready-made views that combine multiple base tables (e.g., People/Contacts, Companies, Insights) so you can query them without writing joins yourself. Use them when you need a single table that already links people, companies, and optional insight data.
+
+### What you get
+
+- **Fewer joins** — Query one table instead of joining Contacts, Companies, and Insights manually.
+- **Consistent keys** — Join keys and relationships are defined and documented for each pre-joined view.
+- **Easier analytics** — Start with [People + Companies](/data-feeds/people-companies) or [People + Companies + Insights](/data-feeds/people-companies-insights) and filter or aggregate as needed.
+
+### Available pre-joined views
+
+| View                        | Description                                          |
+| --------------------------- | ---------------------------------------------------- |
+| [People + Companies](/data-feeds/people-companies) | Contacts joined to Companies (one row per contact).  |
+| [People + Companies + Insights](/data-feeds/people-companies-insights) | Contacts, Companies, and Insights in one view.       |
+
+### When to use which
+
+- **People + Companies** — When you need contact and company attributes together (e.g., contact email + company name) without insight fields.
+- **People + Companies + Insights** — When you also need insight or score fields on the same row.
+
+For custom joins or other combinations, use the base tables and [Joining tables](/data-feeds/joining-tables).
+
+<Note>
+Placeholder: Replace with your actual pre-joined table names, column lists, and use cases.
+</Note>

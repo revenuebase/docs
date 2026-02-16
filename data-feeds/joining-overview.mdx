@@ -1,0 +1,24 @@
+---
+title: "Overview"
+description: "Introduction to joining Dynamic Data Feeds tables"
+---
+
+## Joining tables overview
+
+RevenueBase Dynamic Data Feeds tables are designed to be joined so you can combine people, companies, insights, and historical experience in a single query. This section explains how tables relate and how to get started.
+
+### Why join?
+
+- **Contacts** link to **Companies** via `company_id` — get contact and company attributes together.
+- **Insights** and **Historical Experience** link to Contacts and/or Companies — add scores, signals, or job history to your analysis.
+
+### Quick reference
+
+- **Companies** — Primary entity table (organizations).
+- **Contacts** — People; join to Companies on `contacts.company_id = companies.id`.
+- **Insights** — Join on `contact_id` and/or `company_id`.
+- **Historical Experience** — Join on `contact_id` (and optionally `company_id`).
+
+### Next steps
+
+For full join keys, example SQL, and gotchas, see [Joining tables](/data-feeds/joining-tables). For pre-built combined views, see [Pre-Joined Tables](/data-feeds/pre-joined-overview).

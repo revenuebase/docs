@@ -1,0 +1,34 @@
+---
+title: "Insights"
+description: "What the Insights table is and what's in it"
+---
+
+## Insights
+
+The **Insights** table holds derived or aggregated insight data you can join to people and companies. Use it for scoring, signals, or other analytical attributes.
+
+### What it is
+
+Insights provide additional dimensions for contacts and companies — for example, intent scores, engagement signals, or segment flags. Each row typically links to a contact and/or company and carries one or more insight fields.
+
+### What's in it
+
+| Column       | Type     | Description                         |
+| ------------ | -------- | ----------------------------------- |
+| id           | bigint   | Unique primary key.                 |
+| contact_id   | bigint   | Foreign key to Contacts (optional).|
+| company_id   | bigint   | Foreign key to Companies (optional).|
+| insight_type | string   | Type or category of insight.       |
+| value        | string   | Insight value or score.             |
+| updated_at   | timestamp| Last update time (UTC).             |
+
+Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full definitions.
+
+### How to use it
+
+- **Joining** — Join to [Contacts](/data-feeds/contacts) and [Companies](/data-feeds/companies) on the ID columns. See [Joining tables](/data-feeds/joining-tables) and [Pre-Joined Tables](/data-feeds/pre-joined-overview) for combined views.
+- **Filtering** — Filter by `insight_type`, entity IDs, or date as needed.
+
+<Note>
+Placeholder: Replace with your actual Insights schema and use cases.
+</Note>

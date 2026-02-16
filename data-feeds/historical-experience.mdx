@@ -1,0 +1,35 @@
+---
+title: "Historical Experience"
+description: "What the Historical Experience table is and what's in it"
+---
+
+## Historical Experience
+
+The **Historical Experience** table holds historical job or experience records — for example, employment history or role changes you can link to contacts and companies.
+
+### What it is
+
+Historical Experience adds a time dimension to people and companies: past roles, tenure, or experience attributes. Each row typically links to a contact and optionally to a company, with start/end or effective dates.
+
+### What's in it
+
+| Column       | Type     | Description                         |
+| ------------ | -------- | ----------------------------------- |
+| id           | bigint   | Unique primary key.                 |
+| contact_id   | bigint   | Foreign key to Contacts.            |
+| company_id   | bigint   | Foreign key to Companies (optional).|
+| role_title   | string   | Job title or role.                  |
+| start_date   | date     | Start of the experience.            |
+| end_date     | date     | End of the experience (nullable).  |
+| updated_at   | timestamp| Last update time (UTC).             |
+
+Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full definitions.
+
+### How to use it
+
+- **Joining** — Join to [Contacts](/data-feeds/contacts) and [Companies](/data-feeds/companies) on the ID columns. See [Joining tables](/data-feeds/joining-tables).
+- **Filtering** — Filter by contact, company, date range, or role as needed.
+
+<Note>
+Placeholder: Replace with your actual Historical Experience schema and use cases.
+</Note>

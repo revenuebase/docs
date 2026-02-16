@@ -1,0 +1,46 @@
+---
+title: "People + Companies + Insights"
+description: "Pre-joined view of contacts, companies, and insights"
+---
+
+## People + Companies + Insights
+
+**People + Companies + Insights** is a pre-joined table that combines [Contacts](/data-feeds/contacts), [Companies](/data-feeds/companies), and [Insights](/data-feeds/insights) in one view. Each row represents a contact with company and insight attributes already joined.
+
+### What it is
+
+Use this view when you need contact, company, and insight (e.g., scores or signals) columns in a single query. No need to join the three base tables yourself — the view is maintained for you.
+
+### Key columns (placeholder)
+
+| Column           | Type     | Description                    |
+| ---------------- | -------- | ------------------------------ |
+| contact_id       | bigint   | Unique contact identifier.    |
+| company_id       | bigint   | Unique company identifier.    |
+| email            | string   | Contact email.                 |
+| company_name     | string   | Company name.                 |
+| insight_type     | string   | Type of insight.              |
+| insight_value    | string   | Insight value or score.       |
+| _..._            | _..._    | Other fields.                  |
+
+Exact columns depend on your schema. Use the [Data dictionary](/data-feeds/data-dictionary) for the full list.
+
+### Example query
+
+```sql
+SELECT contact_id, email, company_name, insight_type, insight_value
+FROM people_companies_insights
+WHERE insight_type = 'intent_score'
+LIMIT 100;
+```
+
+Replace `people_companies_insights` and column names with your actual view name and schema.
+
+### See also
+
+- [People + Companies](/data-feeds/people-companies) when you don’t need insight fields.
+- [Pre-Joined Tables overview](/data-feeds/pre-joined-overview) for when to use each view.
+
+<Note>
+Placeholder: Replace with your actual view name, column list, and sample queries.
+</Note>

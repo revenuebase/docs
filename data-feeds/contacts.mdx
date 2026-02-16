@@ -1,0 +1,41 @@
+---
+title: "Contacts"
+description: "What the Contacts table is and what's in it"
+---
+
+## Contacts
+
+The **Contacts** table holds people records — individuals you can link to companies. Each row is one contact with a unique identifier, contact details, and a foreign key to the Companies table.
+
+### What it is
+
+Contacts represent people (e.g., decision-makers, leads). Each row typically links to one company via `company_id`. Use this table for contact-level analytics, enrichment, or joining to company attributes.
+
+### What's in it
+
+| Column      | Type     | Description                    |
+| ----------- | -------- | ------------------------------ |
+| id          | bigint   | Unique primary key.            |
+| company_id  | bigint   | Foreign key to Companies.      |
+| email       | string   | Email address.                 |
+| created_at  | timestamp| When the record was created.   |
+| updated_at  | timestamp| Last update time (UTC).        |
+
+Add or replace columns to match your actual schema. Use the [Data dictionary](/data-feeds/data-dictionary) for full field definitions.
+
+### How to use it
+
+- **Filtering** — Use `WHERE` on id, company_id, or date columns as needed.
+- **Joining** — Join to [Companies](/data-feeds/companies) on `contacts.company_id = companies.id`. See [Joining tables](/data-feeds/joining-tables).
+
+### Example query
+
+```sql
+SELECT c.id, c.email, co.name AS company_name
+FROM contacts c
+JOIN companies co ON co.id = c.company_id
+WHERE c.updated_at >= CURRENT_DATE - INTERVAL '7 days'
+LIMIT 100;
+```
+
+Adjust table and column names to your real schema.

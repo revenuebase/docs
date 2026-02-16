@@ -1,0 +1,48 @@
+---
+title: "Accessing your data"
+description: "Ways to access Dynamic Data Feeds: Snowflake, S3, GCS, Azure Blob"
+---
+
+## Accessing your data
+
+RevenueBase Dynamic Data Feeds can be accessed through multiple channels. Choose the option that fits your stack: Snowflake Marketplace, AWS S3, Google Cloud Storage, or Azure Blob Storage.
+
+## Snowflake Marketplace access
+
+Access Dynamic Data Feeds directly in Snowflake via the Snowflake Marketplace.
+
+1. In Snowflake, go to **Marketplace** and search for RevenueBase (or the listing name provided to you).
+2. Request access to the RevenueBase data product and complete any approval steps.
+3. After access is granted, the shared database (or share) appears in your Snowflake account. Query the tables using standard SQL in your worksheets or from connected tools.
+
+You can join RevenueBase tables with your own Snowflake data in the same account. Billing and consumption are handled through Snowflake; refer to your RevenueBase and Snowflake agreements for details.
+
+## AWS S3 bucket access
+
+RevenueBase can deliver data to an AWS S3 bucket you control.
+
+1. In the RevenueBase dashboard, open **Settings** → **Data Feeds** (or **Access**).
+2. Choose **AWS S3** and provide your bucket name, region, and optional prefix. Configure IAM credentials (access key and secret) or an IAM role that RevenueBase can use to write to the bucket.
+3. Once configured, files are delivered to the bucket on the agreed schedule (e.g., daily or weekly). File format is typically Parquet, CSV, or another format you’ve selected.
+
+Ensure your bucket policy and IAM permissions allow RevenueBase to write to the specified path. Use the same bucket for incremental and full refreshes as per your contract.
+
+## Google Cloud Storage access
+
+Access data via Google Cloud Storage (GCS) by having RevenueBase deliver files to a GCS bucket you own.
+
+1. In the RevenueBase dashboard, go to **Settings** → **Data Feeds** (or **Access**) and select **Google Cloud Storage**.
+2. Provide your GCS bucket name and optional path prefix. Authenticate using a service account key (JSON) or workload identity that has write access to the bucket.
+3. RevenueBase writes files to the bucket on the agreed schedule. You can then load the data into BigQuery, Databricks, or other tools that read from GCS.
+
+Restrict the service account to the minimum permissions needed (e.g., write to a single bucket or prefix). Keep the key or identity credentials secure and rotate them according to your security policy.
+
+## Azure Blob access
+
+Access data via Azure Blob Storage by having RevenueBase deliver files to a container in your Azure storage account.
+
+1. In the RevenueBase dashboard, go to **Settings** → **Data Feeds** (or **Access**) and select **Azure Blob**.
+2. Provide your storage account name, container name, and optional path. Authenticate using a connection string or a service principal (client ID, secret, and tenant ID) with write access to the container.
+3. RevenueBase writes files to the container on the agreed schedule. You can then ingest the data into Synapse, Databricks, or other services that read from Blob storage.
+
+Use a dedicated container or path for RevenueBase deliveries and limit permissions to that scope. Rotate keys or secrets according to your security policy.

@@ -1,0 +1,44 @@
+---
+title: "People + Companies"
+description: "Pre-joined view of contacts and companies"
+---
+
+## People + Companies
+
+**People + Companies** is a pre-joined table that combines [Contacts](/data-feeds/contacts) (people) and [Companies](/data-feeds/companies) in one view. Each row represents one contact with their associated company attributes already joined.
+
+### What it is
+
+Instead of joining `contacts` and `companies` yourself, you query this view and get contact and company columns on the same row. Useful for lists, exports, and reporting where you need both person and company fields.
+
+### Key columns (placeholder)
+
+| Column           | Type     | Description                    |
+| ---------------- | -------- | ------------------------------ |
+| contact_id       | bigint   | Unique contact identifier.     |
+| company_id       | bigint   | Unique company identifier.     |
+| email            | string   | Contact email.                 |
+| company_name     | string   | Company name.                  |
+| _..._            | _..._    | Other contact/company fields.  |
+
+Exact columns depend on your schema. Use the [Data dictionary](/data-feeds/data-dictionary) for the full list.
+
+### Example query
+
+```sql
+SELECT contact_id, email, company_name
+FROM people_companies
+WHERE company_name ILIKE '%Tech%'
+LIMIT 100;
+```
+
+Replace `people_companies` and column names with your actual view name and schema.
+
+### See also
+
+- [People + Companies + Insights](/data-feeds/people-companies-insights) when you need insight fields on the same row.
+- [Pre-Joined Tables overview](/data-feeds/pre-joined-overview) for when to use each view.
+
+<Note>
+Placeholder: Replace with your actual view name, column list, and sample queries.
+</Note>

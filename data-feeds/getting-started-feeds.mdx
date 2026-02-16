@@ -7,6 +7,16 @@ description: "Connect to RevenueBase data feeds and run queries"
 
 This page walks you through connecting to RevenueBase data feeds and running your first queries.
 
+## Accessing the data
+
+You can access Dynamic Data Feeds in several ways:
+
+- **SQL client** — Connect with a JDBC- or ODBC-compatible client (e.g., DBeaver, Tableau, or your preferred SQL tool) using the host, port, database, and credentials from the dashboard.
+- **BI and analytics tools** — Many BI platforms can connect directly to the feed; use the connection details from **Settings** → **Data Feeds** in the dashboard.
+- **Applications** — Use the same connection details from your application or ETL pipeline to query tables programmatically.
+
+Access is controlled by the feed credentials provided in the dashboard. Keep these credentials secure and do not share them or commit them to version control.
+
 ### Prerequisites
 
 - A RevenueBase account with Data Feeds enabled.

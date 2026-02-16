@@ -9,51 +9,54 @@ This page explains how RevenueBase data feed tables relate to each other, which 
 
 ### Relationship overview
 
-- **Table A** (e.g., companies) is the primary entity table.
-- **Table B** (e.g., contacts) references Table A via a foreign key (e.g., `table_a_id`).
+- **Companies** is the primary entity table for organizations.
+- **Contacts** (people) reference Companies via a foreign key (e.g., `company_id`).
+- **Insights** and **Historical Experience** can reference Contacts and/or Companies.
 
-Other tables may reference Table A or Table B similarly. Document each relationship on the relevant table pages and summarize here.
+Document each relationship on the relevant table pages and summarize here.
 
 ### Join keys
 
-| From table | To table   | Join key              | Relationship   |
-| ---------- | ---------- | --------------------- | -------------- |
-| Table B    | Table A    | `table_b.table_a_id = table_a.id` | Many-to-one   |
+| From table | To table   | Join key                        | Relationship   |
+| ---------- | ---------- | ------------------------------- | -------------- |
+| Contacts   | Companies  | `contacts.company_id = companies.id` | Many-to-one   |
+| Insights   | Contacts   | `insights.contact_id = contacts.id`   | Many-to-one   |
+| Insights   | Companies  | `insights.company_id = companies.id`  | Many-to-one   |
+| Historical Experience | Contacts   | `historical_experience.contact_id = contacts.id` | Many-to-one   |
 
 Use these keys in your `JOIN` conditions. Column names may differ in your real schema; adjust accordingly.
 
 ### Example joins
 
-**Table B to Table A (many-to-one):**
+**Contacts to Companies (many-to-one):**
 
 ```sql
-SELECT a.id, a.name, b.id AS contact_id, b.email
-FROM table_a a
-JOIN table_b b ON b.table_a_id = a.id;
+SELECT c.id, c.email, co.name AS company_name
+FROM contacts c
+JOIN companies co ON co.id = c.company_id;
 ```
 
-**Only rows that have a match in both tables (INNER JOIN):**
+**Include company rows with no contacts (LEFT JOIN):**
 
 ```sql
-SELECT a.name, COUNT(b.id) AS contact_count
-FROM table_a a
-JOIN table_b b ON b.table_a_id = a.id
-GROUP BY a.id, a.name;
+SELECT co.name, c.email
+FROM companies co
+LEFT JOIN contacts c ON c.company_id = co.id;
 ```
 
-**Include Table A rows with no Table B rows (LEFT JOIN):**
+**Contacts with Insights:**
 
 ```sql
-SELECT a.name, b.email
-FROM table_a a
-LEFT JOIN table_b b ON b.table_a_id = a.id;
+SELECT c.email, i.insight_type, i.value
+FROM contacts c
+JOIN insights i ON i.contact_id = c.id;
 ```
 
 ### Gotchas and best practices
 
-1. **Cardinality** — Table B may have many rows per Table A row. Aggregating or limiting per entity can avoid duplicates in reporting.
+1. **Cardinality** — Contacts may have many rows per Company. Aggregating or limiting per entity can avoid duplicates in reporting.
 2. **Nulls** — Foreign key columns are usually non-null when the relationship is required; optional relationships may allow nulls. Check the [Data dictionary](/data-feeds/data-dictionary) and table pages.
 3. **Performance** — Join on indexed columns (typically primary and foreign keys). Large tables may require filters or limits during development.
-4. **Naming** — Table and column names may be case-sensitive depending on the engine; use the exact names from the schema.
+4. **Pre-joined views** — For common combinations (people + companies, or + insights), use [Pre-Joined Tables](/data-feeds/pre-joined-overview) instead of writing joins yourself.
 
-For table-specific details, see [Table A](/data-feeds/table-a) and [Table B](/data-feeds/table-b).
+For table-specific details, see [Companies](/data-feeds/companies), [Contacts](/data-feeds/contacts), [Insights](/data-feeds/insights), and [Historical Experience](/data-feeds/historical-experience).

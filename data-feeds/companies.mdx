@@ -1,0 +1,45 @@
+---
+title: "Companies"
+description: "What the Companies table is and what's in it"
+---
+
+## Introduction
+
+The **Companies** table holds organization records — businesses you can link to contacts, insights, and other tables. Each row is one company with a unique identifier and firmographic attributes. Use this table for company-level analytics and as the main join target across Dynamic Data Feeds.
+
+## What it is
+
+Companies are the primary entity table for organizations. Each row has a unique ID and attributes such as name, location, and industry. [Contacts](/data-feeds/contacts) and other tables reference Companies via `company_id`. Use this table when you need organization-level data or when joining people and insights to companies.
+
+## Data coverage
+
+Companies data covers organizations in the RevenueBase universe. Coverage varies by region and industry; the map below illustrates geographic availability.
+
+<img src="/images/companies-data-coverage.png" alt="Map or chart showing Companies data coverage by region" />
+
+<Note>
+Replace the image path with your actual data coverage asset. Add the file under an `images` folder in your docs repo (e.g. `images/companies-data-coverage.png`).
+</Note>
+
+## Data updates
+
+Companies data is updated on a regular schedule. New and changed records are reflected in the feed according to your plan’s refresh cadence. Historical snapshots are not retained by default; contact support or check your agreement for retention and update frequency details.
+
+## Data dictionary
+
+The following table lists all columns in the Companies table: name, type, description, and an example value.
+
+| Column       | Type     | Description                                | Example                    |
+| ------------ | -------- | ------------------------------------------ | -------------------------- |
+| id           | bigint   | Unique primary key for the company.        | `12345678`                 |
+| name         | string   | Legal or display name of the company.      | `Acme Corp`                |
+| domain       | string   | Primary website domain.                    | `acme.com`                 |
+| industry     | string   | Industry or sector classification.         | `Technology`               |
+| employee_count | string | Employee count band or range.              | `51-200`                   |
+| headquarters_city   | string | City of headquarters.           | `San Francisco`            |
+| headquarters_state  | string | State or region of headquarters. | `CA`                       |
+| headquarters_country | string | Country of headquarters.       | `US`                       |
+| created_at   | timestamp| When the record was first added (UTC).     | `2024-01-15T12:00:00Z`     |
+| updated_at   | timestamp| When the record was last updated (UTC).     | `2024-06-01T08:30:00Z`     |
+
+Add, remove, or edit rows to match your actual schema. Use this table as the source of truth for column names, types, and usage.

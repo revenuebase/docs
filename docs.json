@@ -9,6 +9,7 @@
   },
   "background": {
     "color": {
+      "light": "#FFFFFF",
       "dark": "#091220"
     }
   },
@@ -29,6 +30,42 @@
               "index",
               "getting-started/quickstart-api",
               "getting-started/quickstart-data-feeds"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Dynamic Data Feeds",
+        "groups": [
+          {
+            "group": "Dynamic Data Feeds",
+            "pages": [
+              "data-feeds/overview",
+              "data-feeds/getting-started-feeds",
+              "data-feeds/accessing-your-data"
+            ]
+          },
+          {
+            "group": "Tables & Schema",
+            "pages": [
+              "data-feeds/companies",
+              "data-feeds/contacts",
+              "data-feeds/insights",
+              "data-feeds/historical-experience"
+            ]
+          },
+          {
+            "group": "Pre-Joined Tables",
+            "pages": [
+              "data-feeds/pre-joined-overview",
+              "data-feeds/people-companies",
+              "data-feeds/people-companies-insights"
+            ]
+          },
+          {
+            "group": "Joining Tables",
+            "pages": [
+              "data-feeds/joining-overview"
             ]
           }
         ]
@@ -71,45 +108,6 @@
               "api-reference/company-match-overview",
               "POST /v2/company-resolver/resolve",
               "POST /v2/company-resolver/discovery"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Data Feeds",
-        "groups": [
-          {
-            "group": "Data Feeds",
-            "pages": [
-              "data-feeds/overview",
-              "data-feeds/getting-started-feeds",
-              "data-feeds/data-dictionary",
-              "data-feeds/data-coverage"
-            ]
-          },
-          {
-            "group": "Tables & Schema",
-            "pages": [
-              "data-feeds/tables-schema",
-              "data-feeds/table-a",
-              "data-feeds/table-b"
-            ]
-          },
-          {
-            "group": "Joining tables",
-            "pages": [
-              "data-feeds/joining-tables"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "FAQ",
-        "groups": [
-          {
-            "group": "FAQ / Troubleshooting",
-            "pages": [
-              "faq"
             ]
           }
         ]
