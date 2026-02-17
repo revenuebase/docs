@@ -30,7 +30,29 @@
               "index",
               "getting-started/platform-overview",
               "getting-started/quickstart-api",
-              "getting-started/quickstart-data-feeds"
+              "getting-started/quickstart-data-feeds",
+              "getting-started/quickstart-gigasheet"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Gigasheet Access",
+        "groups": [
+          {
+            "group": "Gigasheet Access",
+            "pages": [
+              "gigasheet/overview"
+            ]
+          },
+          {
+            "group": "How To",
+            "pages": [
+              "gigasheet/adding-users",
+              "gigasheet/searching",
+              "gigasheet/filtering",
+              "gigasheet/exporting",
+              "gigasheet/enrichment"
             ]
           }
         ]
