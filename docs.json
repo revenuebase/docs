@@ -14,6 +14,15 @@
     }
   },
   "favicon": "/favicon.svg",
+  "fonts": {
+    "heading": {
+      "family": "Fraunces",
+      "weight": 400
+    },
+    "body": {
+      "family": "DM Sans"
+    }
+  },
   "api": {
     "playground": {
       "display": "interactive"
@@ -111,11 +120,11 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "API Reference & Playground",
         "openapi": "openapi.json",
         "groups": [
           {
-            "group": "API Reference",
+            "group": "API Reference & Playground",
             "pages": [
               "api-reference/overview",
               "api-reference/authentication",

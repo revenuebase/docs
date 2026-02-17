@@ -1,0 +1,18 @@
+/* Custom fonts: JetBrains Mono for code (DM Sans for body is set in docs.json) */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Code blocks and inline code */
+pre,
+code,
+pre code,
+.shiki,
+[data-rehype-pretty-code-figure] code {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace !important;
+}
+
+/* Sidebar menu group headings (e.g. "Tables & Schema") — thicker weight */
+.sidebar-group-header,
+[class*="sidebar-group-header"],
+[class*="SidebarGroupHeader"] {
+  font-weight: 700 !important;
+}

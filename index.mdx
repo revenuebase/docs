@@ -4,13 +4,11 @@ sidebarTitle: "Intro to RevenueBase"
 description: "Introduction to RevenueBase — data access, tools, and documentation."
 ---
 
-# Welcome to RevenueBase
-
 ## Welcome
 
 You're here because you care about data quality — not as a talking point, but as an engineering constraint. Bad data breaks pipelines, poisons models, bounces emails, and wastes your team's time. We built RevenueBase because we care about the same thing.
 
-RevenueBase gives you 375M+ contacts and 60M+ companies, continuously verified, with source provenance on every record. Core data is flat-rate and unmetered — no per-record fees, no throttling. On top of that: verification, enrichment, and AI-powered search tools priced per outcome, so you pay when we deliver a result, not when you make a request.
+RevenueBase gives you 375M+ contacts and 60M+ companies, continuously verified, with source provenance on every record. Core data is flat-rate and unmetered — no per-record fees, no throttling. On top of that: verification, insight data, and AI-powered search tools priced per outcome, so you pay when we deliver a result, not when you make a request.
 
 These docs cover everything you need to get up and running: how to access the data, how the tools work, API references, schema documentation, and the Gigasheet UI for teams that want to work with the data without writing code.
 
@@ -22,7 +20,7 @@ There are two ways to get RevenueBase data into your workflow. Pick the one that
   <Card title="Direct Data Feeds" icon="database" href="/getting-started/quickstart-data-feeds">
     **Full dataset, delivered to your infrastructure.**
 
-    Connect RevenueBase to your data warehouse or pipeline via Snowflake data share, Amazon S3, Google Cloud Storage, or Azure Blob Storage. You get the complete dataset — contacts, companies, firmographics, enrichment signals — updating continuously. Set up the connection once, and your copy stays current as records are verified, updated, and added.
+    Connect RevenueBase to your data warehouse or pipeline via Snowflake data share, Amazon S3, Google Cloud Storage, or Azure Blob Storage. You get the complete dataset — contacts, companies, firmographics, insight data — updating continuously. Set up the connection once, and your copy stays current as records are verified, updated, and added.
 
     This is the right choice if you're building data pipelines, powering internal analytics, feeding AI systems, or embedding RevenueBase in a product you ship to your own customers.
 
@@ -97,7 +95,7 @@ This matters because your systems are making decisions based on this data. If yo
 ## Key references
 
 <CardGroup cols={2}>
-  <Card title="API Reference" icon="square-terminal" href="/api-reference/overview">
+  <Card title="API Reference & Playground" icon="square-terminal" href="/api-reference/overview">
     Authentication, endpoints, request/response schemas, rate limits, and error codes.
   </Card>
   <Card title="Data Feed Schema" icon="database" href="/data-feeds/overview">
@@ -107,7 +105,7 @@ This matters because your systems are making decisions based on this data. If yo
     Real-time and batch verification, result codes, accuracy methodology, and deliverability scoring.
   </Card>
   <Card title="Company Match" icon="building" href="/api-reference/company-match-overview">
-    Resolve company names to canonical IDs, discover companies, and match against RevenueBase's company graph.
+    Resolve company names to canonical IDs, run company semantic search to find companies, and match against RevenueBase's company graph.
   </Card>
   <Card title="Gigasheet" icon="table" href="/gigasheet/overview">
     Searching, filtering, enriching your data with RevenueBase data, team access, and data export.

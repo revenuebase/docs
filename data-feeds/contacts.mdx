@@ -4,8 +4,6 @@ sidebarTitle: "Contacts"
 description: "Individual contact records — verified emails, titles, seniority, direct dials."
 ---
 
-# Contacts table
-
 The `contacts` table contains individual person records with professional contact information and email verification data. This is the primary table for building prospect lists, outbound campaigns, and enrichment workflows. Each row is one person at one organization; if a contact holds multiple current positions, they appear in multiple rows.
 
 ## Where the data comes from
@@ -123,7 +121,7 @@ These fields are copied from the `companies` table for convenience. For the full
 
 ## Joining this table
 
-Join `contacts` to **companies** on `company_id` when you need full firmographic or HQ address data. Join to **insights** on `contact_id` when you need enrichment or intent signals per contact.
+Join `contacts` to **companies** on `company_id` when you need full firmographic or HQ address data. Join to **insights** on `contact_id` when you need insight or intent signals per contact.
 
 ### Contacts + companies (full company attributes)
 

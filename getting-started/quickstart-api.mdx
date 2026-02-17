@@ -3,9 +3,7 @@ title: "Quickstart (API)"
 description: "Get started with the RevenueBase API in minutes"
 ---
 
-## Quickstart (API)
-
-Use this guide to get an API key and make your first request to the RevenueBase API.
+Get an API key and make your first request.
 
 <Warning>
   **Create an account first.** You must have a RevenueBase account before you can use the API. If you don't have one yet, go to [https://app.revenuebase.ai/](https://app.revenuebase.ai/) to create an account, then return here to get your API key.
@@ -21,18 +19,9 @@ Use this guide to get an API key and make your first request to the RevenueBase 
 Keep your API key secret. Do not commit it to version control or expose it in client-side code.
 </Note>
 
-### Step 2: Authenticate requests
+### Step 2: Make your first request
 
-Send your API key in the `x-key` header on every request:
-
-```bash
-curl -X GET "https://api.revenuebase.ai/v1/credits" \
-  -H "x-key: YOUR_API_KEY"
-```
-
-### Step 3: Call an endpoint
-
-Example: check your credit balance:
+Send your API key in the `x-key` header and call an endpoint. Example: check your credit balance:
 
 ```bash
 curl -X GET "https://api.revenuebase.ai/v1/credits" \
@@ -50,5 +39,5 @@ Example response:
 ### Next steps
 
 - Read [Authentication](/api-reference/authentication) for full auth details.
-- Explore the [API Reference](/api-reference/authentication) for all endpoints.
+- Explore the [API Reference & Playground](/api-reference/authentication) for all endpoints.
 - See [Rate limits and error codes](/api-reference/rate-limits) before going to production.
