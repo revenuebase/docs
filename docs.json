@@ -171,7 +171,12 @@
     "dark": "/logo/dark.png"
   },
   "navbar": {
-    "links": [],
+    "links": [
+      {
+        "label": "Talk to us",
+        "href": "https://revenuebase.ai/request-for-demo/"
+      }
+    ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
