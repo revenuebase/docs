@@ -7,19 +7,51 @@ description: "Introduction to RevenueBase data in Gigasheet"
 
 RevenueBase data is available in **Gigasheet** so you can work with large datasets in a spreadsheet-like interface — no SQL required. Use Gigasheet to search, filter, and export RevenueBase contacts and companies, and to run enrichment workflows.
 
+<Info>
+  **Subscriptions:** Gigasheet is a flat subscription with unmetered access. The RevenueBase data feeds you use inside Gigasheet (e.g. people + company, enhanced) are separate subscriptions. You can subscribe to Gigasheet and add data feeds, or add Gigasheet to your existing data feed subscription. Contact your account manager for pricing.
+</Info>
+
+## What Gigasheet looks like
+
+<Frame>
+  <img
+    src="/images/gigasheet-overview.png"
+    alt="Gigasheet interface showing the main workspace with a Filter dialog open, spreadsheet-style grid with columns like Last Name, Job Level, Job Function, and a status bar indicating Searching 293M+ rows and 157 columns."
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
+
+The screenshot above, which shows the Gigasheet workspace, a spreadsheet-style grid with a filter dialog.
+
+## How the data is structured
+
+Gigasheet exposes RevenueBase data in pre-joined tables so you can work without writing SQL or joining rows yourself.
+
+- **People + company** — One table contains all people in the database with company information already joined. You see contact and company fields side by side in a single sheet.
+- **Enhanced package** — In the enhanced package, the table includes people, company, and insights joined together. Everything is pre-joined: you get contacts, firmographics, and enrichment signals in one place with no joins required.
+
 ## What you can do
 
 - **Search** — Find contacts and companies by name, domain, industry, and other attributes.
 - **Filter** — Narrow results with filters on verification status, seniority, company size, and more.
-- **Export** — Download filtered results as CSV or use them in downstream tools.
-- **Enrichment** — Enrich your own lists using RevenueBase data inside Gigasheet.
+- **Export CSVs** — Download filtered results as CSV or use them in downstream tools.
+- **Export to HubSpot** — Send selected rows directly to HubSpot. See [Exporting to HubSpot](/gigasheet/exporting-hubspot) for steps.
+- **Enrich your data with RevenueBase data** — Enrich your own lists using RevenueBase data inside Gigasheet.
 
 ## Getting started
 
 See [Quickstart (Gigasheet)](/getting-started/quickstart-gigasheet) to connect and open your first sheet. Then use the **How To** section for step-by-step guides:
 
-- [Adding users](/gigasheet/adding-users)
-- [Searching](/gigasheet/searching)
+**Setup & access**
+- [Accessing your data](/gigasheet/accessing-your-data)
+- [Add users](/gigasheet/adding-users)
+
+**Search, filter & views**
 - [Filtering](/gigasheet/filtering)
-- [Exporting](/gigasheet/exporting)
-- [Enrichment](/gigasheet/enrichment)
+- [Saving views](/gigasheet/saving-views)
+- [Sharing data](/gigasheet/sharing-data)
+
+**Export & enrichment**
+- [Exporting CSVs](/gigasheet/exporting)
+- [Exporting to HubSpot](/gigasheet/exporting-hubspot)
+- [Enrich your data with RevenueBase data](/gigasheet/enrichment)
