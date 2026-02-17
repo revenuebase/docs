@@ -4,24 +4,30 @@ sidebarTitle: "Insights"
 description: "Enrichment signals — technographics, hiring indicators, funding events, and engagement signals."
 ---
 
-# Insights Table
+# Insights table
 
-The `insights` table contains enrichment signals and derived intelligence about companies and contacts. Use it to prioritize accounts based on buying signals, identify companies going through growth or change, and layer intent-like signals into your targeting.
+The `insights` table contains enrichment signals and derived intelligence about companies and contacts. Use it to prioritize accounts based on buying signals, identify companies going through growth or change, and layer intent-like signals into your targeting. Insights can be company-level (`contact_id` is null) or contact-level (`contact_id` is set).
 
-## Quick stats
+## Where the data comes from
 
-{/* TODO: Fill in actual numbers */}
+Insights are derived from multiple sources: technographic data from website and stack detection, hiring data from job boards and career pages, funding data from press and regulatory filings, and engagement-style signals where available. Data is updated with each monthly release; recency varies by signal type.
+
+## Counts and coverage
+
+Insight record count depends on your subscription and which products (e.g. technographics, hiring, funding) are enabled. Not every company or contact has insights; fill rates are highest for companies with a clear web presence and for venture-backed companies (funding). Use the fill-rate query below to see coverage for your dataset.
+
+## Table stats
 
 | Metric | Value |
 |--------|-------|
-| **Total records** | _TODO_ |
-| **Update frequency** | _TODO_ |
+| **Total records** | Varies by subscription; one row per insight event or snapshot |
+| **Update frequency** | Monthly (aligned with contacts and companies release) |
 | **Primary key** | `insight_id` |
-| **Main foreign keys** | `company_id → companies.company_id`, `contact_id → contacts.contact_id` |
+| **Main foreign keys** | `company_id` → `companies.company_id`, `contact_id` → `contacts.contact_id` (optional) |
 
 ## Data dictionary & fill rates
 
-{/* TODO: Replace ALL fields with your actual schema. The fields below are illustrative. */}
+Fill rates vary significantly by insight type. Technographic data is available for companies with a detectable web/tech footprint; funding data is richest for venture-backed companies; hiring signals depend on public job postings.
 
 ### Identifiers
 
@@ -30,7 +36,9 @@ The `insights` table contains enrichment signals and derived intelligence about 
 | `insight_id` | VARCHAR | 100% | Unique identifier for this insight record |
 | `company_id` | VARCHAR | _TODO_% | Foreign key to `companies` table |
 | `contact_id` | VARCHAR | _TODO_% | Foreign key to `contacts` table (NULL for company-level insights) |
-| `insight_type` | VARCHAR | _TODO_% | Category of insight: `technographic`, `hiring`, `funding`, `growth`, `engagement` |
+| `insight_type` | VARCHAR | _TODO_% | Category: `technographic`, `hiring`, `funding`, `growth`, `engagement` |
+
+<Info>When **contact_id** is null, the insight applies to the **company** (e.g. “company uses Snowflake”). When **contact_id** is set, the insight applies to that **contact** (e.g. “contact engaged with X”). Filter or join accordingly to avoid double-counting or mixing company- and contact-level signals.</Info>
 
 ### Technographic signals
 
@@ -41,14 +49,16 @@ The `insights` table contains enrichment signals and derived intelligence about 
 | `tech_added_date` | DATE | _TODO_% | When the technology was first detected |
 | `tech_removed_date` | DATE | _TODO_% | When the technology was last detected (NULL if still active) |
 
+<Warning>**technologies_detected** is a nested/array field. Use your warehouse’s array functions to filter (e.g. `ARRAY_CONTAINS`, `LIST_CONTAINS`, or unnest). Syntax varies by platform (Snowflake, BigQuery, Redshift).</Warning>
+
 ### Hiring signals
 
 | Field | Type | Fill rate | Description |
 |-------|------|-----------|-------------|
 | `is_hiring` | BOOLEAN | _TODO_% | Whether the company currently has open roles |
 | `open_roles_count` | INTEGER | _TODO_% | Number of open job postings |
-| `hiring_departments` | ARRAY | _TODO_% | Departments with open roles (e.g., `['engineering', 'sales']`) |
-| `headcount_growth_6m` | FLOAT | _TODO_% | Headcount growth rate over the last 6 months (as decimal, e.g., 0.15 = 15%) |
+| `hiring_departments` | ARRAY | _TODO_% | Departments with open roles (e.g. `['engineering', 'sales']`) |
+| `headcount_growth_6m` | FLOAT | _TODO_% | Headcount growth rate over the last 6 months (e.g. 0.15 = 15%) |
 | `headcount_growth_12m` | FLOAT | _TODO_% | Headcount growth rate over the last 12 months |
 
 ### Funding & financial signals
@@ -78,13 +88,77 @@ The `insights` table contains enrichment signals and derived intelligence about 
 | `created_at` | TIMESTAMP | 100% | When this record was first added |
 | `updated_at` | TIMESTAMP | 100% | When this record was last modified |
 
-<Warning>
-  **Fill rates vary significantly by insight type.** Technographic data is available for companies with a web presence. Funding data is primarily available for venture-backed companies. Hiring signals depend on whether the company posts jobs publicly.
-</Warning>
+<Warning>**Fill rates vary significantly by insight type.** Technographic data is available for companies with a web presence. Funding data is primarily available for venture-backed companies. Hiring signals depend on whether the company posts jobs publicly.</Warning>
 
-## Example queries
+## Joining this table
 
-### Find companies showing growth signals
+Join **insights** to **companies** on `company_id` to attach firmographics, and optionally to **contacts** on `contact_id` when you have contact-level insights. Use `contact_id IS NULL` when you want only company-level insights.
+
+### Insights + companies (signals with firmographics)
+
+```sql
+SELECT
+    co.company_name,
+    co.domain,
+    co.industry,
+    co.employee_count,
+    i.insight_type,
+    i.technologies_detected,
+    i.is_hiring,
+    i.headcount_growth_6m,
+    i.recent_funding
+FROM insights i
+JOIN companies co ON i.company_id = co.company_id
+WHERE i.contact_id IS NULL   -- company-level insights only
+  AND co.employee_count BETWEEN 50 AND 500
+  AND i.observed_at >= DATEADD(month, -3, CURRENT_DATE());
+```
+
+### Insights + contacts + companies (contact-level signals with full context)
+
+```sql
+SELECT
+    c.first_name,
+    c.last_name,
+    c.email,
+    c.title,
+    co.company_name,
+    co.domain,
+    i.insight_type,
+    i.observed_at
+FROM insights i
+JOIN contacts c ON i.contact_id = c.contact_id
+JOIN companies co ON c.company_id = co.company_id
+WHERE i.insight_type = 'engagement'
+ORDER BY i.observed_at DESC;
+```
+
+## How to calculate fill rates
+
+Use this pattern to see how many records have each insight type and how complete key fields are.
+
+```sql
+SELECT
+    insight_type,
+    COUNT(*) AS record_count,
+    ROUND(COUNT(technologies_detected) * 100.0 / COUNT(*), 1) AS tech_fill_pct,
+    ROUND(COUNT(is_hiring) * 100.0 / COUNT(*), 1) AS hiring_fill_pct,
+    ROUND(COUNT(recent_funding) * 100.0 / COUNT(*), 1) AS funding_fill_pct,
+    ROUND(COUNT(headcount_growth_6m) * 100.0 / COUNT(*), 1) AS growth_fill_pct
+FROM insights
+WHERE contact_id IS NULL
+GROUP BY insight_type;
+```
+
+## Sample queries
+
+### Find companies showing growth signals (hiring + headcount growth)
+
+**What you’re finding:** Companies that are growing headcount and actively hiring — strong candidates for sales or hiring tools.
+
+**Why these fields:** `headcount_growth_6m` and `is_hiring` are the main growth signals. We join to **companies** to filter by size (`employee_count`) and to get `company_name` and `domain`. `recent_funding` and `funding_round_type` add optional context for prioritization.
+
+**Logic:** Restrict to company-level insights, require meaningful headcount growth and hiring, and limit to a mid-market size band. Order by growth rate so the hottest accounts are first.
 
 ```sql
 SELECT
@@ -97,13 +171,20 @@ SELECT
     i.funding_round_type
 FROM insights i
 JOIN companies co ON i.company_id = co.company_id
-WHERE i.headcount_growth_6m > 0.20  -- 20%+ headcount growth
+WHERE i.contact_id IS NULL
+  AND i.headcount_growth_6m > 0.20
   AND i.is_hiring = TRUE
   AND co.employee_count BETWEEN 50 AND 500
 ORDER BY i.headcount_growth_6m DESC;
 ```
 
 ### Companies that recently adopted a specific technology
+
+**What you’re finding:** Accounts that added a technology (e.g. Snowflake) in the last 6 months — good for competitive displacement or upsell plays.
+
+**Why these fields:** `technologies_detected` (array) is filtered for the product name; `tech_added_date` restricts to recent adoption. We join to **companies** for name and domain. Array syntax in the WHERE clause depends on your warehouse (see call-out above).
+
+**Logic:** Filter to technographic insights, require the technology to be in the detected list, and limit to the last 6 months. Order by `tech_added_date` descending so the most recent adopters appear first.
 
 ```sql
 SELECT
@@ -113,10 +194,11 @@ SELECT
     i.tech_added_date
 FROM insights i
 JOIN companies co ON i.company_id = co.company_id
-WHERE i.insight_type = 'technographic'
-  AND ARRAY_CONTAINS('Snowflake'::VARIANT, i.technologies_detected)
+WHERE i.contact_id IS NULL
+  AND i.insight_type = 'technographic'
+  AND ARRAY_CONTAINS('Snowflake'::VARIANT, i.technologies_detected)   -- Snowflake syntax; adjust for your warehouse
   AND i.tech_added_date >= DATEADD(month, -6, CURRENT_DATE())
 ORDER BY i.tech_added_date DESC;
 ```
 
-{/* TODO: Update all column names to match your actual schema */}
+<Tip>Array containment syntax varies: Snowflake often uses `ARRAY_CONTAINS(value, array)` or `array IN (SELECT value FROM table)`. BigQuery uses `value IN UNNEST(array)`. Check your warehouse docs and adjust the filter accordingly.</Tip>

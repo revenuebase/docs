@@ -4,25 +4,39 @@ sidebarTitle: "Contacts"
 description: "Individual contact records — verified emails, titles, seniority, direct dials."
 ---
 
-# Contacts Table
+# Contacts table
 
-The `contacts` table contains individual person records with professional contact information and email verification data. This is the primary table for building prospect lists, outbound campaigns, and enrichment workflows.
+The `contacts` table contains individual person records with professional contact information and email verification data. This is the primary table for building prospect lists, outbound campaigns, and enrichment workflows. Each row is one person at one organization; if a contact holds multiple current positions, they appear in multiple rows.
 
-## Quick stats
+## Where the data comes from
 
-{/* TODO: Fill in actual numbers */}
+Contact records are built from professional profiles, public sources, and verified email and phone data. RevenueBase continuously verifies email deliverability via SMTP checks and re-verifies addresses on a regular cadence. Titles, seniority, and department are normalized from raw job titles so you can filter and segment consistently.
+
+## Contact counts by region
+
+The map below shows current contact counts by country. Use it to understand coverage and plan targeting by region.
+
+<Expandable title="View interactive map: contact counts by country" defaultOpen>
+  <iframe
+    src="https://embed.domo.com/cards/wV5yw"
+    title="RevenueBase contact counts by region"
+    className="w-full h-96 rounded-xl border border-gray-200 dark:border-gray-700"
+    frameBorder="0"
+  />
+</Expandable>
+
+## Table stats
 
 | Metric | Value |
 |--------|-------|
-| **Total records** | _TODO_ |
-| **Verified emails** | _TODO_ |
-| **Update frequency** | _TODO_ |
+| **Total records** | See map above; updated with each release |
+| **Update frequency** | Monthly (new delivery on the 1st of each month) |
 | **Primary key** | `contact_id` |
-| **Main foreign key** | `company_id → companies.company_id` |
+| **Main foreign key** | `company_id` → `companies.company_id` |
 
 ## Data dictionary & fill rates
 
-{/* TODO: Replace ALL fields, types, descriptions, and fill rates with your actual schema. */}
+Fill rate is the percentage of rows where a field is non-null. Rates vary by segment (e.g. US and larger companies often have higher fill rates for phone and seniority).
 
 ### Identifiers
 
@@ -40,9 +54,6 @@ The `contacts` table contains individual person records with professional contac
 | `last_name` | VARCHAR | _TODO_% | Last name |
 | `full_name` | VARCHAR | _TODO_% | Combined full name |
 | `gender` | VARCHAR | _TODO_% | Inferred gender: `male`, `female`, `unknown` |
-| `location_city` | VARCHAR | _TODO_% | Contact's city (may differ from company HQ) |
-| `location_state` | VARCHAR | _TODO_% | Contact's state/province |
-| `location_country` | VARCHAR | _TODO_% | Contact's country (ISO 2-letter code) |
 
 ### Professional info
 
@@ -65,6 +76,18 @@ The `contacts` table contains individual person records with professional contac
 | `direct_phone` | VARCHAR | _TODO_% | Direct dial phone number |
 | `mobile_phone` | VARCHAR | _TODO_% | Mobile phone number |
 
+### Addresses (contact location)
+
+Contact-level address fields describe the **person’s location**, which may differ from their company’s headquarters. Use them for regional targeting, territory assignment, or compliance (e.g. not contacting certain jurisdictions).
+
+| Field | Type | Fill rate | Description |
+|-------|------|-----------|-------------|
+| `location_city` | VARCHAR | _TODO_% | Contact’s city |
+| `location_state` | VARCHAR | _TODO_% | Contact’s state or province |
+| `location_country` | VARCHAR | _TODO_% | Contact’s country (ISO 2-letter code) |
+
+<Info>For **company** headquarters address (street, city, state, country), use the `companies` table or the denormalized company context fields on this table. Contact location is inferred from profile and may be less complete than company HQ.</Info>
+
 ### Company context (denormalized)
 
 These fields are copied from the `companies` table for convenience. For the full set of company attributes, join to `companies` on `company_id` — or use the [People + Companies](/data-feeds/people-companies) pre-joined table.
@@ -84,9 +107,7 @@ These fields are copied from the `companies` table for convenience. For the full
 | `updated_at` | TIMESTAMP | 100% | When this record was last modified |
 | `data_source` | VARCHAR | _TODO_% | Primary data source for this record |
 
-<Warning>
-  **Fill rates are approximate** and vary by segment. Contacts at larger, US-based companies tend to have higher fill rates for direct dials, seniority, and department. International and SMB records may have lower fill rates on some fields.
-</Warning>
+<Warning>**Fill rates are approximate** and vary by segment. Contacts at larger, US-based companies tend to have higher fill rates for direct dials, seniority, and department. International and SMB records may have lower fill rates on some fields.</Warning>
 
 ## Understanding verification fields
 
@@ -98,13 +119,74 @@ These fields are copied from the `companies` table for convenience. For the full
 | `unknown` | Verification inconclusive (server timeout, etc.) | ⚠️ Proceed with caution |
 | `disposable` | Temporary / throwaway email address | ❌ No |
 
-<Tip>
-  For the safest outbound sends, filter on `verification_status = 'valid'` AND `last_verified_at >= DATEADD(day, -30, CURRENT_DATE())`. This gives you recently verified, confirmed-deliverable addresses.
-</Tip>
+<Tip>For the safest outbound sends, filter on `verification_status = 'valid'` AND `last_verified_at >= DATEADD(day, -30, CURRENT_DATE())`. This gives you recently verified, confirmed-deliverable addresses.</Tip>
 
-## Example queries
+## Joining this table
 
-### Build a prospect list
+Join `contacts` to **companies** on `company_id` when you need full firmographic or HQ address data. Join to **insights** on `contact_id` when you need enrichment or intent signals per contact.
+
+### Contacts + companies (full company attributes)
+
+```sql
+SELECT
+    c.contact_id,
+    c.first_name,
+    c.last_name,
+    c.email,
+    c.title,
+    co.company_name,
+    co.industry,
+    co.employee_count,
+    co.hq_city,
+    co.hq_country
+FROM contacts c
+JOIN companies co ON c.company_id = co.company_id
+WHERE c.email_verified = TRUE
+  AND co.employee_count BETWEEN 100 AND 1000;
+```
+
+### Contacts + insights (contact-level signals)
+
+```sql
+SELECT
+    c.contact_id,
+    c.first_name,
+    c.last_name,
+    c.email,
+    i.insight_type,
+    i.observed_at
+FROM contacts c
+LEFT JOIN insights i ON c.contact_id = i.contact_id
+WHERE c.company_id = 'YOUR_TARGET_COMPANY_ID';
+```
+
+<Note>Insights can be company-level or contact-level. When `contact_id` is not null, the insight applies to that contact; otherwise it applies to the company. Filter or join accordingly.</Note>
+
+## How to calculate fill rates
+
+Run a query that counts non-null values and divides by total rows. Use this pattern to inspect any field or segment.
+
+```sql
+SELECT
+    COUNT(*) AS total_records,
+    ROUND(COUNT(email) * 100.0 / COUNT(*), 1) AS email_fill_pct,
+    ROUND(COUNT(CASE WHEN email_verified THEN 1 END) * 100.0 / COUNT(*), 1) AS verified_pct,
+    ROUND(COUNT(direct_phone) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
+    ROUND(COUNT(title) * 100.0 / COUNT(*), 1) AS title_fill_pct,
+    ROUND(COUNT(seniority_level) * 100.0 / COUNT(*), 1) AS seniority_fill_pct,
+    ROUND(COUNT(department) * 100.0 / COUNT(*), 1) AS department_fill_pct
+FROM contacts;
+```
+
+## Sample queries
+
+### Build a prospect list (VP+ in engineering or sales at mid-size software companies)
+
+**What you’re finding:** Decision-makers and influencers at software companies in a size band that fits your ICP.
+
+**Why these fields:** `email_verified` and `verification_status` reduce bounces. `seniority_level` and `department` narrow to buying roles. `company_industry` and `company_employee_count` (denormalized) avoid a join while filtering by ICP. `last_verified_at` prioritizes recently verified emails.
+
+**Logic:** Restrict to verified emails, seniority in c_suite/vp/director, departments that typically own tooling decisions, and a single industry + employee range. Order by `last_verified_at` so the freshest data appears first.
 
 ```sql
 SELECT
@@ -125,18 +207,19 @@ ORDER BY last_verified_at DESC
 LIMIT 500;
 ```
 
-### Check fill rates yourself
+### Check fill rates for a segment
+
+**What you’re finding:** How complete key fields are for a subset (e.g. one industry or country) so you can set expectations for list build size and which filters to use.
+
+**Why these fields:** Same as the global fill-rate query, but run with a `WHERE` clause so rates reflect only the segment you care about.
 
 ```sql
 SELECT
-    COUNT(*) as total_records,
-    ROUND(COUNT(email) * 100.0 / COUNT(*), 1) as email_fill_pct,
-    ROUND(COUNT(CASE WHEN email_verified THEN 1 END) * 100.0 / COUNT(*), 1) as verified_pct,
-    ROUND(COUNT(direct_phone) * 100.0 / COUNT(*), 1) as phone_fill_pct,
-    ROUND(COUNT(title) * 100.0 / COUNT(*), 1) as title_fill_pct,
-    ROUND(COUNT(seniority_level) * 100.0 / COUNT(*), 1) as seniority_fill_pct,
-    ROUND(COUNT(department) * 100.0 / COUNT(*), 1) as department_fill_pct
-FROM contacts;
+    COUNT(*) AS total_records,
+    ROUND(COUNT(email) * 100.0 / COUNT(*), 1) AS email_fill_pct,
+    ROUND(COUNT(direct_phone) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
+    ROUND(COUNT(title) * 100.0 / COUNT(*), 1) AS title_fill_pct
+FROM contacts
+WHERE company_industry = 'Software'
+  AND location_country = 'US';
 ```
-
-{/* TODO: Update all column names to match your actual schema */}

@@ -4,26 +4,39 @@ sidebarTitle: "Companies"
 description: "Company-level firmographic data — industry, size, revenue, location, and more."
 ---
 
-# Companies Table
+# Companies table
 
-The `companies` table contains organization-level records with firmographic data. Use it for account targeting, ICP filtering, segmentation, and enriching your CRM with company-level attributes.
+The `companies` table contains organization-level records with firmographic data. Use it for account targeting, ICP filtering, segmentation, and enriching your CRM with company-level attributes. One row per company; join to contacts and insights via `company_id`.
 
-## Quick stats
+## Where the data comes from
 
-{/* TODO: Fill in actual numbers */}
+Company records are built from public company profiles, websites, regulatory filings, and third-party data providers. Industry and size are normalized for consistent filtering. Location and financials are updated with each release; fill rates for revenue and funding are higher for public and venture-backed companies.
+
+## Company counts by region
+
+The map below shows current company counts by country. Use it to understand coverage and plan account-based campaigns by region.
+
+<Expandable title="View interactive map: company counts by country" defaultOpen>
+  <iframe
+    src="https://embed.domo.com/cards/xn5zr"
+    title="RevenueBase company counts by region"
+    className="w-full h-96 rounded-xl border border-gray-200 dark:border-gray-700"
+    frameBorder="0"
+  />
+</Expandable>
+
+## Table stats
 
 | Metric | Value |
 |--------|-------|
-| **Total records** | _TODO_ |
-| **Update frequency** | _TODO_ |
+| **Total records** | See map above; updated with each release |
+| **Update frequency** | Monthly (new delivery on the 1st of each month) |
 | **Primary key** | `company_id` |
-| **Most common join** | `contacts.company_id → companies.company_id` |
+| **Main foreign key** | `contacts.company_id` and `insights.company_id` join here |
 
 ## Data dictionary & fill rates
 
-Fill rate indicates the percentage of records where this field is populated (non-null). Higher fill rates mean more complete data for that attribute.
-
-{/* TODO: Replace ALL field names, types, descriptions, and fill rates with your actual schema. The fields below are illustrative — update to match reality. */}
+Fill rate is the percentage of rows where a field is non-null. Rates vary by segment (e.g. US and public companies often have higher fill rates for financials and industry).
 
 ### Identifiers
 
@@ -68,17 +81,23 @@ Fill rate indicates the percentage of records where this field is populated (non
 | `last_funding_round` | VARCHAR | _TODO_% | Most recent funding round type (e.g., `Series B`) |
 | `last_funding_date` | DATE | _TODO_% | Date of most recent funding round |
 
-### Location
+<Info>Use **employee_range** when you need stable buckets for segmentation or reporting; use **employee_count** when you need numeric filters (e.g. `BETWEEN 100 AND 500`). Both refer to the same underlying estimate.</Info>
+
+### Addresses (headquarters)
+
+Headquarters address fields describe the **company’s primary office location**. Use them for territory assignment, regional targeting, compliance, or direct mail.
 
 | Field | Type | Fill rate | Description |
 |-------|------|-----------|-------------|
-| `hq_street` | VARCHAR | _TODO_% | Headquarters street address |
-| `hq_city` | VARCHAR | _TODO_% | Headquarters city |
-| `hq_state` | VARCHAR | _TODO_% | Headquarters state/province |
-| `hq_zip` | VARCHAR | _TODO_% | Headquarters postal code |
-| `hq_country` | VARCHAR | _TODO_% | Headquarters country (ISO 2-letter code) |
-| `hq_country_name` | VARCHAR | _TODO_% | Headquarters country (full name) |
+| `hq_street` | VARCHAR | _TODO_% | Street address (number and street name) |
+| `hq_city` | VARCHAR | _TODO_% | City |
+| `hq_state` | VARCHAR | _TODO_% | State or province |
+| `hq_zip` | VARCHAR | _TODO_% | Postal or ZIP code |
+| `hq_country` | VARCHAR | _TODO_% | Country (ISO 2-letter code) |
+| `hq_country_name` | VARCHAR | _TODO_% | Country (full name) |
 | `hq_region` | VARCHAR | _TODO_% | Geographic region (e.g., `North America`, `EMEA`) |
+
+<Tip>**hq_street** is useful for direct mail and enrichment; **hq_city**, **hq_state**, and **hq_country** are the most commonly filled and are best for regional filters. **hq_region** is derived and useful for high-level territory reporting.</Tip>
 
 ### Technology
 
@@ -88,6 +107,8 @@ Fill rate indicates the percentage of records where this field is populated (non
 | `primary_language` | VARCHAR | _TODO_% | Primary programming language (tech companies) |
 | `cloud_provider` | VARCHAR | _TODO_% | Primary cloud provider: `aws`, `azure`, `gcp`, `other` |
 
+<Warning>**tech_stack** is a nested/array field. In SQL, use your warehouse’s array functions to filter (e.g. `ARRAY_CONTAINS`, `LIST_CONTAINS`, or unnest and join). Syntax varies by platform (Snowflake, BigQuery, Redshift).</Warning>
+
 ### Metadata
 
 | Field | Type | Fill rate | Description |
@@ -96,13 +117,74 @@ Fill rate indicates the percentage of records where this field is populated (non
 | `updated_at` | TIMESTAMP | 100% | When this record was last modified |
 | `data_source` | VARCHAR | _TODO_% | Primary data source for this record |
 
-<Warning>
-  **Fill rates are approximate** and reflect the current state of the dataset. They may vary by segment — for example, fill rates for US-based software companies will generally be higher than for international companies in niche industries.
-</Warning>
+<Warning>**Fill rates are approximate** and vary by segment. US-based and public companies tend to have higher fill rates for revenue, funding, and industry. International and private companies may have lower fill rates on financials.</Warning>
 
-## Example queries
+## Joining this table
 
-### Find target accounts by ICP
+Join **companies** to **contacts** on `company_id` to attach firmographics to people. Join to **insights** on `company_id` to attach buying signals and technographics.
+
+### Companies + contacts (accounts with decision-makers)
+
+```sql
+SELECT
+    co.company_id,
+    co.company_name,
+    co.domain,
+    co.industry,
+    co.employee_count,
+    COUNT(c.contact_id) AS contact_count
+FROM companies co
+JOIN contacts c ON c.company_id = co.company_id
+WHERE co.industry = 'Software'
+  AND co.employee_count BETWEEN 50 AND 500
+  AND c.email_verified = TRUE
+GROUP BY co.company_id, co.company_name, co.domain, co.industry, co.employee_count
+HAVING COUNT(c.contact_id) >= 1;
+```
+
+### Companies + insights (firmographics + signals)
+
+```sql
+SELECT
+    co.company_name,
+    co.domain,
+    co.industry,
+    co.employee_count,
+    i.insight_type,
+    i.technologies_detected,
+    i.is_hiring,
+    i.recent_funding
+FROM companies co
+LEFT JOIN insights i ON co.company_id = i.company_id AND i.contact_id IS NULL
+WHERE co.employee_count BETWEEN 100 AND 1000;
+```
+
+<Note>Filter insights with `contact_id IS NULL` when you want company-level signals only; otherwise you may get multiple rows per company (one per contact-level insight).</Note>
+
+## How to calculate fill rates
+
+Use this pattern to compute fill rates for any field or segment. Replace the sample fields with the columns you care about.
+
+```sql
+SELECT
+    COUNT(*) AS total_records,
+    ROUND(COUNT(domain) * 100.0 / COUNT(*), 1) AS domain_fill_pct,
+    ROUND(COUNT(industry) * 100.0 / COUNT(*), 1) AS industry_fill_pct,
+    ROUND(COUNT(employee_count) * 100.0 / COUNT(*), 1) AS employee_count_fill_pct,
+    ROUND(COUNT(revenue_estimate) * 100.0 / COUNT(*), 1) AS revenue_fill_pct,
+    ROUND(COUNT(hq_country) * 100.0 / COUNT(*), 1) AS hq_country_fill_pct
+FROM companies;
+```
+
+## Sample queries
+
+### Find target accounts by ICP (mid-size software in the US)
+
+**What you’re finding:** Companies that match your ideal customer profile so you can build an account list or sync to a CRM.
+
+**Why these fields:** `industry` and `employee_count` define ICP; `revenue_range` adds budget signal. `hq_city` and `hq_state` support territory or regional campaigns. We select only the columns you’d need for account creation or routing.
+
+**Logic:** Filter by industry, size band, country, and revenue band. Order by `employee_count` to prioritize larger accounts within the band.
 
 ```sql
 SELECT
@@ -121,17 +203,20 @@ WHERE industry IN ('Software', 'Information Technology')
 ORDER BY employee_count DESC;
 ```
 
-### Check fill rates yourself
+### Check fill rates for a segment
+
+**What you’re finding:** How complete key fields are for a subset (e.g. one industry or region) so you know what to expect when building lists.
+
+**Why these fields:** Same as the global fill-rate query, but with a `WHERE` clause so percentages reflect only the segment you care about.
 
 ```sql
--- Calculate actual fill rates for any field
 SELECT
-    COUNT(*) as total_records,
-    ROUND(COUNT(domain) * 100.0 / COUNT(*), 1) as domain_fill_pct,
-    ROUND(COUNT(industry) * 100.0 / COUNT(*), 1) as industry_fill_pct,
-    ROUND(COUNT(employee_count) * 100.0 / COUNT(*), 1) as employee_count_fill_pct,
-    ROUND(COUNT(revenue_estimate) * 100.0 / COUNT(*), 1) as revenue_fill_pct
-FROM companies;
+    COUNT(*) AS total_records,
+    ROUND(COUNT(domain) * 100.0 / COUNT(*), 1) AS domain_fill_pct,
+    ROUND(COUNT(industry) * 100.0 / COUNT(*), 1) AS industry_fill_pct,
+    ROUND(COUNT(employee_count) * 100.0 / COUNT(*), 1) AS employee_count_fill_pct,
+    ROUND(COUNT(revenue_estimate) * 100.0 / COUNT(*), 1) AS revenue_fill_pct
+FROM companies
+WHERE hq_country = 'US'
+  AND industry = 'Software';
 ```
-
-{/* TODO: Update all column names to match your actual schema */}

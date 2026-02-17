@@ -1,70 +1,74 @@
 ---
 title: "Intro to RevenueBase"
 sidebarTitle: "Intro to RevenueBase"
-description: "How RevenueBase works — verified B2B data for humans and AI, designed to combine with yours."
+description: "AI-native B2B data infrastructure — continuously verified contacts, companies, and tools designed for modern go-to-market."
 ---
+
+> **Documentation index**  
+> Fetch the complete documentation index at: [https://docs.revenuebase.ai/llms.txt](https://docs.revenuebase.ai/llms.txt)  
+> Use this file to discover all available pages before exploring further.
 
 # Intro to RevenueBase
 
-Welcome to RevenueBase. We're the verified data layer that sits underneath your go-to-market stack. We provide continuously verified B2B contact and company data — and we make it easy to combine with your own data so that you, your team, and your AI systems are all working from a complete, trustworthy picture.
+RevenueBase is the data infrastructure layer underneath your go-to-market stack. We provide 350M+ contacts and 60M+ companies with continuous verification — plus AI-powered tools to clean, enrich, and discover data on demand. Core data ships unmetered on a flat subscription. Tools run on per-outcome pricing. Everything is built so AI agents and human teams work from the same trustworthy foundation.
 
-## Data for humans and AI
+## Built for how AI actually works
 
-The way teams use B2B data is changing. It's no longer just a sales rep looking up a prospect — it's AI agents writing outbound sequences, enrichment pipelines feeding CRMs, and LLMs researching accounts before a call. All of these workflows depend on the same thing: **data that's actually correct.**
+Legacy B2B data was designed for humans working in funnels: buy a list, run a campaign, qualify leads. AI agents don't work that way. They operate in continuous loops — observing, reasoning, acting, adjusting — and they break when the data underneath them is stale, incomplete, or metered in ways that starve experimentation.
 
 RevenueBase is built for both audiences:
 
 <CardGroup cols={2}>
   <Card title="For your team" icon="users">
-    Sales, marketing, and ops teams query RevenueBase directly — through our API, Snowflake data feeds, or integrations with the tools you already use. Every record comes with verification metadata so your team knows exactly how fresh and reliable the data is before they act on it.
+    Sales, marketing, and ops teams query RevenueBase through our API, Snowflake data feeds, or integrations with the tools you already use. Every record includes verification metadata — source, freshness, deliverability score — so your team knows exactly what they're acting on.
   </Card>
-  <Card title="For your AI" icon="microchip-ai">
-    AI agents and automation workflows consume RevenueBase through the same API and data feeds. We support llms.txt and MCP so AI systems can discover and use your data programmatically. When your AI has access to verified data, it makes better decisions — better targeting, better personalization, fewer hallucinated contacts.
+  <Card title="For AI agents and automation" icon="microchip-ai">
+    AI agents and automation workflows consume RevenueBase through the same API and data feeds, with unmetered access to core data so agents can query freely without hitting usage caps. We support llms.txt and MCP so AI systems can discover and use data programmatically. When your agents work from verified data, they target the right people, personalize accurately, and don't hallucinate contacts.
   </Card>
 </CardGroup>
 
 ## Combine your data with ours
 
-RevenueBase isn't a replacement for the data you already have — it's a force multiplier. The real power comes from combining your proprietary data with our verified dataset.
+RevenueBase isn't a replacement for your proprietary data — it's the verified layer that makes your data complete. The real power comes from combining what you already know with what we continuously verify.
 
 <Steps>
   <Step title="Start with what you know">
-    You already have valuable data — CRM records, product usage signals, customer interactions, intent data. That's context no external provider can replicate.
+    Your CRM records, product usage signals, customer interactions, and intent data contain context no external provider can replicate. That's your advantage.
   </Step>
   <Step title="Layer in RevenueBase">
-    Match your accounts and contacts against RevenueBase by domain, email, or company ID. We fill in the gaps — missing contacts, outdated emails, incomplete firmographics — and verify what you already have.
+    Match your accounts and contacts against RevenueBase by domain, email, or company ID. We fill coverage gaps — missing contacts, outdated emails, incomplete firmographics — and verify what you already have in real time.
   </Step>
-  <Step title="Get the complete picture">
-    Now you're working with a dataset that has both your proprietary intelligence *and* verified, up-to-date contact data. Your team targets the right people. Your AI works from accurate inputs. Your campaigns hit real inboxes.
+  <Step title="Work from a complete, verified picture">
+    Now your team targets the right people. Your AI agents work from accurate inputs. Your campaigns hit real inboxes. And every record is traceable to a verified source.
   </Step>
 </Steps>
 
-## Enrich your data — and your customers' data
+## Power your product — not just your pipeline
 
-RevenueBase works at two levels:
+RevenueBase operates at two levels, and this is what makes us different from traditional data vendors:
 
-**Enrich your own operations.** Connect RevenueBase to your CRM, outbound tools, or data warehouse. Keep your contact records current, fill coverage gaps, and maintain deliverability across your entire database.
+**Enrich your own operations.** Connect RevenueBase to your CRM, outbound tools, or data warehouse. Keep contact records current, fill coverage gaps, and maintain deliverability across your entire database.
 
-**Power your product for your customers.** If you're building a data product, sales tool, or GTM platform, RevenueBase can be the verified data layer underneath it. Our customers include data providers, sales intelligence platforms, and CRM tools that use RevenueBase to ensure the data they deliver to *their* customers is accurate.
+**Embed verified data in your product.** If you're building a sales tool, data product, or GTM platform, RevenueBase is the data infrastructure underneath it. Our customers include data providers, sales intelligence platforms, and AI-native GTM tools that embed RevenueBase so the data they deliver to *their* customers is accurate and verified. Partners like Wiza, Clay, and Orbital run RevenueBase in production — every email they verify, every contact they surface, flows through our infrastructure.
 
 <Tip>
-  Whether you're enriching your own data or building a product on top of ours, the same API and data feeds power both use cases. The difference is just how you connect.
+  Whether you're enriching your own data or embedding RevenueBase in your product, the same API and data feeds power both use cases. Flat-rate, unmetered access to core data. Per-outcome pricing on verification and discovery tools.
 </Tip>
 
 ## How it all fits together
 
-<img src="/images/platform-overview-architecture.png" alt="Architecture diagram: Your GTM Stack (CRM, Outbound, AI Agents, Your App) connects to RevenueBase Verified Data Layer, which provides Contacts (325M+ verified), Companies (Firmographics), and Emails (Verified and scored)." />
+<img src="/images/platform-overview-architecture.png" alt="Architecture diagram: Your GTM Stack (CRM, Outbound, AI Agents, Your App) connects to RevenueBase Verified Data Layer, which provides Contacts (350M+ verified), Companies (Firmographics), and Emails (Verified and scored)." />
 
 ## Choose how you connect
 
 <CardGroup cols={2}>
   <Card title="API" icon="square-terminal" href="/getting-started/quickstart-api">
-    Real-time queries and enrichment. Best for integrating into your product, CRM workflows, or anywhere you need contact data on demand.
+    Real-time verification, enrichment, and discovery. Best for embedding in your product, CRM workflows, or AI agent pipelines.
   </Card>
   <Card title="Data Feeds" icon="database" href="/getting-started/quickstart-data-feeds">
-    Full dataset access in Snowflake. Best for bulk analysis, custom segmentation, and combining RevenueBase with your own data warehouse.
+    Full dataset access via Snowflake or S3. Best for bulk analysis, custom segmentation, and combining RevenueBase with your data warehouse.
   </Card>
   <Card title="Gigasheet" icon="table" href="/getting-started/quickstart-gigasheet">
-    Spreadsheet-style access to RevenueBase data. Search, filter, export, and enrich without writing SQL.
+    Spreadsheet-style access to RevenueBase data. Search, filter, export, and enrich without writing code or SQL.
   </Card>
 </CardGroup>
