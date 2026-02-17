@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "sequoia",
+  "theme": "mint",
   "name": "RevenueBase",
   "colors": {
     "primary": "#00B5B0",
@@ -28,7 +28,6 @@
             "group": "Getting Started",
             "pages": [
               "index",
-              "getting-started/platform-overview",
               "getting-started/quickstart-api",
               "getting-started/quickstart-data-feeds",
               "getting-started/quickstart-gigasheet"
@@ -64,8 +63,7 @@
             "group": "Dynamic Data Feeds",
             "pages": [
               "data-feeds/overview",
-              "data-feeds/verification-summaries",
-              "data-feeds/accessing-your-data"
+              "data-feeds/verification-summaries"
             ]
           },
           {
