@@ -4,17 +4,62 @@ sidebarTitle: "Enrich your data with RevenueBase data"
 description: "How to enrich your data using RevenueBase in Gigasheet"
 ---
 
-Use RevenueBase data in Gigasheet to enrich your own lists — add or update contact and company attributes by matching on email, domain, or other keys.
+Use Gigasheet to upload your own list of people (for example, LinkedIn URLs) and enrich it with RevenueBase contact and firmographic data — job title, company name, email, cell phone, and more. Match on LinkedIn URL, domain, or email; then pull in the columns you need.
 
-## How it works
+## Video walkthrough
 
-1. Upload or open your list in Gigasheet (e.g., a sheet with company domains or contact emails).
-2. Use Gigasheet’s **Enrichment** or **Lookup** feature (or the RevenueBase integration) to match your rows to RevenueBase.
-3. Map the match key (e.g., domain, email) and choose which RevenueBase fields to pull in (title, company name, industry, verification status, etc.).
-4. Run the enrichment; new columns are added or updated with RevenueBase data for matched rows.
+<div style={{ position: 'relative', paddingBottom: '64.86%', height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/8526a4de09434d27988074254afe83c4"
+    frameBorder="0"
+    allowFullScreen
+    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+  />
+</div>
 
-Enrichment is useful for filling gaps in your CRM, verifying emails, or adding firmographic and contact data to prospect lists.
+## How contact enrichment works
 
-<Note>
-Placeholder: Replace with your actual Gigasheet + RevenueBase enrichment workflow, match keys, and available fields.
-</Note>
+**Use case:** You have a list of people (e.g., LinkedIn URLs) and want to enrich it with contact information and firmographic data from RevenueBase.
+
+**Example:** Upload 100 LinkedIn URLs, then enrich with job title, company name, email, and cell phone.
+
+### Step 1: Create a RevenueBase sheet with your match column
+
+1. In Gigasheet, go to **RevenueBase** (via the data source or LinkedIn entry point) and click **Add New**.
+2. Create a **LinkedIn person URL** sheet (or the sheet type that matches your data — e.g., domain, email).
+3. Upload or paste your identifiers (LinkedIn URLs, domains, or emails) into that sheet.
+4. Open the sheet and confirm your data is loaded.
+
+### Step 2: Match your format to RevenueBase
+
+Your upload format must **exactly match** how RevenueBase stores the same field. Otherwise matches will fail.
+
+- **LinkedIn URLs:** Use `https://` with the full URL and **no trailing slash**.
+- **Domains and emails:** Use the same format RevenueBase uses in its published data.
+
+Check a few rows in an existing RevenueBase sheet to see the exact pattern, then make your list identical.
+
+### Step 3: Run Crossfile lookup
+
+1. Go to **Insert** → **Crossfile v Lookup**.
+2. Select the **column in your file** that you want to match (e.g., the column containing LinkedIn URLs).
+3. **Browse** to the RevenueBase file that contains the same identifier type.
+4. Choose the **match column** in the RevenueBase file (e.g., **LinkedIn URL Person**).
+5. Select **NearMatch** to allow for case or minor formatting differences.
+6. Choose **which columns to return** (e.g., full name, email, job title, company name, cell phone). You can select any columns available in the RevenueBase file.
+7. Click **Apply**.
+
+### Step 4: Wait for enrichment to complete
+
+- While the job is running, the file area **grays out** at the top.
+- When enrichment is done, the new values appear in **blue** and the file becomes active again.
+
+### Step 5: Use your enriched data
+
+From the enriched sheet you can download the file, save it for later, or keep working in Gigasheet.
+
+## Tips
+
+- Use **NearMatch** when your identifiers might differ slightly in case or formatting.
+- Any column visible in the RevenueBase file can be selected as a return value for enrichment.
+- Enrichment is useful for filling gaps in your CRM, verifying emails, or adding firmographic and contact data to prospect lists.
