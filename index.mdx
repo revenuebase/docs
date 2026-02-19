@@ -8,9 +8,18 @@ description: "Introduction to RevenueBase — data access, tools, and documentat
 
 You're here because you care about data quality — not as a talking point, but as an engineering constraint. Bad data breaks pipelines, poisons models, bounces emails, and wastes your team's time. We built RevenueBase because we care about the same thing.
 
-RevenueBase gives you 375M+ contacts and 60M+ companies, continuously verified, with source provenance on every record. Core data is flat-rate and unmetered — no per-record fees, no throttling. On top of that: verification, insight data, and AI-powered search tools priced per outcome, so you pay when we deliver a result, not when you make a request.
+**RevenueBase is not just another data company selling contacts and companies. We're a data platform — one platform with three layers.** Start with clean data. Use tools to verify, merge, and enrich your own. Search the result. Each layer works on its own, but together they give you dynamically updated, enriched, searchable company and contact data, ready for whatever you run next.
 
-These docs cover everything you need to get up and running: how to access the data, how the tools work, API references, schema documentation, and the Gigasheet UI for teams that want to work with the data without writing code.
+- **Data feeds** can be accessed **directly** — via S3, Snowflake, Google Cloud Storage, Azure Blob Storage, or Gigasheet — so you get the full dataset in your infrastructure or in a spreadsheet UI.
+- The **Trust layer** (verification, enrichment, and management tools) and the **Search layer** (discovery) are available **by API**, so you can clean your own data, merge it with RevenueBase, and find new contacts and companies programmatically.
+
+**The Foundation (Data)** — 375M+ contacts and 60M+ companies, continuously refreshed and verified before they reach you. Every record includes a verification summary and timestamp. Clean, dynamic data you can build on immediately. Delivered via data feeds (S3, Snowflake, GCS, Azure, Gigasheet) or API. Flat subscription, unmetered access.
+
+**The Trust layer** — Verify emails, resolve messy company names to canonical IDs, detect job changes, reconnect with contacts who moved. Merge your cleaned data with RevenueBase feeds and enrich with firmographics, tech stack, hiring signals, and custom attributes. Per-outcome pricing.
+
+**The Search layer** — Find new companies and contacts using deterministic filters (headcount, funding, industry, job title, location) and semantic search that understands meaning (e.g. "ambulatory care facilities" or "the person who owns demand gen"). Combine both in a single query. Results come back enriched and verified. Per-outcome pricing.
+
+These docs cover how to access the data, how the tools work, API references, schema documentation, and the Gigasheet UI for teams that want to work with the data without writing code.
 
 ## How you access the data
 
