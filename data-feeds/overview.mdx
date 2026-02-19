@@ -4,7 +4,7 @@ sidebarTitle: "Getting Started"
 description: "Set up your RevenueBase data feed via AWS S3 or Snowflake and start querying person, company, and insight data."
 ---
 
-RevenueBase delivers structured B2B data directly to your infrastructure through **Dynamic Data Feeds** — continuously updated datasets pushed to your AWS S3 bucket or Snowflake account on a monthly cadence. This guide walks you through onboarding, accessing your data, and understanding the tables available in your feed.
+RevenueBase delivers structured B2B data through **Dynamic Data Feeds** — continuously updated datasets on a monthly cadence. Data is available in our **S3 bucket** (we grant your AWS account access), or we share it through the **Snowflake Marketplace** to your Snowflake account. This guide walks you through onboarding, accessing your data, and understanding the tables available in your feed.
 
 ---
 
@@ -18,7 +18,7 @@ To get started, we need a few details from your team depending on your chosen de
 
     <Steps>
       <Step title="Provide your AWS Account ID">
-        Share your **12-digit AWS Account ID** with your RevenueBase onboarding contact. This is required so we can grant your account access to the shared S3 bucket.
+        Share your **12-digit AWS Account ID** with your RevenueBase onboarding contact. This is required so we can grant your account access to our S3 bucket.
 
         <Tip>You can find your AWS Account ID in the top-right dropdown of the AWS Console, or by running `aws sts get-caller-identity` in the AWS CLI.</Tip>
       </Step>
@@ -70,7 +70,7 @@ To get started, we need a few details from your team depending on your chosen de
     | Path segment      | Description                                                                 |
     | ----------------- | --------------------------------------------------------------------------- |
     | `delivery_date`   | Date of delivery in `YYYYMMDD` format (e.g., `20260201`)                    |
-    | `dataset_name`    | The dataset included in your subscription (e.g., `per`, `org`, `velocity_enhanced_unlimited`) |
+    | `dataset_name`    | The dataset included in your subscription (e.g., `per`, `org`, or a pre-joined dataset) |
     | `file_format`     | One of `json`, `csv`, or `parquet`                                           |
 
     Each monthly delivery creates a **new folder**. Previous deliveries remain accessible at their original paths and are never overwritten.
@@ -94,16 +94,14 @@ To get started, we need a few details from your team depending on your chosen de
       <Step title="Share your Snowflake account URL">
         Provide the full URL your organization uses to access Snowflake. This helps us ensure the share is routed correctly.
       </Step>
-      <Step title="Accept the private share">
-        Once we've provisioned the share, you'll see it in your Snowflake account. To access it:
+      <Step title="Accept the share via Snowflake Marketplace">
+        Once we've added you to the share, you'll see it in your Snowflake account. To access it:
 
-        1. Navigate to **Data Sharing → Private Sharing** in the left panel of the Snowflake UI
-        2. Click on the incoming share tabs (e.g., `RELEASES_EXT_SHARE` or `RELEASES_RAW_SHARE`)
-        3. Click **Get Data** to add the shared database to your account
+        1. Open the **Snowflake Marketplace** (or **Data Sharing** in the left panel of the Snowflake UI)
+        2. Find the RevenueBase listing or incoming share (e.g., `RELEASES_EXT_SHARE` or `RELEASES_RAW_SHARE`)
+        3. Click **Get** or **Get Data** to add the shared database to your account
 
         This creates a new database called **RELEASES** in your Snowflake account containing the shared tables.
-
-        {/* TODO: Add screenshot of Snowflake Private Sharing UI showing incoming shares */}
       </Step>
       <Step title="Query your data">
         Once the share is accepted, you can query the tables directly:
@@ -120,6 +118,10 @@ To get started, we need a few details from your team depending on your chosen de
   </Tab>
 </Tabs>
 
+<Info>
+  **Azure and GCP delivery** — Access and delivery through other clouds (Google Cloud Storage and Azure Blob Storage) is available. File format options (CSV, JSON, Parquet) and delivery cadence are the same as S3. Please contact your account manager or **support@revenuebase.ai** for details.
+</Info>
+
 ---
 
 ## Data updates & refresh schedule
@@ -134,22 +136,24 @@ RevenueBase data is updated on a **monthly** basis.
     We send an **email notification** to your team when new data has been posted and is ready for consumption.
   </Card>
   <Card title="Profile verification" icon="badge-check">
-    95% of profiles are re-verified every **90 days**. Check the `updated_at` field for the most recent verification date on any record.
+    95% of profiles are re-verified every **90 days**. "Re-verified" means the source profile was accessible and we confirmed or updated at least the core profile information — name, current title, company association, and location. Check the `updated_at` field for the most recent verification date on any record. See [Data Freshness & Quality](/data-feeds/data-freshness-quality) for details on what happens when profiles can't be reached.
   </Card>
   <Card title="Email verification" icon="at">
-    All email addresses are re-verified every **60 days**. See the `email_last_verified_at` field. A valid email is a strong signal that the work experience is current.
+    All email addresses are re-verified every **60 days**. See the `email_last_verified_at` field. A recently validated email is one of the strongest indicators that a record is current — prioritize records with recent `email_last_verified_at` dates when building high-confidence segments for outbound or enrichment.
   </Card>
 </CardGroup>
 
 <Tip>For S3 deliveries, each update creates a new date-stamped folder. Previous deliveries remain accessible and are never overwritten. Bucket names and credentials remain the same across all deliveries.</Tip>
 
+For a deeper look at why some records may be older than expected and how to assess data quality programmatically, see [Data Freshness & Quality](/data-feeds/data-freshness-quality).
+
 ---
 
 ## Available tables
 
-Your RevenueBase subscription includes access to the following tables, depending on your plan. In Snowflake, these appear under the `RELEASES` database. For S3 deliveries, each table corresponds to a dataset folder in your bucket.
+Your RevenueBase subscription includes access to the following tables, depending on your plan. In Snowflake, these appear under the `RELEASES` database. For S3 deliveries, each table corresponds to a dataset folder in your bucket. For full schema and field reference, see [Contacts](/data-feeds/contacts), [Companies](/data-feeds/companies), [Insights](/data-feeds/insights), and [Historical experience](/data-feeds/historical-experience).
 
-### Person table (`per`)
+### [Person table](/data-feeds/contacts) (`per`)
 
 The core contact-level table. Each row represents a person at a specific organization.
 
@@ -170,9 +174,11 @@ The core contact-level table. Each row represents a person at a specific organiz
 
 **S3 path:** `<delivery_date>/per/<format>/`
 
+See [Contacts](/data-feeds/contacts) for the full field reference.
+
 {/* TODO: Add screenshot of sample person table data in Snowflake or a data preview */}
 
-### Organization table (`org`)
+### [Organization table](/data-feeds/companies) (`org`)
 
 Company-level data including firmographics, technographics, and company metadata.
 
@@ -189,11 +195,15 @@ Company-level data including firmographics, technographics, and company metadata
 
 **S3 path:** `<delivery_date>/org/<format>/`
 
-### Insights table
+See [Companies](/data-feeds/companies) for the full field reference.
+
+### [Insights table](/data-feeds/insights)
 
 Aggregated analytics and derived metrics across people and organizations.
 
 **Snowflake path:** `RELEASES.RELEASE.INSIGHTS_LATEST`
+
+See [Insights](/data-feeds/insights) for the full field reference.
 
 ### Raw feed
 
@@ -201,18 +211,20 @@ The unprocessed, full-fidelity data feed for advanced use cases and custom pipel
 
 **Snowflake path:** `RELEASES.CUSTOM.RAW_FEED_PER_LATEST`
 
-### Velocity tables
+### Pre-joined tables
+
+Pre-joined tables combine multiple core tables so you can query people, companies, and optionally insights in a single view without writing joins.
 
 <AccordionGroup>
-  <Accordion title="Velocity Base Unlimited">
-    The base unlimited dataset covering all available records.
+  <Accordion title="People and companies">
+    Pre-joined table containing people and company data in one view.
 
     **Snowflake path:** `RELEASES.RELEASE.VELOCITY_BASE_UNLIMITED_LATEST`
 
     **S3 path:** `<delivery_date>/velocity_base_unlimited/<format>/`
   </Accordion>
-  <Accordion title="Velocity Enhanced Unlimited">
-    The enhanced unlimited dataset with additional insight fields and deeper coverage.
+  <Accordion title="People, companies, and insights">
+    Pre-joined table containing people, company, and insight data in one view.
 
     **Snowflake path:** `RELEASES.RELEASE.VELOCITY_ENHANCED_UNLIMITED_LATEST`
 
@@ -232,33 +244,7 @@ The unprocessed, full-fidelity data feed for advanced use cases and custom pipel
 
 ## Troubleshooting
 
-<AccordionGroup>
-  <Accordion title="AWS S3: InvalidAccessPointAlias error">
-    This error typically occurs when using the **AWS Console** instead of the **AWS CLI**, or when the region is misconfigured.
-
-    - Ensure you're using the AWS CLI (not the Console web UI)
-    - Confirm you're targeting the correct region in your CLI command
-    - Verify your AWS account has been linked to the RevenueBase bucket
-
-    If the issue persists, contact your RevenueBase onboarding representative.
-  </Accordion>
-  <Accordion title="AWS S3: Access Denied or bucket not found">
-    - Double-check that you're including `--request-payer requester` in your CLI command
-    - Verify your AWS credentials are configured correctly (`aws configure`)
-    - Ensure the bucket alias or ARN is copied exactly as provided — typos in the access point name are common
-  </Accordion>
-  <Accordion title="Snowflake: Share not visible">
-    - Confirm your Snowflake account locator and region match what was provided to RevenueBase during onboarding
-    - Check **Data Sharing → Private Sharing** (not Marketplace)
-    - If you recently onboarded, allow up to 24 hours for the share to propagate
-  </Accordion>
-  <Accordion title="Missing RBID_ORG or RBID_PAO fields">
-    These fields may be null when a person's LinkedIn profile doesn't link to a company page. The company name on LinkedIn is free text, so some profiles will not have a resolvable organization ID. A valid company email is the strongest indicator that the person-organization association is accurate.
-  </Accordion>
-  <Accordion title="Logo URLs returning 403 errors">
-    LinkedIn periodically rotates logo URLs. Updated URLs are included in each monthly data refresh. For reliable access, we recommend building a **logo cache** on your end and populating it incrementally with each delivery.
-  </Accordion>
-</AccordionGroup>
+For help with S3 access errors, Snowflake share visibility, missing fields, and logo URLs, see [Troubleshooting](/data-feeds/troubleshooting).
 
 ---
 
@@ -266,12 +252,14 @@ The unprocessed, full-fidelity data feed for advanced use cases and custom pipel
 
 <CardGroup cols={3}>
   <Card title="Data Dictionary" icon="book" href="/data-feeds/data-dictionary">
-    Explore the full schema and field definitions for every table.
+    Full schema, field definitions, and data types for every table.
   </Card>
-  <Card title="FAQ" icon="circle-question" href="/faq">
-    Answers to common questions about data organization, updates, and delivery.
+
+  <Card title="Data Freshness & Quality" icon="chart-line" href="/data-feeds/data-freshness-quality">
+    How verification works, why records become stale, and quality assessment guidance.
   </Card>
-  <Card title="Get Support" icon="headset" href="/support">
-    Schedule a call or reach out to the RevenueBase team for help.
+
+  <Card title="FAQ" icon="circle-question" href="/data-feeds/faq">
+    Answers to common questions about data organization, delivery, and troubleshooting.
   </Card>
 </CardGroup>

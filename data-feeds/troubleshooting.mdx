@@ -1,0 +1,59 @@
+---
+title: "Troubleshooting"
+description: "Resolve common issues with Dynamic Data Feeds — S3 access, Snowflake shares, missing fields, and logo URLs."
+---
+
+# Troubleshooting
+
+Use this page to resolve common issues when connecting to or querying RevenueBase Dynamic Data Feeds. For general questions about data organization, delivery, and updates, see the [FAQ](/data-feeds/faq).
+
+## AWS S3
+
+<AccordionGroup>
+  <Accordion title="InvalidAccessPointAlias error">
+    This error typically occurs when using the **AWS Console** instead of the **AWS CLI**, or when the region is misconfigured.
+
+    - Use the **AWS CLI** — the Console web UI does not support `--request-payer` and will return access errors
+    - Confirm you're targeting the correct region in your CLI command
+    - Verify your AWS account has been linked to the RevenueBase bucket
+
+    If the issue persists, contact your RevenueBase onboarding representative or **support@revenuebase.ai**.
+  </Accordion>
+  <Accordion title="Access Denied or bucket not found">
+    - Double-check that you're including `--request-payer requester` in your CLI command
+    - Verify your AWS credentials are configured correctly (`aws configure`)
+    - Ensure the bucket alias or ARN is copied exactly as provided — typos in the access point name are common
+  </Accordion>
+</AccordionGroup>
+
+## Snowflake
+
+<AccordionGroup>
+  <Accordion title="Share not visible">
+    - Confirm your Snowflake account locator and region match what was provided to RevenueBase during onboarding
+    - Check the **Snowflake Marketplace** or **Data Sharing** area in the Snowflake UI for the RevenueBase listing or incoming share
+    - If you recently onboarded, allow up to 24 hours for the share to propagate
+  </Accordion>
+</AccordionGroup>
+
+## Data and fields
+
+<AccordionGroup>
+  <Accordion title="Missing RBID_ORG or RBID_PAO fields">
+    These fields may be null when a person's LinkedIn profile doesn't link to a company page. The company name on LinkedIn is free text, so some profiles will not have a resolvable organization ID. A valid company email is the strongest indicator that the person-organization association is accurate.
+  </Accordion>
+  <Accordion title="Logo URLs returning 403 errors">
+    LinkedIn periodically rotates logo URLs. Updated URLs are included in each monthly data refresh. For reliable access, we recommend building a **logo cache** on your end and populating it incrementally with each delivery.
+  </Accordion>
+</AccordionGroup>
+
+## More help
+
+<CardGroup cols={2}>
+  <Card title="FAQ" icon="circle-question" href="/data-feeds/faq">
+    Answers to common questions about data organization, delivery, and updates.
+  </Card>
+  <Card title="Data Feeds overview" icon="book" href="/data-feeds/overview">
+    Setup steps for S3 and Snowflake, table reference, and paths.
+  </Card>
+</CardGroup>

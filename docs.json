@@ -51,6 +51,7 @@
             "group": "Dynamic Data Feeds",
             "pages": [
               "data-feeds/overview",
+              "data-feeds/data-freshness-quality",
               "data-feeds/verification-summaries"
             ]
           },
@@ -81,6 +82,13 @@
             "group": "Building Lists",
             "pages": [
               "data-feeds/company-keyword-search"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "data-feeds/faq",
+              "data-feeds/troubleshooting"
             ]
           }
         ]
@@ -120,7 +128,7 @@
             ]
           },
           {
-            "group": "Reference",
+            "group": "Resources",
             "pages": [
               "gigasheet/monthly-updates",
               "gigasheet/integrations",

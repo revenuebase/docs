@@ -1,42 +1,47 @@
 ---
 title: "Quickstart (Data Feeds)"
-description: "Get started with RevenueBase data feeds"
+description: "Get started with RevenueBase Dynamic Data Feeds — S3 or Snowflake"
 ---
 
-This guide gets you connected so you can query tables and join data.
+RevenueBase **Dynamic Data Feeds** deliver structured B2B data (contacts, companies, and insights) to you in two ways: data is available in our **S3 bucket** (we grant your AWS account access), or we share it through the **Snowflake Marketplace** to your Snowflake account. Updates are delivered on a **monthly** cadence. This quickstart gets you oriented; the full [Data Feeds overview](/data-feeds/overview) has step-by-step onboarding for each delivery method.
 
-### Step 1: Enable data feeds access
+## Choose your delivery method
 
-1. Sign in to the <a href="https://app.revenuebase.ai/dashboard" target="_blank" rel="noopener noreferrer">RevenueBase dashboard</a>.
-2. Ensure your plan includes **Data Feeds**.
-3. Note your feed credentials (host, database, and auth) from **Settings** → **Data Feeds**.
+RevenueBase supports two ways to receive your feed:
 
-### Step 2: Connect your client
+<CardGroup cols={2}>
+  <Card title="AWS S3" icon="cloud" href="/data-feeds/overview">
+    Data is available in our S3 bucket. We grant your AWS account access so you can list and download date-stamped delivery folders (CSV, JSON, or Parquet) via the AWS CLI.
+  </Card>
+  <Card title="Snowflake" icon="database" href="/data-feeds/overview">
+    We share the data through the **Snowflake Marketplace** to your Snowflake account. You get a database (e.g. **RELEASES**) with tables you can query directly in SQL.
+  </Card>
+</CardGroup>
 
-Use the connection details from the dashboard. Example (replace placeholders with your values):
+## Quick path to your first data
 
-```bash
-# Example: connect via provided client or JDBC/ODBC
-# Host: feed.revenuebase.ai
-# Port: 443
-# Database: your_database
-# Auth: your_feed_username / your_feed_password
-```
+<Steps>
+  <Step title="Share details with RevenueBase">
+    **S3:** Provide your 12-digit **AWS Account ID** and preferred file format (CSV, JSON, or Parquet). **Snowflake:** Provide your **Snowflake Account Locator**, region, and account URL. Contact your RevenueBase onboarding contact or **support@revenuebase.ai** to get started.
+  </Step>
+  <Step title="Get access">
+    **S3:** You’ll receive bucket alias (or ARN), region, and AWS credentials. **Snowflake:** We’ll add you to the marketplace listing; accept the share in the Snowflake Marketplace and add the **RELEASES** database to your account.
+  </Step>
+  <Step title="Verify and query">
+    **S3:** Use the AWS CLI with `--request-payer requester` to list your delivery folder (see [Data Feeds overview](/data-feeds/overview) for exact commands). **Snowflake:** Run a query such as `SELECT * FROM RELEASES.RELEASE.PER_LATEST LIMIT 100;`
+  </Step>
+</Steps>
 
-<Note>
-Credentials are unique per account. Do not share them or commit them to version control.
-</Note>
+<Warning>
+Use the **AWS CLI** for S3 access — not the AWS Console. The Console does not support `--request-payer requester` and will return access errors.
+</Warning>
 
-### Step 3: Run a sample query
+## What you’ll see in your feed
 
-Once connected, try a simple query against a core table (see [Tables & Schema](/data-feeds/tables-schema) for exact table names):
+Depending on your subscription, your feed includes person-level data (`per`), organization data (`org`), insights, and optionally pre-joined tables (people and companies, or people, companies, and insights). Each monthly update creates a **new** delivery (new S3 folder or refreshed Snowflake tables); previous deliveries remain available. See the [Data Feeds overview](/data-feeds/overview) for table names, paths, and the full onboarding flow.
 
-```sql
-SELECT * FROM companies LIMIT 10;
-```
+## Next steps
 
-### Next steps
-
-- Read the [Data Feeds overview](/data-feeds/overview).
-- Follow [Getting started with feeds](/data-feeds/getting-started-feeds) for more detail.
-- Use the [Data dictionary](/data-feeds/data-dictionary) and [Joining tables](/data-feeds/joining-tables) when building queries.
+- **[Data Feeds overview](/data-feeds/overview)** — Full onboarding steps for S3 and Snowflake, path layout, and troubleshooting.
+- **[Data dictionary](/data-feeds/data-dictionary)** — All fields, types, and descriptions for every table.
+- **[Joining tables](/data-feeds/joining-overview)** — How to join person, organization, and insight tables correctly.

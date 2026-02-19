@@ -1,0 +1,156 @@
+---
+title: "Data Freshness & Quality"
+description: "How RevenueBase keeps data current, why some records may be outdated, and how to assess data quality programmatically."
+---
+
+# Data Freshness & Quality
+
+RevenueBase continuously verifies and refreshes its dataset, but no B2B data source is perfect. This page explains how our refresh cycle works, why certain records may lag, and how to use the fields we provide to make quality decisions in your own systems.
+
+## How verification works
+
+When we say a record has been "re-verified," we mean the source profile was accessible, and we were able to confirm or update at least the core profile information — name, current title, company association, and location. This is distinct from simply checking that a URL resolves. Verification means we read the profile content and either confirmed it matches our existing record or updated our record to reflect changes.
+
+Two verification cycles run in parallel:
+
+**Profile verification** — 95% of all profiles are re-verified every **90 days**. The `updated_at` field on each record reflects when this last occurred. If a profile's `updated_at` is more than 90 days old, it typically means the source was temporarily inaccessible during the most recent verification cycle (see [why records become stale](#why-records-become-stale) below).
+
+**Email verification** — All email addresses are re-verified every **60 days**, independent of profile verification. The `email_last_verified_at` field reflects when this last occurred. Email verification checks deliverability — whether the address accepts mail — not just whether it has valid syntax.
+
+The charts below pull from live data in our system.
+
+<Frame>
+  <iframe
+    src="https://embed.domo.com/cards/MJnqm"
+    title="RevenueBase re-verification cadence and coverage"
+    style={{ width: '100%', maxWidth: '640px', height: '480px', border: 'none', borderRadius: '0.5rem', display: 'block' }}
+  />
+</Frame>
+
+<Frame>
+  <iframe
+    src="https://embed.domo.com/cards/NYor2"
+    title="RevenueBase email re-verification frequency"
+    style={{ width: '100%', maxWidth: '640px', height: '480px', border: 'none', borderRadius: '0.5rem', display: 'block' }}
+  />
+</Frame>
+
+<Tip>
+A recently verified email is one of the strongest signals that a record is current. If `email_last_verified_at` is recent and the email status is valid, the associated work experience is very likely still accurate — even if `updated_at` is slightly older. Prioritize records with recently validated emails when building high-confidence segments.
+</Tip>
+
+## Why records become stale
+
+Most records in RevenueBase are verified within the cycles described above. When a record falls behind, it's typically for one of three reasons:
+
+### Source accessibility issues
+
+Profiles may return 404 errors, timeout, or become temporarily unreachable during a verification pass. When this happens, the existing record is retained but `updated_at` is not advanced. If a profile remains inaccessible for **one year**, we deprecate and remove it from the dataset entirely. This prevents the accumulation of records that can no longer be confirmed.
+
+### Platform scraping protections
+
+LinkedIn and other source platforms periodically apply protections that hide full profiles — or specific sections like work experience — from public view. These protections affect random profiles and can last anywhere from days to months before the profile becomes fully accessible again. During this time, we retain the existing record but cannot update it. There is no way to predict which profiles will be affected or for how long.
+
+### Delayed profile updates by individuals
+
+People frequently change jobs weeks or months before updating their online profiles. Someone who starts a new role in May might not update their LinkedIn until September. RevenueBase would then capture that change in the October or November verification cycle. This is an inherent limitation of any data source that relies on self-reported professional information — the data is only as current as the person's last profile edit.
+
+## Profile deprecation
+
+Records that have not been successfully verified for **one year** are deprecated and removed from the dataset. This is an intentional quality measure — it prevents your systems from relying on records that can no longer be confirmed against any source.
+
+When a profile is deprecated:
+- It is removed from subsequent monthly data releases
+- If you're consuming via Snowflake, the record will no longer appear in `*_LATEST` views
+- If you're consuming via S3, the record will be absent from the next delivery folder
+- Previous deliveries are never modified — historical snapshots remain intact
+
+## Assessing record quality
+
+Every record ships with fields that let you evaluate freshness and reliability programmatically. Use these to build scoring logic, filter thresholds, or quality gates in your pipelines.
+
+| Field | What it tells you | Quality signal |
+| --- | --- | --- |
+| `updated_at` | When the full profile was last verified against the source | Records verified within 90 days are within normal cycle. Older records may have accessibility issues. |
+| `email_last_verified_at` | When the email address was last checked for deliverability | Recent email verification (within 60 days) is a strong indicator the record is current. |
+| `revenuebase_contact_verification_summary` | Machine-readable summary of verification status across all contact fields | Use this for programmatic quality filtering. See [Verification Summaries](/data-feeds/verification-summaries) for schema details. |
+
+### Sample verification summary
+
+The `revenuebase_contact_verification_summary` field contains a human- and machine-readable block like this:
+
+```
+Verified by RevenueBase
+
+Experience last observed on LinkedIn on September 7, 2025: Proposal Manager at Metaphase
+
+Profile: linkedin.com/in/jamie-gregory-28878356
+
+Email last verified on October 15, 2025 via RevenueBase's Email Verification Tool
+
+Next verification scheduled: November 2025
+
+Learn more at https://revenuebase.ai/verified-by-revenuebase
+```
+
+Use it to see when experience and email were last verified and when the next verification is scheduled. For a full breakdown of each element and how to parse the field, see [Verification Summaries](/data-feeds/verification-summaries).
+
+### Recommended quality filters
+
+For **high-confidence outbound** (email campaigns, direct outreach): filter to records where `email_last_verified_at` is within the last 60 days and email status is valid.
+
+```sql
+-- High-confidence outbound: recently verified, deliverable emails only
+SELECT *
+FROM RELEASES.RELEASE.PER_LATEST  -- or your person/contacts table
+WHERE verification_status = 'valid'
+  AND email_last_verified_at >= DATEADD(day, -60, CURRENT_DATE());
+```
+
+For **enrichment and analytics** (market sizing, account scoring): the full dataset is appropriate, but weight records by recency — `updated_at` within 90 days should receive higher confidence than older records.
+
+```sql
+-- Enrichment/analytics: weight by profile freshness (higher confidence for recent verification)
+SELECT *,
+       CASE
+         WHEN updated_at >= DATEADD(day, -90, CURRENT_DATE()) THEN 1.0
+         WHEN updated_at >= DATEADD(day, -180, CURRENT_DATE()) THEN 0.7
+         ELSE 0.5
+       END AS freshness_score
+FROM RELEASES.RELEASE.PER_LATEST  -- or your person/contacts table
+ORDER BY updated_at DESC;
+```
+
+For **AI agent pipelines**: pass the `revenuebase_contact_verification_summary` and `email_last_verified_at` fields to your agent so it can make programmatic decisions about whether to act on a record or flag it for review.
+
+```sql
+-- AI agent pipelines: include verification context for programmatic quality decisions
+SELECT
+  RBID_PER,
+  email_address,
+  email_last_verified_at,
+  revenuebase_contact_verification_summary,
+  updated_at
+FROM RELEASES.RELEASE.PER_LATEST  -- or your person/contacts table
+WHERE email_last_verified_at IS NOT NULL;
+```
+
+## Sparse profiles and data quality
+
+Some profiles in the dataset contain minimal information — a name and company association, but limited detail on title, location, or experience. These profiles are sourced the same way as complete ones, but the underlying source simply contains less data. In some cases, sparse profiles may be incomplete or low-quality.
+
+**The strongest indicator that a person genuinely belongs to an organization is a valid company email address.** If a profile is sparse but has a verified email at the company domain, the association is reliable. If a sparse profile has no verified email, treat the association with lower confidence.
+
+When building segments or powering outbound, filtering on email verification status is the most effective way to exclude low-quality records without losing legitimate contacts who simply have minimal public profiles.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Verification Summaries" icon="shield-check" href="/data-feeds/verification-summaries">
+    Schema reference for the verification summary field and how to parse it.
+  </Card>
+
+  <Card title="Contacts Table" icon="user" href="/data-feeds/contacts">
+    Full field reference for person-level records including all verification fields.
+  </Card>
+</CardGroup>
