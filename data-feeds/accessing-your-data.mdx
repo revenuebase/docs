@@ -34,7 +34,7 @@ After access is granted, you’ll see the shared database and schemas in your Sn
 
 ### In cloud storage (S3, Azure, GCP)
 
-You get access to a **directory (bucket/container path)** where RevenueBase publishes updates. Each update is published in a **subdirectory whose name includes the date** of the release. Inside, you’ll find files in **CSV, JSON, and Parquet**. Each data feed has its own subdirectory.
+RevenueBase supports dynamic feeds in three formats: CSV, JSON, and Parquet. When you get access to the data in S3, you get access to all three. Your data is published in a **directory (bucket/container path)**. Each update is in a **subdirectory whose name includes the date** of the release. Inside, you’ll find files in **CSV, JSON, and Parquet**. Each data feed has its own subdirectory.
 
 Example folder structure (placeholders):
 

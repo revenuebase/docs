@@ -11,7 +11,7 @@ RevenueBase supports two ways to receive your feed:
 
 <CardGroup cols={2}>
   <Card title="AWS S3" icon="cloud" href="/data-feeds/overview">
-    Data is available in our S3 bucket. We grant your AWS account access so you can list and download date-stamped delivery folders (CSV, JSON, or Parquet) via the AWS CLI.
+    Data is available in our S3 bucket. We grant your AWS account access so you can list and download date-stamped delivery folders. When you get S3 access, you get access to all three formats: CSV, JSON, and Parquet.
   </Card>
   <Card title="Snowflake" icon="database" href="/data-feeds/overview">
     We share the data through the **Snowflake Marketplace** to your Snowflake account. You get a database (e.g. **RELEASES**) with tables you can query directly in SQL.
@@ -22,11 +22,11 @@ RevenueBase supports two ways to receive your feed:
   **Custom locations** — We can make data available in custom locations beyond S3 and Snowflake. We can support almost any location; contact **support@revenuebase.ai** to discuss your requirements. There may be an additional cost.
 </Info>
 
-## Quick path to your first data
+## Get your first data in three steps
 
 <Steps>
   <Step title="Share details with RevenueBase">
-    **S3:** Provide your 12-digit **AWS Account ID** and preferred file format (CSV, JSON, or Parquet). **Snowflake:** Provide your **Snowflake Account Locator**, region, and account URL. Contact your RevenueBase onboarding contact or **support@revenuebase.ai** to get started.
+    **S3:** Provide your 12-digit **AWS Account ID**. You get access to all three formats (CSV, JSON, Parquet) when access is provisioned. **Snowflake:** Provide your **Snowflake Account Locator**, region, and account URL. Contact your RevenueBase onboarding contact or **support@revenuebase.ai** to get started.
   </Step>
   <Step title="Get access">
     **S3:** You’ll receive bucket alias (or ARN), region, and AWS credentials. **Snowflake:** We’ll add you to the marketplace listing; accept the share in the Snowflake Marketplace and add the **RELEASES** database to your account.

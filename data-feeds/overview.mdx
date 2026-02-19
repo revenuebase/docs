@@ -8,26 +8,19 @@ RevenueBase delivers structured B2B data through **Dynamic Data Feeds** — cont
 
 ---
 
-## Onboarding
+## Get access to your data feed
 
-To get started, we need a few details from your team depending on your chosen delivery method. Once we have this information, we'll provision access and deliver your first dataset — typically within 1–2 business days.
+To get started, provide a few details based on your chosen delivery method. After you provide this information, RevenueBase will provision access and deliver your first dataset — typically within 1–2 business days.
 
 <Tabs>
   <Tab title="AWS S3">
-    ### What we need from you
+    ### Provide your AWS details and get credentials
 
     <Steps>
       <Step title="Provide your AWS Account ID">
         Share your **12-digit AWS Account ID** with your RevenueBase onboarding contact. This is required so we can grant your account access to our S3 bucket.
 
         <Tip>You can find your AWS Account ID in the top-right dropdown of the AWS Console, or by running `aws sts get-caller-identity` in the AWS CLI.</Tip>
-      </Step>
-      <Step title="Confirm your preferred data format">
-        Let us know which file format you'd like for your deliveries:
-
-        - **CSV** — Best for spreadsheet tools, SQL imports, and lightweight pipelines
-        - **JSON** — Best for programmatic ingestion and nested data structures
-        - **Parquet** — Best for high-performance analytics and columnar query engines
       </Step>
       <Step title="Receive your access credentials">
         Once provisioned, we'll share your bucket details including:
@@ -59,9 +52,9 @@ To get started, we need a few details from your team depending on your chosen de
       </Step>
     </Steps>
 
-    ### Where to find your data
+    ### Find your data in the bucket
 
-    Your data lives in date-stamped folders within the S3 bucket. The path structure is:
+    RevenueBase supports dynamic feeds in three formats: **CSV**, **JSON**, and **Parquet**. When you get access to the data in S3, you get access to all three formats. For more on Parquet, see the <a href="https://parquet.apache.org/docs/" target="_blank" rel="noopener noreferrer">official Parquet documentation</a>. Your data lives in date-stamped folders within the S3 bucket. The path structure is:
 
     ```
     <delivery_date>/<dataset_name>/<file_format>/
@@ -80,7 +73,7 @@ To get started, we need a few details from your team depending on your chosen de
     {/* TODO: Add screenshot of S3 bucket folder structure showing date-stamped delivery folders */}
   </Tab>
   <Tab title="Snowflake">
-    ### What we need from you
+    ### Provide your Snowflake details and accept the share
 
     <Steps>
       <Step title="Provide your Snowflake account locator">
