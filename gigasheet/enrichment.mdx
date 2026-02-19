@@ -25,10 +25,20 @@ Use Gigasheet to upload your own list of people (for example, LinkedIn URLs) and
 
 ### Step 1: Create a RevenueBase sheet with your match column
 
-1. In Gigasheet, go to **RevenueBase** (via the data source or LinkedIn entry point) and click **Add New**.
-2. Create a **LinkedIn person URL** sheet (or the sheet type that matches your data — e.g., domain, email).
-3. Upload or paste your identifiers (LinkedIn URLs, domains, or emails) into that sheet.
-4. Open the sheet and confirm your data is loaded.
+<Steps>
+  <Step title="Add a new RevenueBase sheet">
+    In Gigasheet, go to **RevenueBase** (via the data source or LinkedIn entry point) and click **Add New**.
+  </Step>
+  <Step title="Choose sheet type">
+    Create a **LinkedIn person URL** sheet (or the sheet type that matches your data — e.g., domain, email).
+  </Step>
+  <Step title="Upload identifiers">
+    Upload or paste your identifiers (LinkedIn URLs, domains, or emails) into that sheet.
+  </Step>
+  <Step title="Confirm data">
+    Open the sheet and confirm your data is loaded.
+  </Step>
+</Steps>
 
 ### Step 2: Match your format to RevenueBase
 
@@ -41,13 +51,23 @@ Check a few rows in an existing RevenueBase sheet to see the exact pattern, then
 
 ### Step 3: Run Crossfile lookup
 
-1. Go to **Insert** → **Crossfile v Lookup**.
-2. Select the **column in your file** that you want to match (e.g., the column containing LinkedIn URLs).
-3. **Browse** to the RevenueBase file that contains the same identifier type.
-4. Choose the **match column** in the RevenueBase file (e.g., **LinkedIn URL Person**).
-5. Select **NearMatch** to allow for case or minor formatting differences.
-6. Choose **which columns to return** (e.g., full name, email, job title, company name, cell phone). You can select any columns available in the RevenueBase file.
-7. Click **Apply**.
+<Steps>
+  <Step title="Open Crossfile lookup">
+    Go to **Insert** → **Crossfile v Lookup**.
+  </Step>
+  <Step title="Select your match column">
+    Select the **column in your file** that you want to match (e.g., the column containing LinkedIn URLs).
+  </Step>
+  <Step title="Select the RevenueBase file">
+    **Browse** to the RevenueBase file that contains the same identifier type and choose the **match column** (e.g., **LinkedIn URL Person**).
+  </Step>
+  <Step title="Choose match and return options">
+    Select **NearMatch** to allow for case or minor formatting differences. Choose **which columns to return** (e.g., full name, email, job title, company name, cell phone). You can select any columns available in the RevenueBase file.
+  </Step>
+  <Step title="Apply">
+    Click **Apply** and wait for enrichment to complete.
+  </Step>
+</Steps>
 
 ### Step 4: Wait for enrichment to complete
 
@@ -58,8 +78,45 @@ Check a few rows in an existing RevenueBase sheet to see the exact pattern, then
 
 From the enriched sheet you can download the file, save it for later, or keep working in Gigasheet.
 
-## Tips
-
+<Tip>
 - Use **NearMatch** when your identifiers might differ slightly in case or formatting.
 - Any column visible in the RevenueBase file can be selected as a return value for enrichment.
 - Enrichment is useful for filling gaps in your CRM, verifying emails, or adding firmographic and contact data to prospect lists.
+</Tip>
+
+## How to enrich company target lists with people attributes
+
+This walkthrough shows how to upload a list of target company domains and find the right people within those organizations using Gigasheet and RevenueBase data.
+
+<div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/5717dfcb117f4f25b326d4b78661ebd6"
+    frameBorder="0"
+    allowFullScreen
+    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+  />
+</div>
+
+### Step-by-step summary
+
+<Steps>
+  <Step title="Upload your file">
+    In the Gigasheet navigation bar, go to **My Files** → **Add New** and upload an Excel/CSV file of domains (or other unique identifiers). Domains must match RevenueBase's formatting exactly — no `www.`, no `https://`, no trailing slashes (e.g., `aheadoftime.com`, not `www.aheadoftime.com`).
+  </Step>
+  <Step title="Open your RevenueBase file">
+    Go to **Shared with Me** in the Gigasheet navigation bar and select your RevenueBase data file.
+  </Step>
+  <Step title="Apply a Found in Sheet filter">
+    Click the **Filter** button, select the unique identifier you want to match on (e.g., **Organization Domain**), set the operator to **Found in Sheet**, and browse to select the file you just uploaded. Choose the matching column and click **Apply**.
+  </Step>
+  <Step title="Layer on additional filters">
+    Add filters for job titles, seniority, or other person-level attributes to narrow down to the exact personnel you need.
+  </Step>
+  <Step title="Export">
+    Once your audience is refined, export as needed.
+  </Step>
+</Steps>
+
+<Note>
+You can also match on other unique identifiers, such as Company Name + Headquarter Location (useful when multiple companies share a name), or Company LinkedIn URL.
+</Note>

@@ -1,0 +1,40 @@
+---
+title: "Integrations"
+sidebarTitle: "Integrations"
+description: "Push RevenueBase data from Gigasheet to HubSpot and other tools"
+---
+
+Send RevenueBase data from Gigasheet into your CRM or other systems.
+
+## HubSpot integration
+
+You can push RevenueBase data directly from Gigasheet into HubSpot — whether you want to update existing HubSpot records or add new ones.
+
+### How to push data to HubSpot
+
+<Steps>
+  <Step title="Create a segment">
+    In Gigasheet, create a segment (filtered view) of the data you want to push.
+  </Step>
+  <Step title="Save to HubSpot">
+    Go to **File** → **Save to** → **HubSpot**.
+  </Step>
+  <Step title="Connect HubSpot">
+    When prompted, sync your HubSpot API key and complete the connection.
+  </Step>
+  <Step title="Push data">
+    Once connected, data flows one-way out of Gigasheet into HubSpot.
+  </Step>
+</Steps>
+
+<Frame>
+  <img
+    src="/images/gigasheet-integrations-hubspot.png"
+    alt="Export to HubSpot dialog with overwrite behavior and options for marketing contacts and contact list"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
+
+<Warning>
+**Important:** Any data being pushed into HubSpot must include an email address, as that is how HubSpot creates contact records. This is true of any data provider pushing to HubSpot.
+</Warning>

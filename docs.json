@@ -105,6 +105,8 @@
             "group": "Search, filter & views",
             "pages": [
               "gigasheet/filtering",
+              "gigasheet/saved-views",
+              "gigasheet/grouping",
               "gigasheet/saving-views",
               "gigasheet/sharing-data"
             ]
@@ -115,6 +117,15 @@
               "gigasheet/exporting",
               "gigasheet/exporting-hubspot",
               "gigasheet/enrichment"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "gigasheet/monthly-updates",
+              "gigasheet/integrations",
+              "gigasheet/pricing",
+              "gigasheet/troubleshooting"
             ]
           }
         ]

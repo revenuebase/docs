@@ -21,13 +21,67 @@ Filter your RevenueBase data in Gigasheet to build targeted lists without writin
 
 ## How to filter
 
-1. Open your RevenueBase sheet in Gigasheet.
-2. Click the column header for the field you want to filter on (e.g., **Industry**, **Verification status**, **Employee count**).
-3. Choose **Filter** or the filter icon and set your conditions (e.g., Industry = Software, Verification status = valid).
-4. Apply multiple column filters to narrow results further. Clear filters as needed to reset the view.
+<Steps>
+  <Step title="Open your RevenueBase sheet">
+    Open your RevenueBase sheet in Gigasheet.
+  </Step>
+  <Step title="Choose a column to filter on">
+    Click the column header for the field you want to filter on (e.g., **Industry**, **Verification status**, **Employee count**).
+  </Step>
+  <Step title="Set filter conditions">
+    Choose **Filter** or the filter icon and set your conditions (e.g., Industry = Software, Verification status = valid).
+  </Step>
+  <Step title="Narrow or reset">
+    Apply multiple column filters to narrow results further. Clear filters as needed to reset the view.
+  </Step>
+</Steps>
 
+<Tip>
 Common filters for RevenueBase data include verification status, seniority, department, industry, employee count, and location.
+</Tip>
 
-<Note>
-Placeholder: Replace with your actual Gigasheet filtering UI and any RevenueBase-specific filter options.
-</Note>
+## Advanced filtering examples
+
+RevenueBase offers 150+ filters. The examples below show how to combine them for real-world use cases.
+
+### Example 1 — Finding SANS-certified cybersecurity teams worldwide
+
+**Use case:** Find all teams in the world that are SANS certified for cybersecurity.
+
+Use the **Filter** dialog to search **Certifications** or **Skills** for "SANS" (with **Contains**), and add a rule so **Email Address** is not empty so you only get contactable people. Connect the certification/skills rules with **or**, then **and** with the email rule.
+
+<Frame>
+  <img
+    src="/images/gigasheet-filter-sans-certified.png"
+    alt="Filter dialog showing Certifications and Skills containing SANS, and Email Address is not empty"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
+
+### Example 2 — Isolating B2B companies by excluding B2C keywords
+
+**Use case:** Filter for B2B companies by removing certain B2C keywords from results.
+
+Use **Does not contain** on **LinkedIn Company**, **LinkedIn Organization**, and **LinkedIn About Us** with B2C-oriented terms (e.g., entertainment, wishlist, consumer, membership, shopping, b2c). Combine with **or** so that any of these fields lacking those terms helps surface B2B companies. Then add **and** rules for employee count, funding type, job title, job level, and persona as needed.
+
+<Frame>
+  <img
+    src="/images/gigasheet-filter-b2b-exclude.png"
+    alt="Filter dialog excluding B2C keywords from company and about us fields"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
+
+### Example 3 — Mining for technologies not in RevenueBase's preset filters
+
+**Use case:** Find companies using a specific technology (e.g., Selenium) that isn't available as a preset filter — by mining current employees' job descriptions and other text fields.
+
+Use the **Filter** dialog with **Contains** on person-level text fields such as **Job Description**, **About Me**, **LinkedIn Headline**, and **Job Title**. Enter the technology name (e.g., "selenium") in each rule and connect them with **or** so a match in any field includes the row.
+
+<Frame>
+  <img
+    src="/images/gigasheet-filter-selenium.png"
+    alt="Filter dialog searching for Selenium across Job Description, About Me, LinkedIn Headline, and Job Title"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>

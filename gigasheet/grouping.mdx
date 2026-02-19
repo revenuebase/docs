@@ -1,0 +1,60 @@
+---
+title: "Grouping & aggregation"
+sidebarTitle: "Grouping & aggregation"
+description: "Group and aggregate RevenueBase data at company level in Gigasheet"
+---
+
+Roll up people-level records to the company level to count contacts per company, prioritize accounts, or layer analysis with nested groups.
+
+## Why grouping matters
+
+Gigasheet defaults to showing people-level records. But sometimes you need to see people rolled up to the company level — for example, to count how many matching contacts exist at each company, or to prioritize accounts.
+
+## How to group
+
+<Steps>
+  <Step title="Apply filters (optional)">
+    Apply any filters you need so the grouped view shows only the audience you care about.
+  </Step>
+  <Step title="Open Group and choose Company Name">
+    Click the **Group** button (next to the **Filter** button) and select **Company Name** to aggregate your results at a company level.
+  </Step>
+</Steps>
+
+<Frame>
+  <img
+    src="/images/gigasheet-group-company-name.png"
+    alt="Group dialog with Company Name selected; data grouped by company with record counts"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
+
+## Nested groups for territory planning, account prioritization & personalization at scale
+
+You can use nested groups to layer your analysis. For example, if you want to know which retail companies have the biggest e-commerce teams:
+
+<Steps>
+  <Step title="Run your filter query">
+    Find the relevant audience (e.g., retail and e-commerce companies in North America and Europe, with revenue and job title filters).
+  </Step>
+
+<Frame>
+  <img
+    src="/images/gigasheet-group-filter-retail.png"
+    alt="Filter dialog for retail and e-commerce with industry, keywords, location, revenue, and job title"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
+
+  <Step title="Group by company and nest by department">
+    Group by **Company Name** and add a nested level (e.g., e-commerce department) to see department size at every company and prioritize accordingly.
+  </Step>
+</Steps>
+
+<Frame>
+  <img
+    src="/images/gigasheet-group-nested.png"
+    alt="Group dialog with Company Name and Job Title as nested group levels"
+    style={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: '0.5rem' }}
+  />
+</Frame>
