@@ -26,8 +26,7 @@ To get started, provide a few details based on your chosen delivery method. Afte
         Once provisioned, we'll share your bucket details including:
 
         - **S3 bucket alias** (or ARN-based access point)
-        - **AWS region** for the bucket
-        - **Access credentials** (AWS Key / Secret)
+        - **AWS region** for the bucket (by default `eu-norht-1`)
 
         <Warning>Store your credentials securely. Do not commit them to version control or share them over unencrypted channels.</Warning>
       </Step>
@@ -37,7 +36,7 @@ To get started, provide a few details based on your chosen delivery method. Afte
         ```bash
         aws s3 ls s3://<your-bucket-alias>/<delivery_date>/  \
           --request-payer requester  \
-          --region <your-region>
+          --region <target-bucket-region>
         ```
 
         You can also access via ARN:
@@ -45,7 +44,7 @@ To get started, provide a few details based on your chosen delivery method. Afte
         ```bash
         aws s3 ls s3://arn:aws:s3:<region>:<account-id>:accesspoint/<access-point-name>/<delivery_date>/  \
           --request-payer requester  \
-          --region <your-region>
+          --region <target-bucket-region>
         ```
 
         <Info>Use the **AWS CLI** — not the AWS Console web UI — to access RevenueBase buckets. The Console does not support `--request-payer` and will return access errors.</Info>
@@ -92,7 +91,7 @@ To get started, provide a few details based on your chosen delivery method. Afte
 
         1. Open the **Snowflake Marketplace** (or **Data Sharing** in the left panel of the Snowflake UI)
         2. Find the RevenueBase listing or incoming share (e.g., `RELEASES_EXT_SHARE` or `RELEASES_RAW_SHARE`)
-        3. Click **Get** or **Get Data** to add the shared database to your account
+        3. Click **Get** or **Get Data** to add the shared database to your account (button at top right coner)
 
         This creates a new database called **RELEASES** in your Snowflake account containing the shared tables.
       </Step>

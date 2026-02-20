@@ -29,7 +29,7 @@ RevenueBase supports two ways to receive your feed:
     **S3:** Provide your 12-digit **AWS Account ID**. You get access to all three formats (CSV, JSON, Parquet) when access is provisioned. **Snowflake:** Provide your **Snowflake Account Locator**, region, and account URL. See <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank" rel="noopener noreferrer">Snowflake's account identifier documentation</a> for where to find this information. Contact your RevenueBase onboarding contact or **support@revenuebase.ai** to get started.
   </Step>
   <Step title="Get access">
-    **S3:** You’ll receive bucket alias (or ARN), region, and AWS credentials. **Snowflake:** We’ll add you to the marketplace listing; accept the share in the Snowflake Marketplace and add the **RELEASES** database to your account.
+    **S3:** You’ll receive bucket alias (or ARN), region. **Snowflake:** We’ll add you to the marketplace listing; accept the share in the Snowflake Marketplace and add the **RELEASES** database to your account.
   </Step>
   <Step title="Verify and query">
     **S3:** Use the AWS CLI with `--request-payer requester` to list your delivery folder (see [Data Feeds overview](/data-feeds/overview) for exact commands). **Snowflake:** Run a query such as `SELECT * FROM RELEASES.RELEASE.PER_LATEST LIMIT 100;`

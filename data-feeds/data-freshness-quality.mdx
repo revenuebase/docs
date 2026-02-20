@@ -7,13 +7,13 @@ RevenueBase continuously verifies and refreshes its dataset, but no B2B data sou
 
 ## How verification works
 
-A record is "re-verified" when the source profile was accessible and we confirmed or updated at least the core profile information — name, current title, company association, and location. This is distinct from simply checking that a URL resolves. Verification means we read the profile content and either confirmed it matches our existing record or updated our record to reflect changes.
+A record is "re-verified" when the source profile was accessible and we confirmed or updated core profile information — name and location, plus other core fields when available. This is distinct from simply checking that a URL resolves. Verification means we read the profile content and either confirmed it matches our existing record or updated our record to reflect changes.
 
 Two verification cycles run in parallel:
 
-**Profile verification** — 95% of all profiles are re-verified every **90 days**. The `updated_at` field on each record reflects when this last occurred. If a profile's `updated_at` is more than 90 days old, it typically means the source was temporarily inaccessible during the most recent verification cycle (see [why records become stale](#why-records-become-stale) below).
+**Profile verification** — 95% of all profiles are re-verified every **90 days**. The `updated_at` field on each record reflects when this last occurred. It indicates core profile verification, not guaranteed refresh of every section. Work experience can be hidden by source platforms and may not refresh in a given cycle. If a profile's `updated_at` is more than 90 days old, it typically means the source was temporarily inaccessible during the most recent verification cycle (see [why records become stale](#why-records-become-stale) below).
 
-**Email verification** — All email addresses are re-verified every **60 days**, independent of profile verification. The `email_last_verified_at` field reflects when this last occurred. Email verification checks deliverability — whether the address accepts mail — not just whether it has valid syntax.
+**Email verification** — at least 97% are re-verified every **60 days**, independent of profile verification. The `email_last_verified_at` field reflects when this last occurred. Email verification checks deliverability — whether the address accepts mail — not just whether it has valid syntax.
 
 The charts below pull from live data in our system.
 
@@ -69,7 +69,7 @@ Every record ships with fields that let you evaluate freshness and reliability p
 
 | Field | What it tells you | Quality signal |
 | --- | --- | --- |
-| `updated_at` | When the full profile was last verified against the source | Records verified within 90 days are within normal cycle. Older records may have accessibility issues. |
+| `updated_at` | When core profile information was last verified against the source (name, location, and other core fields when available) | Records verified within 90 days are within normal cycle. This does not guarantee every section (such as experience) was refreshed. Older records may have accessibility issues. |
 | `email_last_verified_at` | When the email address was last checked for deliverability | Recent email verification (within 60 days) is a strong indicator the record is current. |
 | `revenuebase_contact_verification_summary` | Machine-readable summary of verification status across all contact fields | Use this for programmatic quality filtering. See [Verification Summaries](/data-feeds/verification-summaries) for schema details. |
 
