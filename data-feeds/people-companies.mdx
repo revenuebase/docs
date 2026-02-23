@@ -8,15 +8,9 @@ The `people_companies` view combines every contact record with its associated co
 
 ## What's included
 
-This view is equivalent to:
+This pre-joined table combines person and company data. No joins needed — query directly from the table.
 
-```sql
-SELECT c.*, co.*
-FROM contacts c
-LEFT JOIN companies co ON c.company_id = co.company_id
-```
-
-Every contact field plus every company field, joined for you.
+Every person field plus every company field, already joined for you.
 
 {/* TODO: Fill in actual numbers */}
 
@@ -37,10 +31,9 @@ Every contact field plus every company field, joined for you.
 | `contact_id` | VARCHAR | 100% | Unique contact identifier |
 | `first_name` | VARCHAR | _TODO_% | First name |
 | `last_name` | VARCHAR | _TODO_% | Last name |
-| `email` | VARCHAR | _TODO_% | Primary email address |
-| `email_verified` | BOOLEAN | _TODO_% | Whether the email passed verification |
-| `verification_status` | VARCHAR | _TODO_% | `valid`, `invalid`, `catch_all`, `unknown`, `disposable` |
-| `last_verified_at` | TIMESTAMP | _TODO_% | When the email was last verified |
+| `EMAIL_ADDRESS` | VARCHAR | _TODO_% | Primary email address (all emails in dataset are verified as valid) |
+| `EMAIL_STATUS` | VARCHAR | _TODO_% | `VALID` (all emails in dataset are verified as valid) |
+| `EMAIL_LAST_VERIFIED_AT` | TIMESTAMP | _TODO_% | When the email was last verified |
 | `title` | VARCHAR | _TODO_% | Job title |
 | `seniority_level` | VARCHAR | _TODO_% | `c_suite`, `vp`, `director`, `manager`, `senior`, `entry` |
 | `department` | VARCHAR | _TODO_% | Functional department |
@@ -81,22 +74,20 @@ Every contact field plus every company field, joined for you.
 
 ```sql
 SELECT
-    first_name,
-    last_name,
-    email,
-    title,
-    company_name,
-    industry,
-    employee_count,
-    hq_state
-FROM people_companies
-WHERE email_verified = TRUE
-  AND verification_status = 'valid'
-  AND seniority_level IN ('vp', 'director', 'c_suite')
-  AND industry = 'Software'
-  AND employee_count BETWEEN 100 AND 1000
-  AND hq_country = 'US'
-ORDER BY last_verified_at DESC
+    FIRST_NAME,
+    LAST_NAME,
+    EMAIL_ADDRESS,
+    JOB_TITLE,
+    COMPANY_NAME_ORG,
+    LINKEDIN_INDUSTRY_ORG,
+    EMPLOYEE_COUNT_MAX_ORG,
+    HEADQUARTERS_STATE_NAME_ORG
+FROM RELEASES.RELEASE.VELOCITY_BASE_UNLIMITED_LATEST
+WHERE JOB_LEVEL IN ('VP', 'Director', 'C-Suite')
+  AND LINKEDIN_INDUSTRY_ORG LIKE '%Software%'
+  AND EMPLOYEE_COUNT_MAX_ORG BETWEEN 100 AND 1000
+  AND HEADQUARTERS_COUNTRY_NAME_ORG = 'United States'
+ORDER BY EMAIL_LAST_VERIFIED_AT DESC
 LIMIT 500;
 ```
 
@@ -104,21 +95,20 @@ LIMIT 500;
 
 ```sql
 SELECT
-    first_name,
-    last_name,
-    email,
-    title,
-    company_name,
-    employee_range,
-    industry,
-    hq_city,
-    hq_state
-FROM people_companies
-WHERE email_verified = TRUE
-  AND department = 'marketing'
-  AND employee_count >= 200
-  AND last_verified_at >= DATEADD(day, -30, CURRENT_DATE())
-ORDER BY company_name, last_name;
+    FIRST_NAME,
+    LAST_NAME,
+    EMAIL_ADDRESS,
+    JOB_TITLE,
+    COMPANY_NAME_ORG,
+    EMPLOYEE_COUNT_RANGE_ORG,
+    LINKEDIN_INDUSTRY_ORG,
+    HEADQUARTERS_CITY_ORG,
+    HEADQUARTERS_STATE_NAME_ORG
+FROM RELEASES.RELEASE.VELOCITY_BASE_UNLIMITED_LATEST
+WHERE JOB_FUNCTION = 'Marketing'
+  AND EMPLOYEE_COUNT_MAX_ORG >= 200
+  AND EMAIL_LAST_VERIFIED_AT >= DATEADD(day, -30, CURRENT_DATE())
+ORDER BY COMPANY_NAME_ORG, LAST_NAME;
 ```
 
 {/* TODO: Update table name and column names to match your actual schema */}

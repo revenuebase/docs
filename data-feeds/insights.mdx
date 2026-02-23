@@ -4,7 +4,7 @@ sidebarTitle: "Insights"
 description: "Insight data — technographics, hiring indicators, funding events, and engagement signals."
 ---
 
-The `insights` table contains insight data and derived intelligence about companies and contacts. Use it to prioritize accounts based on buying signals, identify companies going through growth or change, and layer intent-like signals into your targeting. Insights can be company-level (`contact_id` is null) or contact-level (`contact_id` is set).
+The `insights` table contains insight data and derived intelligence about companies. Use it to prioritize accounts based on buying signals, identify companies going through growth or change, and layer intent-like signals into your targeting. All insights are company-level only.
 
 ## Where the data comes from
 
@@ -12,7 +12,7 @@ Insights are derived from multiple sources: technographic data from website and 
 
 ## Counts and coverage
 
-Insight record count depends on your subscription and which products (e.g. technographics, hiring, funding) are enabled. Not every company or contact has insights; fill rates are highest for companies with a clear web presence and for venture-backed companies (funding). Use the fill-rate query below to see coverage for your dataset.
+Insight record count depends on your subscription and which products (e.g. technographics, hiring, funding) are enabled. Not every company has insights; fill rates are highest for companies with a clear web presence and for venture-backed companies (funding). Use the fill-rate query below to see coverage for your dataset.
 
 ## Table stats
 
@@ -20,8 +20,8 @@ Insight record count depends on your subscription and which products (e.g. techn
 |--------|-------|
 | **Total records** | Varies by subscription; one row per insight event or snapshot |
 | **Update frequency** | Monthly (aligned with contacts and companies release) |
-| **Primary key** | `insight_id` |
-| **Main foreign keys** | `company_id` → `companies.company_id`, `contact_id` → `contacts.contact_id` (optional) |
+| **Primary key** | `RBID_ORG` |
+| **Main foreign key** | `RBID_ORG` → `org.RBID` |
 
 ## Data dictionary & fill rates
 
@@ -29,106 +29,144 @@ Fill rates vary significantly by insight type. Technographic data is available f
 
 ### Identifiers
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `insight_id` | VARCHAR | 100% | Unique identifier for this insight record |
-| `company_id` | VARCHAR | _TODO_% | Foreign key to `companies` table |
-| `contact_id` | VARCHAR | _TODO_% | Foreign key to `contacts` table (NULL for company-level insights) |
-| `insight_type` | VARCHAR | _TODO_% | Category: `technographic`, `hiring`, `funding`, `growth`, `engagement` |
-
-<Info>When **contact_id** is null, the insight applies to the **company** (e.g. “company uses Snowflake”). When **contact_id** is set, the insight applies to that **contact** (e.g. “contact engaged with X”). Filter or join accordingly to avoid double-counting or mixing company- and contact-level signals.</Info>
+| Field | Description | Example |
+| --- | --- | --- |
+| `RBID_ORG` | RevenueBase's unique identifier for a company | rb-oab75n3pe |
 
 ### Technographic signals
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `technologies_detected` | ARRAY | _TODO_% | List of technologies detected on the company's website/stack |
-| `tech_category` | VARCHAR | _TODO_% | Technology category (e.g., `CRM`, `marketing_automation`, `analytics`) |
-| `tech_added_date` | DATE | _TODO_% | When the technology was first detected |
-| `tech_removed_date` | DATE | _TODO_% | When the technology was last detected (NULL if still active) |
-
-<Warning>**technologies_detected** is a nested/array field. Use your warehouse’s array functions to filter (e.g. `ARRAY_CONTAINS`, `LIST_CONTAINS`, or unnest). Syntax varies by platform (Snowflake, BigQuery, Redshift).</Warning>
+| Field | Description | Example |
+| --- | --- | --- |
+| `ABM_TECH_ORG` | There is evidence of particular activity based management technologies in use | 6Sense;Demandbase;Uberflip;Terminus;Engagio;Triblio |
+| `ANALYTICS_TECH_ORG` | There is evidence of particular analytics technologies in use | Tableau;Power BI;Segment;Looker;Qlik |
+| `APPLICATION_SECURITY_TECH_ORG` | There is evidence of particular application security technologies in use | Synopsys;Checkmarx;Snyk;Veracode;Semgrep |
+| `CLOUD_PROVIDER_TECH_ORG` | There is evidence of particular cloud providers in use | AWS;Google Cloud;Microsoft Azure;IBM Cloud;Oracle Cloud;Alibaba |
+| `CLOUD_SECURITY_TECH_ORG` | There is evidence of particular cloud security technologies in use | Datadog;Wiz;Sysdig;Lacework |
+| `CMS_TECH_ORG` | There is evidence of particular content management systems in use | Hubspot;Wordpress;Wix;Squarspace;Drupal;Optimizely;Contentful;Adobe Experience Manager;Sitecore;sanity;Prismic;Adobe CQ;Strapi;Episerver |
+| `CONVERSATION_INTELLIGENCE_TECH_ORG` | There is evidence of particular conversation intelligence technologies in use | Chorus;Gong;Aircall;Clari;Dialpad |
+| `CRM_TECH_ORG` | There is evidence of particular customer relationship management technologies in use | Salesforce CRM;Hubspot;Microsoft Dynamics;Zoho;Pipedrive CRM;SugarCRM |
+| `DEVELOPMENT_TECH_ORG` | There is evidence of particular development technologies in use | MongoDB;PostgreSQL;Couchbase;Neo4j:TigerGraph |
+| `E_COMMERCE_PLATFORM_TECH_ORG` | There is evidence of particular e-commerce platform technologies used | WooCommerce;BigCommerce; Shopify;Saleforce Commerce Cloud;Oracle Commerce |
+| `EMAIL_HOSTING_TECH_ORG` | There is evidence of particular email hosting providers in use | Google;Microsoft |
+| `EMAIL_SECURITY_TECH_ORG` | There is evidence of particular email security technologies in use | Mimecast;Symantec;Proofpoint;Fortinet;Microsoft Defender;Barracuda |
+| `ERP_TECH_ORG` | There is evidence of particular ERP technologies in use | SAP ecc;SAP s/4hana;Infor Cloudsuite Industrial |
+| `MARKETING_AUTOMATION_TECH_ORG` | There is evidence of particular Marketing Automation technologies in use | Mailchimp;Hubspot;Klaviyo;Pardot;Marketo;Salesforce Marketing Cloud |
+| `MARTECH_CATEGORIES_ORG` | G2 martech sub-category | eCommerce Platforms & Carts;Live Chat & Chatbots;Display & Programmatic Advertising;Native/Content Advertising;Business/Customer Intelligence & Data Science |
+| `SALES_AUTOMATION_TECH_ORG` | There is evidence of particular sales automation technologies in use | Salesloft;Outreach;Yesware;Apollo |
+| `HAS_WEB_APP_ORG` | If the business maintains a web application | Yes |
+| `HAS_MOBILE_APP_ORG` | If the business has either a Google or Apple mobile app available | Yes |
 
 ### Hiring signals
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `is_hiring` | BOOLEAN | _TODO_% | Whether the company currently has open roles |
-| `open_roles_count` | INTEGER | _TODO_% | Number of open job postings |
-| `hiring_departments` | ARRAY | _TODO_% | Departments with open roles (e.g. `['engineering', 'sales']`) |
-| `headcount_growth_6m` | FLOAT | _TODO_% | Headcount growth rate over the last 6 months (e.g. 0.15 = 15%) |
-| `headcount_growth_12m` | FLOAT | _TODO_% | Headcount growth rate over the last 12 months |
+| Field | Description | Example |
+| --- | --- | --- |
+| `ACCOUNT_EXECUTIVE_OPEN_ROLES_COUNT_ORG` | Number of open job postings for account executives positions at the organization | 1 |
+| `BUSINESS_DEVELOPMENT_OPEN_ROLES_COUNT_ORG` | Number of open job postings for business development positions at the organization | 350 |
+| `BUSINESS_DEVELOPMENT_ROLE_COUNT_ORG` | Number of people with business development titles associated with the organization | 662 |
+| `CUSTOMER_SUCCESS_OPEN_ROLES_COUNT_ORG` | Number of open job postings for customer success positions at the organization | 2 |
+| `CUSTOMER_SUCCESS_ROLE_COUNT_ORG` | Number of people with customer success titles associated with the organization | 29 |
+| `DEMAND_GENERATION_OPEN_ROLES_COUNT_ORG` | Number of open job postings for demand generation positions at the organization | 1 |
+| `DEVOPS_OPEN_ROLES_COUNT_ORG` | Number of open job postings for development operations positions at the organization | 5 |
+| `DEVOPS_ROLE_COUNT_ORG` | Number of people with development operations titles associated with the organization | 14 |
+| `ENGINEER_ROLE_COUNT_ORG` | Number of people with engineering titles associated with the organization | 26 |
+| `GRC_OPEN_ROLES_COUNT_ORG` | Number of open job postings for governance, risk, and compliance positions at the organization | 450 |
+| `GRC_ROLE_COUNT_ORG` | Number of people with governance, risk, and compliance titles associated with the organization | 3477 |
+| `IOS_DEV_ROLE_COUNT_ORG` | Number of people with IOS developer titles associated with the organization | 589 |
+| `IT_OPEN_ROLES_COUNT_ORG` | Number of open job postings for information technology positions at the organization | 2 |
+| `IT_ROLE_COUNT_ORG` | Number of people with information technology titles associated with the organization | 476 |
+| `MARKETING_OPEN_ROLES_COUNT_ORG` | Number of open job postings for marketing positions at the organization | 1 |
+| `MARKETING_ROLE_COUNT_ORG` | Number of people with marketing titles associated with the organization | 3 |
+| `MOBILE_DEV_ROLE_COUNT_ORG` | Number of people with mobile developer titles associated with the organization | 1 |
+| `NETWORK_INFRASTRUCTURE_OPEN_ROLES_COUNT_ORG` | Number of open job postings for network infrastructure positions at the organization | 6 |
+| `NETWORK_INFRASTRUCTURE_ROLE_COUNT_ORG` | Number of people with network infrastructure titles associated with the organization | 32 |
+| `OPERATIONS_OPEN_ROLES_COUNT_ORG` | Number of open job postings for operations positions at the organization | 324 |
+| `OPERATIONS_ROLE_COUNT_ORG` | Number of people with operations titles associated with the organization | 1 |
+| `QA_ROLE_COUNT_ORG` | Number of people with quality assurance titles associated with the organization | 18 |
+| `SALES_OPEN_ROLES_COUNT_ORG` | Number of open job postings for sales positions at the organization | 6 |
+| `SALES_ROLE_COUNT_ORG` | Number of people with sales titles associated with the organization | 4 |
+| `SECURITY_OPEN_ROLES_COUNT_ORG` | Number of open job postings for security positions at the organization | 500 |
+| `SECURITY_ROLE_COUNT_ORG` | Number of people with security titles associated with the organization | 6 |
+| `ANDROID_DEV_ROLE_COUNT_ORG` | Number of people with Android developer titles associated with the organization | 467 |
+| `HAS_CIO_ORG` | If the business has a chief information officer | Yes |
+| `HAS_CISO_ORG` | If the business has a chief information security officer | Yes |
 
 ### Funding & financial signals
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `recent_funding` | BOOLEAN | _TODO_% | Whether the company raised funding in the last 12 months |
-| `funding_round_type` | VARCHAR | _TODO_% | Most recent round: `seed`, `series_a`, `series_b`, `series_c`, `growth`, `other` |
-| `funding_amount` | FLOAT | _TODO_% | Amount raised in the most recent round (USD) |
-| `funding_date` | DATE | _TODO_% | Date of the most recent funding round |
-| `total_funding` | FLOAT | _TODO_% | Total funding raised to date (USD) |
+| Field | Description | Example |
+| --- | --- | --- |
+| `FUNDING_ROUND_NUMBER_OF_INVESTORS_ORG` | If the business received funding, the last known number of investors | 2 |
+| `LAST_FUNDING_AMOUNT_ORG` | If the organization received funding, the last funding amount | 15400000 |
+| `LAST_FUNDING_DATE_ORG` | If the organization received funding, the last funding date | 2022-09-22 |
+| `LAST_FUNDING_TYPE_ORG` | If the business received funding, the last funding type | Post-IPO Equity |
+| `LEAD_INVESTORS_ORG` | If the business received funding, the last set of lead investors | Exact Sciences |
+| `TOTAL_FUNDING_AMOUNT_ORG` | If the organization received funding, the total amount of funding to date | 175500000 |
+| `MONTHLY_GOOGLE_ADSPEND_ORG` | Estimated monthly Google Ads budget | 1370 |
 
 ### Growth indicators
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `web_traffic_trend` | VARCHAR | _TODO_% | Website traffic trend: `growing`, `stable`, `declining` |
-| `web_traffic_rank` | INTEGER | _TODO_% | Relative traffic rank (lower = more traffic) |
-| `social_presence_score` | FLOAT | _TODO_% | Composite social media presence score (0–100) |
-| `news_mentions_30d` | INTEGER | _TODO_% | Number of news mentions in the last 30 days |
+| Field | Description | Example |
+| --- | --- | --- |
+| `EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG` | Percentage of latest month's employee growth rate as a percentage. | 4 |
+| `MONTHLY_ORGANIC_TRAFFIC_ORG` | Estimated monthly search result clicks | 4943 |
+| `MONTHLY_PAID_TRAFFIC_ORG` | Estimated monthly pay per click number | 372 |
+| `TOTAL_MONTHLY_TRAFFIC_ORG` | Estimated monthly web traffic | 5315 |
+| `TOTAL_REVIEWS_ORG` | Total reviews of the two top applications from Google and Apple. | 1373 |
 
 ### Metadata
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `observed_at` | TIMESTAMP | 100% | When this insight was captured |
-| `created_at` | TIMESTAMP | 100% | When this record was first added |
-| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
-
-<Warning>**Fill rates vary significantly by insight type.** Technographic data is available for companies with a web presence. Funding data is primarily available for venture-backed companies. Hiring signals depend on whether the company posts jobs publicly.</Warning>
+| Field | Description | Example |
+| --- | --- | --- |
+| `LAST_APPSTORE_UPDATE_ORG` | The date of the last update to this particular application | 2021-12-24 |
+| `LAST_PLAYSTORE_UPDATE_ORG` | The last date of an update to the most frequently downloaded application | 2023-11-09 |
+| `APPSTORE_UPDATE_COUNT_ORG` | The number of updates to this top application | 8 |
+| `APPSTORE_APP_CATEGORY_ORG` | The applestore classification of this application | Sports |
+| `TOP_APPLEAPPSTORE_URL_ORG` | The latest apple store app for the organization. Where there are multiple latest apps, the 'top' app is the one with the most updates and the highest rating | https://apps.apple.com/ng/app/id1541201440 |
+| `TOP_APPSTORE_RATING_ORG` | The rating of the top apple store app for the organization | 4.5 |
+| `TOP_APPSTORE_REVIEW_COUNT_ORG` | The total reviews for the organizations' top apple store application | 35 |
+| `PLAYSTORE_APP_CATEGORY_ORG` | The playstore classification of this application | Finance |
+| `PLAYSTORE_DOWNLOAD_COUNT_ORG` | The total number of downloads for this application | 272740 |
+| `TOP_PLAYSTORE_URL_ORG` | The most frequently downloaded playstore app for the organization | https://play.google.com/store/apps/details?id=com.todo1.davivienda.mobileapp.hn&hl=es_419 |
+| `TOP_PLAYSTORE_RATING_ORG` | The latest rating of the playstore app with the most downloads | 3.6 |
+| `TOP_PLAYSTORE_REVIEW_COUNT_ORG` | The total of reviews for the most highly downloaded application | 1291 |
 
 ## Joining this table
 
-Join **insights** to **companies** on `company_id` to attach firmographics, and optionally to **contacts** on `contact_id` when you have contact-level insights. Use `contact_id IS NULL` when you want only company-level insights.
+Join **INSIGHTS_LATEST** to **ORG_LATEST** on `RBID_ORG = RBID` to attach firmographics. To get insights for contacts, join **PER_LATEST** to **INSIGHTS_LATEST** on `per.RBID_ORG = insights.RBID_ORG`.
 
 ### Insights + companies (signals with firmographics)
 
 ```sql
 SELECT
-    co.company_name,
-    co.domain,
-    co.industry,
-    co.employee_count,
-    i.insight_type,
-    i.technologies_detected,
-    i.is_hiring,
-    i.headcount_growth_6m,
-    i.recent_funding
-FROM insights i
-JOIN companies co ON i.company_id = co.company_id
-WHERE i.contact_id IS NULL   -- company-level insights only
-  AND co.employee_count BETWEEN 50 AND 500
-  AND i.observed_at >= DATEADD(month, -3, CURRENT_DATE());
+    co.COMPANY_NAME,
+    co.DOMAIN,
+    co.INDUSTRY_LINKEDIN,
+    co.EMPLOYEE_COUNT_MAX,
+    i.CRM_TECH_ORG,
+    i.SALES_ROLE_COUNT_ORG,
+    i.HAS_CIO_ORG,
+    i.EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG,
+    i.LAST_FUNDING_AMOUNT_ORG
+FROM RELEASES.RELEASE.INSIGHTS_LATEST i
+JOIN RELEASES.RELEASE.ORG_LATEST co ON i.RBID_ORG = co.RBID
+WHERE co.EMPLOYEE_COUNT_MAX BETWEEN 50 AND 500;
 ```
 
-### Insights + contacts + companies (contact-level signals with full context)
+### Insights + contacts + companies (company-level insights with contact context)
 
 ```sql
 SELECT
-    c.first_name,
-    c.last_name,
-    c.email,
-    c.title,
-    co.company_name,
-    co.domain,
-    i.insight_type,
-    i.observed_at
-FROM insights i
-JOIN contacts c ON i.contact_id = c.contact_id
-JOIN companies co ON c.company_id = co.company_id
-WHERE i.insight_type = 'engagement'
-ORDER BY i.observed_at DESC;
+    c.FIRST_NAME,
+    c.LAST_NAME,
+    c.EMAIL_ADDRESS,
+    c.JOB_TITLE,
+    co.COMPANY_NAME,
+    co.DOMAIN,
+    i.CRM_TECH_ORG,
+    i.SALES_ROLE_COUNT_ORG
+FROM RELEASES.RELEASE.PER_LATEST c
+JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
+JOIN RELEASES.RELEASE.INSIGHTS_LATEST i ON c.RBID_ORG = i.RBID_ORG
+ORDER BY i.LAST_FUNDING_DATE_ORG DESC;
 ```
 
 ## How to calculate fill rates
@@ -137,15 +175,12 @@ Use this pattern to see how many records have each insight type and how complete
 
 ```sql
 SELECT
-    insight_type,
     COUNT(*) AS record_count,
-    ROUND(COUNT(technologies_detected) * 100.0 / COUNT(*), 1) AS tech_fill_pct,
-    ROUND(COUNT(is_hiring) * 100.0 / COUNT(*), 1) AS hiring_fill_pct,
-    ROUND(COUNT(recent_funding) * 100.0 / COUNT(*), 1) AS funding_fill_pct,
-    ROUND(COUNT(headcount_growth_6m) * 100.0 / COUNT(*), 1) AS growth_fill_pct
-FROM insights
-WHERE contact_id IS NULL
-GROUP BY insight_type;
+    ROUND(COUNT(CRM_TECH_ORG) * 100.0 / COUNT(*), 1) AS tech_fill_pct,
+    ROUND(COUNT(SALES_ROLE_COUNT_ORG) * 100.0 / COUNT(*), 1) AS hiring_fill_pct,
+    ROUND(COUNT(LAST_FUNDING_AMOUNT_ORG) * 100.0 / COUNT(*), 1) AS funding_fill_pct,
+    ROUND(COUNT(EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG) * 100.0 / COUNT(*), 1) AS growth_fill_pct
+FROM RELEASES.RELEASE.INSIGHTS_LATEST;
 ```
 
 ## Sample queries
@@ -156,24 +191,23 @@ GROUP BY insight_type;
 
 **Why these fields:** `headcount_growth_6m` and `is_hiring` are the main growth signals. We join to **companies** to filter by size (`employee_count`) and to get `company_name` and `domain`. `recent_funding` and `funding_round_type` add optional context for prioritization.
 
-**Logic:** Restrict to company-level insights, require meaningful headcount growth and hiring, and limit to a mid-market size band. Order by growth rate so the hottest accounts are first.
+**Logic:** Require meaningful headcount growth and hiring, and limit to a mid-market size band. Order by growth rate so the hottest accounts are first.
 
 ```sql
 SELECT
-    co.company_name,
-    co.domain,
-    co.employee_count,
-    i.headcount_growth_6m,
-    i.open_roles_count,
-    i.recent_funding,
-    i.funding_round_type
-FROM insights i
-JOIN companies co ON i.company_id = co.company_id
-WHERE i.contact_id IS NULL
-  AND i.headcount_growth_6m > 0.20
-  AND i.is_hiring = TRUE
-  AND co.employee_count BETWEEN 50 AND 500
-ORDER BY i.headcount_growth_6m DESC;
+    co.COMPANY_NAME,
+    co.DOMAIN,
+    co.EMPLOYEE_COUNT_MAX,
+    i.EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG,
+    i.SALES_OPEN_ROLES_COUNT_ORG,
+    i.LAST_FUNDING_AMOUNT_ORG,
+    i.LAST_FUNDING_TYPE_ORG
+FROM RELEASES.RELEASE.INSIGHTS_LATEST i
+JOIN RELEASES.RELEASE.ORG_LATEST co ON i.RBID_ORG = co.RBID
+WHERE i.EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG > 20
+  AND i.SALES_OPEN_ROLES_COUNT_ORG > 0
+  AND co.EMPLOYEE_COUNT_MAX BETWEEN 50 AND 500
+ORDER BY i.EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG DESC;
 ```
 
 ### Companies that recently adopted a specific technology
@@ -186,17 +220,16 @@ ORDER BY i.headcount_growth_6m DESC;
 
 ```sql
 SELECT
-    co.company_name,
-    co.domain,
-    i.technologies_detected,
-    i.tech_added_date
-FROM insights i
-JOIN companies co ON i.company_id = co.company_id
-WHERE i.contact_id IS NULL
-  AND i.insight_type = 'technographic'
-  AND ARRAY_CONTAINS('Snowflake'::VARIANT, i.technologies_detected)   -- Snowflake syntax; adjust for your warehouse
-  AND i.tech_added_date >= DATEADD(month, -6, CURRENT_DATE())
-ORDER BY i.tech_added_date DESC;
+    co.COMPANY_NAME,
+    co.DOMAIN,
+    i.CRM_TECH_ORG,
+    i.DEVELOPMENT_TECH_ORG,
+    i.LAST_FUNDING_DATE_ORG
+FROM RELEASES.RELEASE.INSIGHTS_LATEST i
+JOIN RELEASES.RELEASE.ORG_LATEST co ON i.RBID_ORG = co.RBID
+WHERE i.DEVELOPMENT_TECH_ORG LIKE '%Snowflake%'
+  AND i.LAST_FUNDING_DATE_ORG >= DATEADD(month, -6, CURRENT_DATE())
+ORDER BY i.LAST_FUNDING_DATE_ORG DESC;
 ```
 
 <Tip>Array containment syntax varies: Snowflake often uses `ARRAY_CONTAINS(value, array)` or `array IN (SELECT value FROM table)`. BigQuery uses `value IN UNNEST(array)`. Check your warehouse docs and adjust the filter accordingly.</Tip>

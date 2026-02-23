@@ -149,15 +149,6 @@ Your RevenueBase subscription includes access to the following tables, depending
 
 The core contact-level table. Each row represents a person at a specific organization.
 
-| Field | Description |
-| ----- | ----------- |
-| `RBID_PER` | Unique person identifier. Follows the person across job changes. |
-| `RBID_ORG` | Unique organization identifier. |
-| `RBID_PAO` | Unique person-at-organization identifier (`RBID_PER` + `RBID_ORG`). Changes when a person moves to a new company. |
-| `updated_at` | Date the profile was last verified by RevenueBase. |
-| `email_last_verified_at` | Date the email address was last verified. |
-| `country_code_per` | ISO country code for the person's location (e.g., `GB`, `US`). |
-
 <Info>If someone holds multiple current positions, they will have **multiple rows** in the person table — each with a unique `RBID_PAO` but sharing the same `RBID_PER`.</Info>
 
 <Note>`RBID_ORG` and `RBID_PAO` may be missing if the person's LinkedIn profile does not link to a company page. This occurs because the company name field on LinkedIn is free text — people can enter anything and may skip linking to an existing company page.</Note>
@@ -173,15 +164,6 @@ See [Contacts](/data-feeds/contacts) for the full field reference.
 ### [Organization table](/data-feeds/companies) (`org`)
 
 Company-level data including firmographics, technographics, and company metadata.
-
-| Field | Description |
-| ----- | ----------- |
-| `RBID_ORG` | Unique organization identifier. Joins to the person table. |
-| `headquarters_country_name_org` | Country where the company is headquartered (e.g., `United Kingdom`). |
-| `linkedin_url_org` | LinkedIn company page URL. |
-| `claimed_page` | Whether the LinkedIn company page appears to be claimed/active. |
-
-<Note>Claimed page detection checks for custom logos, website addresses, company size, and descriptions. This method is not 100% accurate — some well-populated pages may still appear unclaimed. We're actively improving this feature.</Note>
 
 **Snowflake path:** `RELEASES.RELEASE.ORG_LATEST`
 
@@ -207,22 +189,21 @@ The unprocessed, full-fidelity data feed for advanced use cases and custom pipel
 
 Pre-joined tables combine multiple core tables so you can query people, companies, and optionally insights in a single view without writing joins.
 
-<AccordionGroup>
-  <Accordion title="People and companies">
-    Pre-joined table containing people and company data in one view.
+#### People and companies
 
-    **Snowflake path:** `RELEASES.RELEASE.VELOCITY_BASE_UNLIMITED_LATEST`
+Pre-joined table containing people and company data in one view.
 
-    **S3 path:** `<delivery_date>/velocity_base_unlimited/<format>/`
-  </Accordion>
-  <Accordion title="People, companies, and insights">
-    Pre-joined table containing people, company, and insight data in one view.
+**Snowflake path:** `RELEASES.RELEASE.VELOCITY_BASE_UNLIMITED_LATEST`
 
-    **Snowflake path:** `RELEASES.RELEASE.VELOCITY_ENHANCED_UNLIMITED_LATEST`
+**S3 path:** `<delivery_date>/velocity_base_unlimited/<format>/`
 
-    **S3 path:** `<delivery_date>/velocity_enhanced_unlimited/<format>/`
-  </Accordion>
-</AccordionGroup>
+#### People, companies, and insights
+
+Pre-joined table containing people, company, and insight data in one view.
+
+**Snowflake path:** `RELEASES.RELEASE.VELOCITY_ENHANCED_UNLIMITED_LATEST`
+
+**S3 path:** `<delivery_date>/velocity_enhanced_unlimited/<format>/`
 
 ---
 

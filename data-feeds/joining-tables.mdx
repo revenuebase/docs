@@ -9,7 +9,7 @@ This page explains how RevenueBase data feed tables relate to each other, which 
 
 - **Companies** is the primary entity table for organizations.
 - **Contacts** (people) reference Companies via a foreign key (e.g., `company_id`).
-- **Insights** and **Historical Experience** can reference Contacts and/or Companies.
+- **Insights** reference Companies only (company-level insights).
 
 Document each relationship on the relevant table pages and summarize here.
 
@@ -17,10 +17,9 @@ Document each relationship on the relevant table pages and summarize here.
 
 | From table | To table   | Join key                        | Relationship   |
 | ---------- | ---------- | ------------------------------- | -------------- |
-| Contacts   | Companies  | `contacts.company_id = companies.id` | Many-to-one   |
-| Insights   | Contacts   | `insights.contact_id = contacts.id`   | Many-to-one   |
-| Insights   | Companies  | `insights.company_id = companies.id`  | Many-to-one   |
-| Historical Experience | Contacts   | `historical_experience.contact_id = contacts.id` | Many-to-one   |
+| Contacts   | Companies  | `per.RBID_ORG = org.RBID` | Many-to-one   |
+| Insights   | Companies  | `insights.RBID_ORG = org.RBID`  | Many-to-one   |
+| Contacts   | Insights   | `per.RBID_ORG = insights.RBID_ORG`   | Many-to-one   |
 
 Use these keys in your `JOIN` conditions. Column names may differ in your real schema; adjust accordingly.
 
@@ -29,25 +28,25 @@ Use these keys in your `JOIN` conditions. Column names may differ in your real s
 **Contacts to Companies (many-to-one):**
 
 ```sql
-SELECT c.id, c.email, co.name AS company_name
-FROM contacts c
-JOIN companies co ON co.id = c.company_id;
+SELECT c.RBID_PER, c.EMAIL_ADDRESS, co.COMPANY_NAME
+FROM RELEASES.RELEASE.PER_LATEST c
+JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID;
 ```
 
 **Include company rows with no contacts (LEFT JOIN):**
 
 ```sql
-SELECT co.name, c.email
-FROM companies co
-LEFT JOIN contacts c ON c.company_id = co.id;
+SELECT co.COMPANY_NAME, c.EMAIL_ADDRESS
+FROM RELEASES.RELEASE.ORG_LATEST co
+LEFT JOIN RELEASES.RELEASE.PER_LATEST c ON c.RBID_ORG = co.RBID;
 ```
 
-**Contacts with Insights:**
+**Contacts with Insights (company-level insights):**
 
 ```sql
-SELECT c.email, i.insight_type, i.value
-FROM contacts c
-JOIN insights i ON i.contact_id = c.id;
+SELECT c.EMAIL_ADDRESS, i.CRM_TECH_ORG, i.SALES_ROLE_COUNT_ORG
+FROM RELEASES.RELEASE.PER_LATEST c
+JOIN RELEASES.RELEASE.INSIGHTS_LATEST i ON c.RBID_ORG = i.RBID_ORG;
 ```
 
 ### Gotchas and best practices

@@ -95,14 +95,13 @@ Use it to see when experience and email were last verified and when the next ver
 
 ### Recommended quality filters
 
-For **high-confidence outbound** (email campaigns, direct outreach): filter to records where `email_last_verified_at` is within the last 60 days and email status is valid.
+For **high-confidence outbound** (email campaigns, direct outreach): filter to records where `email_last_verified_at` is within the last 60 days. All emails in the dataset are verified as valid.
 
 ```sql
--- High-confidence outbound: recently verified, deliverable emails only
+-- High-confidence outbound: recently verified emails (all emails in dataset are valid)
 SELECT *
-FROM RELEASES.RELEASE.PER_LATEST  -- or your person/contacts table
-WHERE verification_status = 'valid'
-  AND email_last_verified_at >= DATEADD(day, -60, CURRENT_DATE());
+FROM RELEASES.RELEASE.PER_LATEST
+WHERE EMAIL_LAST_VERIFIED_AT >= DATEADD(day, -60, CURRENT_DATE());
 ```
 
 For **enrichment and analytics** (market sizing, account scoring): the full dataset is appropriate, but weight records by recency — `updated_at` within 90 days should receive higher confidence than older records.
@@ -111,12 +110,12 @@ For **enrichment and analytics** (market sizing, account scoring): the full data
 -- Enrichment/analytics: weight by profile freshness (higher confidence for recent verification)
 SELECT *,
        CASE
-         WHEN updated_at >= DATEADD(day, -90, CURRENT_DATE()) THEN 1.0
-         WHEN updated_at >= DATEADD(day, -180, CURRENT_DATE()) THEN 0.7
+         WHEN UPDATED_AT >= DATEADD(day, -90, CURRENT_DATE()) THEN 1.0
+         WHEN UPDATED_AT >= DATEADD(day, -180, CURRENT_DATE()) THEN 0.7
          ELSE 0.5
        END AS freshness_score
-FROM RELEASES.RELEASE.PER_LATEST  -- or your person/contacts table
-ORDER BY updated_at DESC;
+FROM RELEASES.RELEASE.PER_LATEST
+ORDER BY UPDATED_AT DESC;
 ```
 
 For **AI agent pipelines**: pass the `revenuebase_contact_verification_summary` and `email_last_verified_at` fields to your agent so it can make programmatic decisions about whether to act on a record or flag it for review.
@@ -125,12 +124,12 @@ For **AI agent pipelines**: pass the `revenuebase_contact_verification_summary` 
 -- AI agent pipelines: include verification context for programmatic quality decisions
 SELECT
   RBID_PER,
-  email_address,
-  email_last_verified_at,
-  revenuebase_contact_verification_summary,
-  updated_at
-FROM RELEASES.RELEASE.PER_LATEST  -- or your person/contacts table
-WHERE email_last_verified_at IS NOT NULL;
+  EMAIL_ADDRESS,
+  EMAIL_LAST_VERIFIED_AT,
+  REVENUEBASE_CONTACT_VERIFICATION_SUMMARY,
+  UPDATED_AT
+FROM RELEASES.RELEASE.PER_LATEST
+WHERE EMAIL_LAST_VERIFIED_AT IS NOT NULL;
 ```
 
 ## Sparse profiles and data quality
@@ -139,7 +138,7 @@ Some profiles in the dataset contain minimal information — a name and company 
 
 **The strongest indicator that a person genuinely belongs to an organization is a valid company email address.** If a profile is sparse but has a verified email at the company domain, the association is reliable. If a sparse profile has no verified email, treat the association with lower confidence.
 
-When building segments or powering outbound, filtering on email verification status is the most effective way to exclude low-quality records without losing legitimate contacts who simply have minimal public profiles.
+When building segments or powering outbound, all emails in the dataset are verified as valid. Use `EMAIL_LAST_VERIFIED_AT` to prioritize recently verified addresses for the highest confidence.
 
 ## Related
 

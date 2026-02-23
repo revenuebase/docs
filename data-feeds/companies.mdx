@@ -29,8 +29,8 @@ The map below shows current company counts by country. Use it to understand cove
 |--------|-------|
 | **Total records** | See map above; updated with each release |
 | **Update frequency** | Monthly (new delivery on the 1st of each month) |
-| **Primary key** | `company_id` |
-| **Main foreign key** | `contacts.company_id` and `insights.company_id` join here |
+| **Primary key** | `RBID` |
+| **Main foreign key** | `contacts.rbid_org` and `insights.rbid_org` join here |
 
 ## Data dictionary & fill rates
 
@@ -38,126 +38,125 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 
 ### Identifiers
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `company_id` | VARCHAR | 100% | Unique RevenueBase identifier for the company |
-| `domain` | VARCHAR | _TODO_% | Primary web domain (e.g., `acme.com`) |
-| `linkedin_url` | VARCHAR | _TODO_% | Company LinkedIn page URL |
-| `crunchbase_url` | VARCHAR | _TODO_% | Crunchbase profile URL |
-| `ticker` | VARCHAR | _TODO_% | Stock ticker symbol (public companies only) |
+| Field | Description | Example |
+| --- | --- | --- |
+| `RBID` | RevenueBase's unique identifier for a company. The same value is placed in a field RBID_ORG of people dataset | rb-oacksydgz |
+| `DOMAIN` | Doman of the company's website | fsiservices.com |
+| `WEBSITE` | Company URL | https://www.fsiservices.com |
+| `LINKEDIN_URL` | LinkedIn URL for the company | https://www.linkedin.com/company/champify-data |
+| `LINKEDIN_URL_ID` | LinkedIn unique identified for the company | 76647045 |
 
 ### Company basics
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `company_name` | VARCHAR | _TODO_% | Legal or common company name |
-| `description` | TEXT | _TODO_% | Short company description |
-| `founded_year` | INTEGER | _TODO_% | Year the company was founded |
-| `company_type` | VARCHAR | _TODO_% | `public`, `private`, `nonprofit`, `government`, `education` |
-| `website` | VARCHAR | _TODO_% | Full website URL |
-| `logo_url` | VARCHAR | _TODO_% | URL to company logo image |
+| Field | Description | Example |
+| --- | --- | --- |
+| `COMPANY_NAME` | Name of the organization | Dell Technologies |
+| `COMPANY_NAME_LANGUAGE` | The language  the name of the organization is written | en |
+| `ABOUT_US` | Description of the company | Upstream Fullvision is a full service design firm in Honolulu Hawaii. Specializing in homes and small business design, 3D rendering/virtual tour, graphic design and beyond. Upstream Fullvision will provide the best service to turn your concept into reality. |
+| `COMPANY_ENTITY_TYPE` | Legal entity type of the company | Privately Held |
+| `COMPANY_LEGAL_TYPE` | Legal type of the company | [   ""Corporation"" ] |
+| `FOUNDED` | Year of the company's founding | 1997 |
+| `PHONE` | Contact phone number for the company | +1 972-577-0000 |
+| `IS_LINKEDIN_URL_CLAIMED` | Indicates if the LinkedIN URL IS claimed by the company | TRUE |
+| `IS_WEBSITE_FOR_SALE` | Indicates if the website is listed for sale | FALSE |
 
 ### Industry & classification
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `industry` | VARCHAR | _TODO_% | Primary industry (e.g., `Software`, `Financial Services`) |
-| `sub_industry` | VARCHAR | _TODO_% | Sub-industry or vertical |
-| `sic_code` | VARCHAR | _TODO_% | Standard Industrial Classification code |
-| `naics_code` | VARCHAR | _TODO_% | North American Industry Classification code |
-| `sector` | VARCHAR | _TODO_% | High-level sector grouping |
+| Field | Description | Example |
+| --- | --- | --- |
+| `INDUSTRY_LINKEDIN` | Industry description from LinkedIn | [   ""Software Development"" ] |
+| `INDUSTRY_NAICS_CODE` | NAICS Code | [   ""484121"",   ""541512"",   ""541511"",   ""561499"" ] |
+| `INDUSTRY_NAICS_DESCRIPTION` | NAICS Description | [   ""General Freight Trucking, Long-Distance, Truckload"",   ""Computer Systems Design Services"",   ""Custom Computer Programming Services"",   ""All Other Business Support Services"" ] |
+| `INDUSTRY_SIC_CODE` | Standard Industrial Classification code | [   ""7373"" ] |
+| `INDUSTRY_SIC_DESCRIPTION` | Standard Industrial classification description  | [   ""Computer systems design"" ] |
 
 ### Size & financials
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `employee_count` | INTEGER | _TODO_% | Estimated number of employees |
-| `employee_range` | VARCHAR | _TODO_% | Bucketed range: `1-10`, `11-50`, `51-200`, `201-500`, `501-1000`, `1001-5000`, `5001-10000`, `10000+` |
-| `revenue_estimate` | FLOAT | _TODO_% | Estimated annual revenue in USD |
-| `revenue_range` | VARCHAR | _TODO_% | Bucketed range: `$0-1M`, `$1-10M`, `$10-50M`, `$50-100M`, `$100-500M`, `$500M-1B`, `$1B+` |
-| `funding_total` | FLOAT | _TODO_% | Total known funding raised (USD) |
-| `last_funding_round` | VARCHAR | _TODO_% | Most recent funding round type (e.g., `Series B`) |
-| `last_funding_date` | DATE | _TODO_% | Date of most recent funding round |
+| Field | Description | Example |
+| --- | --- | --- |
+| `EMPLOYEE_COUNT_MIN` | Minimum number of employees | 5001 |
+| `EMPLOYEE_COUNT_MAX` | Maximum number of employees | 10000 |
+| `EMPLOYEE_COUNT_RANGE` | Range of employee count | 5001 to 10000 |
+| `EMPLOYEE_PROFILES_ON_LINKEDIN` | Number of employee profiles in LinkedIn | 7196 |
+| `REVENUE_MIN` | Minimum revenue of the company | 1000000 |
+| `REVENUE_MAX` | Maximum revenue of the company | 9999999 |
+| `REVENUE_RANGE` | Range of the company's revenue | $50M to &lt;$100M |
 
-<Info>Use **employee_range** when you need stable buckets for segmentation or reporting; use **employee_count** when you need numeric filters (e.g. `BETWEEN 100 AND 500`). Both refer to the same underlying estimate.</Info>
+### Addresses
 
-### Addresses (headquarters)
+| Field | Description | Example |
+| --- | --- | --- |
+| `LOCATION_STREET` | Street address of the company location | 2440 Sand Hill Rd 300 |
+| `LOCATION_CITY` | City where the company is located | New York |
+| `LOCATION_STATE_NAME` | State name of the company location  | California |
+| `LOCATION_STATE_CODE` | State code of the company location  | CA |
+| `LOCATION_POSTCODE` | Postal code of the company location  | 94612 |
+| `LOCATION_COUNTRY_NAME` | Country name of the company location | United States |
+| `LOCATION_COUNTRY_CODE` | Country code of the location | US |
+| `LOCATION_COUNTRY_REGION` | Region of the company location | NORAM |
+| `LOCATION_CONTINENT` | Continent of the company location | North America |
+| `LOCATION_IS_PRIMARY` | Indicates if the location is the primary one  | TRUE |
+| `LOCATION_COUNT` | Number of locations associated with the company | 1 |
+| `HEADQUARTERS_CITY` | City where the company HQ is located | New York |
+| `HEADQUARTERS_STATE_NAME` | State where the company HQ is located | NY |
+| `HEADQUARTERS_COUNTRY_NAME` | Country where the company HQ is located | United States |
 
-Headquarters address fields describe the **company’s primary office location**. Use them for territory assignment, regional targeting, compliance, or direct mail.
-
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `hq_street` | VARCHAR | _TODO_% | Street address (number and street name) |
-| `hq_city` | VARCHAR | _TODO_% | City |
-| `hq_state` | VARCHAR | _TODO_% | State or province |
-| `hq_zip` | VARCHAR | _TODO_% | Postal or ZIP code |
-| `hq_country` | VARCHAR | _TODO_% | Country (ISO 2-letter code) |
-| `hq_country_name` | VARCHAR | _TODO_% | Country (full name) |
-| `hq_region` | VARCHAR | _TODO_% | Geographic region (e.g., `North America`, `EMEA`) |
-
-<Tip>**hq_street** is useful for direct mail and enrichment; **hq_city**, **hq_state**, and **hq_country** are the most commonly filled and are best for regional filters. **hq_region** is derived and useful for high-level territory reporting.</Tip>
+<Note>
+**Location vs. Headquarters:** For small companies, location and HQ fields may point to the same address. For companies with multiple branches, the `LOCATION_*` fields represent one of the locations listed on the company's LinkedIn page, while `HEADQUARTERS_*` fields are derived from the headquarters information on the LinkedIn company page.
+</Note>
 
 ### Technology
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `tech_stack` | ARRAY | _TODO_% | Detected technologies used by the company |
-| `primary_language` | VARCHAR | _TODO_% | Primary programming language (tech companies) |
-| `cloud_provider` | VARCHAR | _TODO_% | Primary cloud provider: `aws`, `azure`, `gcp`, `other` |
-
-<Warning>**tech_stack** is a nested/array field. In SQL, use your warehouse’s array functions to filter (e.g. `ARRAY_CONTAINS`, `LIST_CONTAINS`, or unnest and join). Syntax varies by platform (Snowflake, BigQuery, Redshift).</Warning>
+| Field | Description | Example |
+| --- | --- | --- |
+| `SPECIALTIES` | Specialties or key areas of focus of the company | [   ""technology"",   ""education and implementation"",   ""data synchornization"",   ""product data management"",   ""advisory services"",   ""innovation"",   ""data quality analytics"" ] |
+| `LINKEDIN_FOLLOWERS` | Number of LinkedIn followers for the company | 2039 |
 
 ### Metadata
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `created_at` | TIMESTAMP | 100% | When this record was first added to RevenueBase |
-| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
-| `data_source` | VARCHAR | _TODO_% | Primary data source for this record |
-
-<Warning>**Fill rates are approximate** and vary by segment. US-based and public companies tend to have higher fill rates for revenue, funding, and industry. International and private companies may have lower fill rates on financials.</Warning>
+| Field | Description | Example |
+| --- | --- | --- |
+| `RBID` | RevenueBase internal key for cross-table joins | rb-oacksydgz |
 
 ## Joining this table
 
-Join **companies** to **contacts** on `company_id` to attach firmographics to people. Join to **insights** on `company_id` to attach buying signals and technographics.
+Join **ORG_LATEST** to **PER_LATEST** on `RBID = RBID_ORG` to attach firmographics to people. Join to **INSIGHTS_LATEST** on `RBID = RBID_ORG` to attach buying signals and technographics.
 
 ### Companies + contacts (accounts with decision-makers)
 
 ```sql
 SELECT
-    co.company_id,
-    co.company_name,
-    co.domain,
-    co.industry,
-    co.employee_count,
-    COUNT(c.contact_id) AS contact_count
-FROM companies co
-JOIN contacts c ON c.company_id = co.company_id
-WHERE co.industry = 'Software'
-  AND co.employee_count BETWEEN 50 AND 500
-  AND c.email_verified = TRUE
-GROUP BY co.company_id, co.company_name, co.domain, co.industry, co.employee_count
-HAVING COUNT(c.contact_id) >= 1;
+    co.RBID,
+    co.COMPANY_NAME,
+    co.DOMAIN,
+    co.INDUSTRY_LINKEDIN,
+    co.EMPLOYEE_COUNT_MAX,
+    COUNT(c.RBID_PER) AS contact_count
+FROM RELEASES.RELEASE.ORG_LATEST co
+JOIN RELEASES.RELEASE.PER_LATEST c ON c.RBID_ORG = co.RBID
+WHERE co.INDUSTRY_LINKEDIN LIKE '%Software%'
+  AND co.EMPLOYEE_COUNT_MAX BETWEEN 50 AND 500
+GROUP BY co.RBID, co.COMPANY_NAME, co.DOMAIN, co.INDUSTRY_LINKEDIN, co.EMPLOYEE_COUNT_MAX
+HAVING COUNT(c.RBID_PER) >= 1;
 ```
 
 ### Companies + insights (firmographics + signals)
 
 ```sql
 SELECT
-    co.company_name,
-    co.domain,
-    co.industry,
-    co.employee_count,
-    i.insight_type,
-    i.technologies_detected,
-    i.is_hiring,
-    i.recent_funding
-FROM companies co
-LEFT JOIN insights i ON co.company_id = i.company_id AND i.contact_id IS NULL
-WHERE co.employee_count BETWEEN 100 AND 1000;
+    co.COMPANY_NAME,
+    co.DOMAIN,
+    co.INDUSTRY_LINKEDIN,
+    co.EMPLOYEE_COUNT_MAX,
+    i.CRM_TECH_ORG,
+    i.SALES_ROLE_COUNT_ORG,
+    i.HAS_CIO_ORG,
+    i.LAST_FUNDING_AMOUNT_ORG
+FROM RELEASES.RELEASE.ORG_LATEST co
+LEFT JOIN RELEASES.RELEASE.INSIGHTS_LATEST i ON co.RBID = i.RBID_ORG
+WHERE co.EMPLOYEE_COUNT_MAX BETWEEN 100 AND 1000;
 ```
 
-<Note>Filter insights with `contact_id IS NULL` when you want company-level signals only; otherwise you may get multiple rows per company (one per contact-level insight).</Note>
 
 ## How to calculate fill rates
 
@@ -166,12 +165,12 @@ Use this pattern to compute fill rates for any field or segment. Replace the sam
 ```sql
 SELECT
     COUNT(*) AS total_records,
-    ROUND(COUNT(domain) * 100.0 / COUNT(*), 1) AS domain_fill_pct,
-    ROUND(COUNT(industry) * 100.0 / COUNT(*), 1) AS industry_fill_pct,
-    ROUND(COUNT(employee_count) * 100.0 / COUNT(*), 1) AS employee_count_fill_pct,
-    ROUND(COUNT(revenue_estimate) * 100.0 / COUNT(*), 1) AS revenue_fill_pct,
-    ROUND(COUNT(hq_country) * 100.0 / COUNT(*), 1) AS hq_country_fill_pct
-FROM companies;
+    ROUND(COUNT(DOMAIN) * 100.0 / COUNT(*), 1) AS domain_fill_pct,
+    ROUND(COUNT(INDUSTRY_LINKEDIN) * 100.0 / COUNT(*), 1) AS industry_fill_pct,
+    ROUND(COUNT(EMPLOYEE_COUNT_MAX) * 100.0 / COUNT(*), 1) AS employee_count_fill_pct,
+    ROUND(COUNT(REVENUE_MAX) * 100.0 / COUNT(*), 1) AS revenue_fill_pct,
+    ROUND(COUNT(HEADQUARTERS_COUNTRY_NAME) * 100.0 / COUNT(*), 1) AS hq_country_fill_pct
+FROM RELEASES.RELEASE.ORG_LATEST;
 ```
 
 ## Sample queries
@@ -186,19 +185,19 @@ FROM companies;
 
 ```sql
 SELECT
-    company_name,
-    domain,
-    industry,
-    employee_count,
-    revenue_range,
-    hq_city,
-    hq_state
-FROM companies
-WHERE industry IN ('Software', 'Information Technology')
-  AND employee_count BETWEEN 50 AND 500
-  AND hq_country = 'US'
-  AND revenue_range IN ('$10-50M', '$50-100M')
-ORDER BY employee_count DESC;
+    COMPANY_NAME,
+    DOMAIN,
+    INDUSTRY_LINKEDIN,
+    EMPLOYEE_COUNT_MAX,
+    REVENUE_RANGE,
+    HEADQUARTERS_CITY,
+    HEADQUARTERS_STATE_NAME
+FROM RELEASES.RELEASE.ORG_LATEST
+WHERE INDUSTRY_LINKEDIN LIKE '%Software%' OR INDUSTRY_LINKEDIN LIKE '%Information Technology%'
+  AND EMPLOYEE_COUNT_MAX BETWEEN 50 AND 500
+  AND HEADQUARTERS_COUNTRY_NAME = 'United States'
+  AND REVENUE_RANGE IN ('$10-50M', '$50-100M')
+ORDER BY EMPLOYEE_COUNT_MAX DESC;
 ```
 
 ### Check fill rates for a segment
@@ -210,11 +209,11 @@ ORDER BY employee_count DESC;
 ```sql
 SELECT
     COUNT(*) AS total_records,
-    ROUND(COUNT(domain) * 100.0 / COUNT(*), 1) AS domain_fill_pct,
-    ROUND(COUNT(industry) * 100.0 / COUNT(*), 1) AS industry_fill_pct,
-    ROUND(COUNT(employee_count) * 100.0 / COUNT(*), 1) AS employee_count_fill_pct,
-    ROUND(COUNT(revenue_estimate) * 100.0 / COUNT(*), 1) AS revenue_fill_pct
-FROM companies
-WHERE hq_country = 'US'
-  AND industry = 'Software';
+    ROUND(COUNT(DOMAIN) * 100.0 / COUNT(*), 1) AS domain_fill_pct,
+    ROUND(COUNT(INDUSTRY_LINKEDIN) * 100.0 / COUNT(*), 1) AS industry_fill_pct,
+    ROUND(COUNT(EMPLOYEE_COUNT_MAX) * 100.0 / COUNT(*), 1) AS employee_count_fill_pct,
+    ROUND(COUNT(REVENUE_MAX) * 100.0 / COUNT(*), 1) AS revenue_fill_pct
+FROM RELEASES.RELEASE.ORG_LATEST
+WHERE HEADQUARTERS_COUNTRY_NAME = 'United States'
+  AND INDUSTRY_LINKEDIN LIKE '%Software%';
 ```

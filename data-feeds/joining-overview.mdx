@@ -41,18 +41,18 @@ The most common join — enriching contacts with their company's firmographic da
 
 ```sql
 SELECT
-    c.first_name,
-    c.last_name,
-    c.email,
-    c.title,
-    co.company_name,
-    co.industry,
-    co.employee_count,
-    co.city,
-    co.state
-FROM contacts c
-LEFT JOIN companies co ON c.company_id = co.company_id
-WHERE c.email_verified = TRUE;
+    c.FIRST_NAME,
+    c.LAST_NAME,
+    c.EMAIL_ADDRESS,
+    c.JOB_TITLE,
+    co.COMPANY_NAME,
+    co.INDUSTRY_LINKEDIN,
+    co.EMPLOYEE_COUNT_MAX,
+    co.LOCATION_CITY,
+    co.LOCATION_STATE_NAME
+FROM RELEASES.RELEASE.PER_LATEST c
+LEFT JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
+WHERE c.EMAIL_ADDRESS IS NOT NULL;
 ```
 
 {/* TODO: Update column names to match your schema */}
@@ -65,16 +65,12 @@ WHERE c.email_verified = TRUE;
 
 ```sql
 SELECT
-    c.first_name,
-    c.last_name,
-    e.email_address,
-    e.verification_status,
-    e.last_verified_at,
-    e.bounce_risk
-FROM contacts c
-JOIN emails e ON c.contact_id = e.contact_id
-WHERE e.is_primary = TRUE
-  AND e.verification_status = 'valid';
+    c.FIRST_NAME,
+    c.LAST_NAME,
+    c.EMAIL_ADDRESS,
+    c.EMAIL_LAST_VERIFIED_AT
+FROM RELEASES.RELEASE.PER_LATEST c
+WHERE c.EMAIL_ADDRESS IS NOT NULL;
 ```
 
 {/* TODO: Update column names */}
@@ -83,20 +79,19 @@ WHERE e.is_primary = TRUE
 
 ```sql
 SELECT
-    c.first_name,
-    c.last_name,
-    c.title,
-    co.company_name,
-    co.industry,
-    co.employee_count,
-    e.email_address,
-    e.verification_status,
-    e.last_verified_at
-FROM contacts c
-LEFT JOIN companies co ON c.company_id = co.company_id
-LEFT JOIN emails e ON c.contact_id = e.contact_id AND e.is_primary = TRUE
-WHERE e.verification_status = 'valid'
-ORDER BY e.last_verified_at DESC;
+    c.FIRST_NAME,
+    c.LAST_NAME,
+    c.JOB_TITLE,
+    co.COMPANY_NAME,
+    co.INDUSTRY_LINKEDIN,
+    co.EMPLOYEE_COUNT_MAX,
+    c.EMAIL_ADDRESS,
+    c.EMAIL_STATUS,
+    c.EMAIL_LAST_VERIFIED_AT
+FROM RELEASES.RELEASE.PER_LATEST c
+LEFT JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
+WHERE c.EMAIL_ADDRESS IS NOT NULL
+ORDER BY c.EMAIL_LAST_VERIFIED_AT DESC;
 ```
 
 {/* TODO: Update column names */}
@@ -114,7 +109,7 @@ ORDER BY e.last_verified_at DESC;
 </Accordion>
 
 <Accordion title="Performance on large joins">
-  When joining across large tables, always include filter conditions (`WHERE` clauses) to reduce the working set before the join. Filtering on `email_verified`, `last_verified_at`, or `industry` early will significantly speed up queries.
+  When joining across large tables, always include filter conditions (`WHERE` clauses) to reduce the working set before the join. Filtering on `EMAIL_LAST_VERIFIED_AT` or `INDUSTRY_LINKEDIN` early will significantly speed up queries.
 </Accordion>
 
 <Accordion title="TODO: Add more gotchas">
@@ -129,12 +124,12 @@ You can also join RevenueBase tables with your own internal data in Snowflake. T
 -- Match your account list against RevenueBase companies by domain
 SELECT
     your_accounts.account_name,
-    co.company_name,
-    co.employee_count,
-    co.industry
+    co.COMPANY_NAME,
+    co.EMPLOYEE_COUNT_MAX,
+    co.INDUSTRY_LINKEDIN
 FROM your_database.your_schema.accounts your_accounts
-JOIN revenuebase.core.companies co
-  ON LOWER(your_accounts.website_domain) = LOWER(co.domain);
+JOIN RELEASES.RELEASE.ORG_LATEST co
+  ON LOWER(your_accounts.website_domain) = LOWER(co.DOMAIN);
 ```
 
 {/* TODO: Update schema/database names and column names */}

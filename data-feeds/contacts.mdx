@@ -8,7 +8,7 @@ The `contacts` table contains individual person records with professional contac
 
 ## Where the data comes from
 
-Contact records are built from professional profiles, public sources, and verified email and phone data. RevenueBase continuously verifies email deliverability via SMTP checks and re-verifies addresses on a regular cadence. Titles, seniority, and department are normalized from raw job titles so you can filter and segment consistently.
+Contact records are built from professional profiles, public sources, and verified email and phone data. RevenueBase continuously verifies email deliverability using its internal email verification system and re-verifies addresses on a regular cadence. Titles, seniority, and department are normalized from raw job titles so you can filter and segment consistently.
 
 ## Contact counts by region
 
@@ -29,8 +29,8 @@ The map below shows current contact counts by country. Use it to understand cove
 |--------|-------|
 | **Total records** | See map above; updated with each release |
 | **Update frequency** | Monthly (new delivery on the 1st of each month) |
-| **Primary key** | `contact_id` |
-| **Main foreign key** | `company_id` → `companies.company_id` |
+| **Primary key** | `RBID_PAO` |
+| **Main foreign key** | `RBID_ORG` → `COMPANIES.RBID` |
 
 ## Data dictionary & fill rates
 
@@ -38,127 +38,126 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 
 ### Identifiers
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `contact_id` | VARCHAR | 100% | Unique RevenueBase identifier for this contact |
-| `company_id` | VARCHAR | _TODO_% | Foreign key to `companies` table |
-| `linkedin_url` | VARCHAR | _TODO_% | Personal LinkedIn profile URL |
+| Field | Description | Example |
+| --- | --- | --- |
+| `RBID` | RevenueBase's unique identification for the person. The RBID stays the same if someone changes their job. | rb-pabq6o2xf |
+| `RBID_ORG` | RevenueBase's unique identifier for a company | rb-oab75n3pe |
+| `RBID_PAO` | RevenueBase's unique identifier for the person at a specific company. | Revenue Base Internal field |
+| `LINKEDIN_URL` | The person's linkedin URL | https://www.linkedin.com/in/simon%c3%a9-burger-ca-sa-0a3a13158 |
 
 ### Name & demographics
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `first_name` | VARCHAR | _TODO_% | First name |
-| `last_name` | VARCHAR | _TODO_% | Last name |
-| `full_name` | VARCHAR | _TODO_% | Combined full name |
-| `gender` | VARCHAR | _TODO_% | Inferred gender: `male`, `female`, `unknown` |
+| Field | Description | Example |
+| --- | --- | --- |
+| `FIRST_NAME` | The person's first name | Marc |
+| `MIDDLE_NAME` | The person's middle name | F. |
+| `LAST_NAME` | The person's last name | Rojas |
+| `FULL_NAME` | The person's full name | Kathryn E. Gibson |
+| `TITLE_NAME` | The person's name prefix | Dr. |
+| `SUFFIX_NAME` | The person's name suffix | Ph. D |
+| `LINKEDIN_HEADLINE` | The person's Linkedin headline | Sales Executive, Rapid Diagnostics, Abbott |
+| `ABOUT_ME` | Linkedin personal profile about me field | Experienced Transportation Security Officer with a demonstrated history of working in the government administration industry. Skilled in Negotiation, Team Building, Public Speaking, Management, and Marketing. Strong military and protective services professional with a Doctor of Philosophy - PhD focused in Public Service Leadership Emergency Management from Capella University. |
 
 ### Professional info
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `title` | VARCHAR | _TODO_% | Current job title |
-| `seniority_level` | VARCHAR | _TODO_% | Normalized seniority: `c_suite`, `vp`, `director`, `manager`, `senior`, `entry`, `other` |
-| `department` | VARCHAR | _TODO_% | Functional department: `engineering`, `sales`, `marketing`, `finance`, `hr`, `operations`, `legal`, `other` |
-| `title_role` | VARCHAR | _TODO_% | Normalized role from title (e.g., `ceo`, `cto`, `vp_sales`, `sdr`) |
+| Field | Description | Example |
+| --- | --- | --- |
+| `JOB_TITLE` | The person's current job title | Senior Technical Consultant |
+| `JOB_LEVEL` | The seniority level of the person's job | Manager |
+| `JOB_FUNCTION` | The department that the person works in. | Information Technology |
+| `PERSONA` | Classification of person job type by several business areas | Sales Engineer/Solution Architect, Information Technology |
+| `JOB_DESCRIPTION` | The description of the person's current job | Financial analysts,tax analysts,account payable |
+| `JOB_IS_CURRENT` | Indicates whether the job is currently active | TRUE |
+| `JOB_START_DATE` | When the person began their job | 2013-01-01 00:00:00 |
+| `JOB_COUNT` | The number of jobs a person has had | 4 |
+| `LINKEDIN_INDUSTRY` | The Linkedin industry associated with the person's employer | Information Technology & Services |
 
 ### Contact information
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `email` | VARCHAR | _TODO_% | Primary professional email address |
-| `email_verified` | BOOLEAN | _TODO_% | Whether the email has passed verification |
-| `verification_status` | VARCHAR | _TODO_% | Detailed status: `valid`, `invalid`, `catch_all`, `unknown`, `disposable` |
-| `last_verified_at` | TIMESTAMP | _TODO_% | When the email was most recently verified |
-| `bounce_risk` | VARCHAR | _TODO_% | Deliverability risk: `low`, `medium`, `high` |
-| `direct_phone` | VARCHAR | _TODO_% | Direct dial phone number |
-| `mobile_phone` | VARCHAR | _TODO_% | Mobile phone number |
+| Field | Description | Example |
+| --- | --- | --- |
+| `EMAIL_ADDRESS` | The person's work email address | kcollins@fortmckaygroup.com |
+| `EMAIL_DOMAIN` | The domain of the person's work email address | fortmckaygroup.com |
+| `EMAIL_STATUS` | The verification status of the email. If an email exists in the dataset, it has been verified as valid. | VALID |
+| `EMAIL_LAST_VERIFIED_AT` | The contact's email last verified timestamp. Timestamp specifically designed to indicate last revalidation of email at RevenueBase side | 2013-01-01 00:00:00 |
+| `DIRECT_PHONE` | The direct office contact number | +1 612-876-4679 |
+| `CELLPHONE` | Mobile phone number | +1 352-359-7618 |
 
 ### Addresses (contact location)
 
-Contact-level address fields describe the **person’s location**, which may differ from their company’s headquarters. Use them for regional targeting, territory assignment, or compliance (e.g. not contacting certain jurisdictions).
+| Field | Description | Example |
+| --- | --- | --- |
+| `CITY` | The city where the person lives | Lexington |
+| `STATE_NAME` | The state/province/region of the country that the person is located in | District of Columbia |
+| `STATE_CODE` | The abbreviation of the state/province/region of the country that the person is located in | DC |
+| `COUNTRY_NAME` | The name of the country the person is located in | United States |
+| `COUNTRY_CODE` | The code for the country the person is located in | US |
+| `COUNTRY_REGION` | The global region that the person is located in | NORAM |
+| `CONTINENT` | The continent that the person is located in | North America |
+| `JOB_LOCATION_CITY` | The city in where the person works | New York |
+| `JOB_LOCATION_STATE` | Name of State or Province of the country that the person is located | New York |
+| `JOB_LOCATION_STATE_CODE` | The state/province/region of the country that the person is located in | NY |
+| `JOB_LOCATION_COUNTRY` | The country name where the person works | South Africa |
+| `JOB_LOCATION_COUNTRY_CODE` | The country code where the person works | ZA |
+| `JOB_LOCATION_COUNTRY_REGION` | The geographic region that a contact works in | EMEA |
+| `JOB_LOCATION_CONTINENT` | The continent where the person works | North America |
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `location_city` | VARCHAR | _TODO_% | Contact’s city |
-| `location_state` | VARCHAR | _TODO_% | Contact’s state or province |
-| `location_country` | VARCHAR | _TODO_% | Contact’s country (ISO 2-letter code) |
+### Company context
 
-<Info>For **company** headquarters address (street, city, state, country), use the `companies` table or the denormalized company context fields on this table. Contact location is inferred from profile and may be less complete than company HQ.</Info>
+| Field | Description | Example |
+| --- | --- | --- |
+| `JOB_ORG_LINKEDIN_URL` | The company's LInkedin URL | https://www.linkedin.com/company/abbott- |
+| `COMPANY_NAME` | The company's name | Meta. Inc |
 
-### Company context (denormalized)
+### Profile enrichments
 
-These fields are copied from the `companies` table for convenience. For the full set of company attributes, join to `companies` on `company_id` — or use the [People + Companies](/data-feeds/people-companies) pre-joined table.
-
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `company_name` | VARCHAR | _TODO_% | Company name (from `companies` table) |
-| `company_domain` | VARCHAR | _TODO_% | Company primary domain |
-| `company_industry` | VARCHAR | _TODO_% | Company industry |
-| `company_employee_count` | INTEGER | _TODO_% | Company employee count |
+| Field | Description | Example |
+| --- | --- | --- |
+| `EDUCATION` | The person's education | [  &#123;    ""degree"": ""Bachelor's degree, Biology"",    ""end_date"": ""2003-01-01"",   ""organization"": ""Louis Pasteur University Strasbourg"",   ""start_date"": ""1999-01-01""  &#125;,  &#123;   ""degree"": ""Ph.D, Biochemistry"",   ""description"": ""Advisor: Daniel Kern<br />Thesis title: New insights in tRNA-dependent asparagine biosynthesis."",   ""end_date"": ""2008-01-01"",    ""organization"": ""Molecular and Cellular Biology Institute (IBMC)"",   ""start_date"": ""2004-01-01""  &#125;,  &#123;   ""degree"": ""Master's degree, Biochemistry"",   ""description"": ""I discovered a new type of ribonucleoprotein involved in amino acid biosynthesis in bacteria and archea."",   ""end_date"": ""2004-01-01"",    ""organization"": ""Louis Pasteur University Strasbourg"",   ""start_date"": ""2003-01-01""  &#125;] |
+| `CERTIFICATIONS` | Linkedin personal profile certifications | [  &#123;    ""authority"": ""Capella University"",    ""linkedin_url"": ""https://www.linkedin.com/company/capella-university"",    ""name"": ""Doctoral Candidate"",    ""start_date"": ""2021-03-01""  &#125;] |
+| `LANGUAGES` | The languages spoken | [  &#123;   ""language"": ""english"",   ""proficiency"": ""native or bilingual proficiency""  &#125;,  &#123;   ""language"": ""german"",   ""proficiency"": ""limited working proficiency""  &#125;] |
+| `SKILLS` | The person's job skills | [  ""media tours"",  ""microsoft office"",  ""research"",  ""photoshop"",  ""photography"",  ""media production"",  ""social media"",  ""microsoft excel"",  ""safety training"",  ""microsoft word"",  ""hostile environment safety"",  ""journalism"", ""powerpoint"", ""first aid"",  ""public speaking"",  ""leadership"" ] |
+| `INTERESTS` | Linkedin personal profile interests field | [   ""Playing Music"" ] |
+| `PATENTS` | Any patents listed on someone's Linkedin profile | [  &#123;   ""title"": ""Tagged Credit Profile System For Credit Applicants"",   ""url"": ""https://patents.google.com/patent/US20090327120A1/&urlhash=H5PF&trk=public_profile_patent-title""  &#125;,  &#123;    ""date"": ""2004-07-01"",   ""title"": ""On-line Distribution Of Per-use Media With Flexible Purchase Options"",    ""url"": ""http://www.google.com/patents/US20050027616&urlhash=HU_b&trk=public_profile_patent-title""  &#125;] |
+| `PUBLICATIONS` | Any publications listed on someone's Linkedin profile | [  &#123;   ""date"": ""2018-07-01"",   ""title"": ""Impact Des Assistantes Humanitaire Sur L'attentisme De Déplace Interne Dela Rdc""  &#125;] |
+| `WEBSITES` | The contact's personal website | [   &#123;     ""url"": ""http://www.dollerhide.com""   &#125;,   &#123;     ""url"": ""http://dollerhide.blogspot.com/""   &#125; ] |
+| `LOGO_URL` | The person's linkedin profile picture URL | https://us.cdn.com/ca-sa-0a3a13158 |
 
 ### Metadata
 
-| Field | Type | Fill rate | Description |
-|-------|------|-----------|-------------|
-| `created_at` | TIMESTAMP | 100% | When this record was first added |
-| `updated_at` | TIMESTAMP | 100% | When this record was last modified |
-| `data_source` | VARCHAR | _TODO_% | Primary data source for this record |
-
-<Warning>**Fill rates are approximate** and vary by segment. Contacts at larger, US-based companies tend to have higher fill rates for direct dials, seniority, and department. International and SMB records may have lower fill rates on some fields.</Warning>
+| Field | Description | Example |
+| --- | --- | --- |
+| `UPDATED_AT` | The contact's last update timestamp. Any field update (except email and phone related fields) will trigger a change in this value. LinkedIn successful profile revalidation (even with no updates) will also update this timestamp | 2013-01-01 00:00:00 |
+| `REVENUEBASE_CONTACT_VERIFICATION_SUMMARY` | Verification Summary showing details on a record observed specifing when and how it was verified | Verified by RevenueBase \| Experience last observed on LinkedIn on September 7, 2025: Proposal Manager at Metaphase \| Profile: linkedin.com/in/jamie-gregory-28878356 \| Email last verified on October 15, 2025 via RevenueBase’s Email Verification Tool \| Next verification scheduled: November, 2025 \| Learn more at https://revenuebase.ai/verified-by-revenuebase |
 
 ## Understanding verification fields
 
-| `verification_status` | What it means | Safe to send? |
-|-----------------------|---------------|---------------|
-| `valid` | Email confirmed deliverable via SMTP verification | ✅ Yes |
-| `invalid` | Email confirmed undeliverable | ❌ No |
-| `catch_all` | Domain accepts all emails — specific address unverifiable | ⚠️ Proceed with caution |
-| `unknown` | Verification inconclusive (server timeout, etc.) | ⚠️ Proceed with caution |
-| `disposable` | Temporary / throwaway email address | ❌ No |
+All emails in the dataset have been verified as valid by RevenueBase's email verification system. If an email address exists in the dataset, it means it has passed verification and is considered deliverable.
 
-<Tip>For the safest outbound sends, filter on `verification_status = 'valid'` AND `last_verified_at >= DATEADD(day, -30, CURRENT_DATE())`. This gives you recently verified, confirmed-deliverable addresses.</Tip>
+<Tip>For the safest outbound sends, filter on `EMAIL_LAST_VERIFIED_AT >= DATEADD(day, -30, CURRENT_DATE())` to prioritize recently verified addresses. Since all emails in the dataset are valid, you don't need to filter on `EMAIL_STATUS`.</Tip>
 
 ## Joining this table
 
-Join `contacts` to **companies** on `company_id` when you need full firmographic or HQ address data. Join to **insights** on `contact_id` when you need insight or intent signals per contact.
+Join `PER_LATEST` to **ORG_LATEST** on `RBID_ORG = RBID` when you need full firmographic or HQ address data. Join to **INSIGHTS_LATEST** on `RBID_ORG = RBID_ORG` when you need company-level insight or intent signals.
 
 ### Contacts + companies (full company attributes)
 
 ```sql
 SELECT
-    c.contact_id,
-    c.first_name,
-    c.last_name,
-    c.email,
-    c.title,
-    co.company_name,
-    co.industry,
-    co.employee_count,
-    co.hq_city,
-    co.hq_country
-FROM contacts c
-JOIN companies co ON c.company_id = co.company_id
-WHERE c.email_verified = TRUE
-  AND co.employee_count BETWEEN 100 AND 1000;
+    c.RBID,
+    c.FIRST_NAME,
+    c.LAST_NAME,
+    c.EMAIL_ADDRESS,
+    c.JOB_TITLE,
+    co.COMPANY_NAME,
+    co.INDUSTRY_LINKEDIN,
+    co.EMPLOYEE_COUNT_MAX,
+    co.HEADQUARTERS_CITY,
+    co.HEADQUARTERS_COUNTRY_NAME
+FROM RELEASES.RELEASE.PER_LATEST c
+JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
+WHERE co.EMPLOYEE_COUNT_MAX BETWEEN 100 AND 1000;
 ```
-
-### Contacts + insights (contact-level signals)
-
-```sql
-SELECT
-    c.contact_id,
-    c.first_name,
-    c.last_name,
-    c.email,
-    i.insight_type,
-    i.observed_at
-FROM contacts c
-LEFT JOIN insights i ON c.contact_id = i.contact_id
-WHERE c.company_id = 'YOUR_TARGET_COMPANY_ID';
-```
-
-<Note>Insights can be company-level or contact-level. When `contact_id` is not null, the insight applies to that contact; otherwise it applies to the company. Filter or join accordingly.</Note>
 
 ## How to calculate fill rates
 
@@ -167,13 +166,12 @@ Run a query that counts non-null values and divides by total rows. Use this patt
 ```sql
 SELECT
     COUNT(*) AS total_records,
-    ROUND(COUNT(email) * 100.0 / COUNT(*), 1) AS email_fill_pct,
-    ROUND(COUNT(CASE WHEN email_verified THEN 1 END) * 100.0 / COUNT(*), 1) AS verified_pct,
-    ROUND(COUNT(direct_phone) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
-    ROUND(COUNT(title) * 100.0 / COUNT(*), 1) AS title_fill_pct,
-    ROUND(COUNT(seniority_level) * 100.0 / COUNT(*), 1) AS seniority_fill_pct,
-    ROUND(COUNT(department) * 100.0 / COUNT(*), 1) AS department_fill_pct
-FROM contacts;
+    ROUND(COUNT(EMAIL_ADDRESS) * 100.0 / COUNT(*), 1) AS email_fill_pct,
+    ROUND(COUNT(DIRECT_PHONE) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
+    ROUND(COUNT(JOB_TITLE) * 100.0 / COUNT(*), 1) AS title_fill_pct,
+    ROUND(COUNT(JOB_LEVEL) * 100.0 / COUNT(*), 1) AS seniority_fill_pct,
+    ROUND(COUNT(JOB_FUNCTION) * 100.0 / COUNT(*), 1) AS department_fill_pct
+FROM RELEASES.RELEASE.PER_LATEST;
 ```
 
 ## Sample queries
@@ -182,26 +180,27 @@ FROM contacts;
 
 **What you’re finding:** Decision-makers and influencers at software companies in a size band that fits your ICP.
 
-**Why these fields:** `email_verified` and `verification_status` reduce bounces. `seniority_level` and `department` narrow to buying roles. `company_industry` and `company_employee_count` (denormalized) avoid a join while filtering by ICP. `last_verified_at` prioritizes recently verified emails.
+**Why these fields:** All emails in the dataset are verified as valid. `EMAIL_LAST_VERIFIED_AT` helps prioritize recently verified addresses. `JOB_LEVEL` and `JOB_FUNCTION` narrow to buying roles. `LINKEDIN_INDUSTRY_ORG` and `EMPLOYEE_COUNT_MAX_ORG` (denormalized) avoid a join while filtering by ICP.
 
-**Logic:** Restrict to verified emails, seniority in c_suite/vp/director, departments that typically own tooling decisions, and a single industry + employee range. Order by `last_verified_at` so the freshest data appears first.
+**Logic:** Restrict to verified emails, seniority in C-Suite/VP/Director, departments that typically own tooling decisions, and a single industry + employee range. Order by `EMAIL_LAST_VERIFIED_AT` so the freshest data appears first.
 
 ```sql
 SELECT
-    first_name,
-    last_name,
-    email,
-    title,
-    seniority_level,
-    company_name,
-    company_employee_count
-FROM contacts
-WHERE email_verified = TRUE
-  AND seniority_level IN ('c_suite', 'vp', 'director')
-  AND department IN ('engineering', 'sales')
-  AND company_industry = 'Software'
-  AND company_employee_count BETWEEN 100 AND 1000
-ORDER BY last_verified_at DESC
+    PER.FIRST_NAME,
+    PER.LAST_NAME,
+    PER.EMAIL_ADDRESS,
+    PER.JOB_TITLE,
+    PER.JOB_LEVEL,
+    PER.COMPANY_NAME,
+    ORG.EMPLOYEE_COUNT_MAX
+FROM RELEASES.RELEASE.PER_LATEST AS PER
+INNER JOIN RELEASES.RELEASE.ORG_LATEST AS ORG
+ON PER.RBID_ORG = ORG.RBID
+WHERE JOB_LEVEL IN ('C-Suite', 'VP', 'Director')
+  AND JOB_FUNCTION IN ('Engineering', 'Sales')
+  AND LINKEDIN_INDUSTRY LIKE '%Software%'
+  AND EMPLOYEE_COUNT_MAX BETWEEN 100 AND 1000
+ORDER BY EMAIL_LAST_VERIFIED_AT DESC
 LIMIT 500;
 ```
 
@@ -214,10 +213,10 @@ LIMIT 500;
 ```sql
 SELECT
     COUNT(*) AS total_records,
-    ROUND(COUNT(email) * 100.0 / COUNT(*), 1) AS email_fill_pct,
-    ROUND(COUNT(direct_phone) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
-    ROUND(COUNT(title) * 100.0 / COUNT(*), 1) AS title_fill_pct
-FROM contacts
-WHERE company_industry = 'Software'
-  AND location_country = 'US';
+    ROUND(COUNT(EMAIL_ADDRESS) * 100.0 / COUNT(*), 1) AS email_fill_pct,
+    ROUND(COUNT(DIRECT_PHONE) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
+    ROUND(COUNT(JOB_TITLE) * 100.0 / COUNT(*), 1) AS title_fill_pct
+FROM RELEASES.RELEASE.PER_LATEST
+WHERE LINKEDIN_INDUSTRY LIKE '%Software%'
+  AND COUNTRY_NAME = 'United States';
 ```
