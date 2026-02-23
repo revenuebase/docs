@@ -4,7 +4,7 @@ sidebarTitle: "Historical Experience"
 description: "Career history and job change data — past roles, tenure, and professional trajectory."
 ---
 
-The `historical_experience` table tracks career history for contacts in the RevenueBase database. Each row represents one LinkedIn profile with an array of job positions. Use it to understand career trajectories, identify recent job changers, find alumni of specific companies, and build more personalized outreach.
+The `historical_experience` table tracks career history for contacts in the RevenueBase database. Each row represents one LinkedIn profile with a nested array structure: a `jobs` array containing job objects, each with an `experience` array of position records. Use it to understand career trajectories, identify recent job changers, find alumni of specific companies, and build more personalized outreach.
 
 ## Where the data comes from
 
@@ -12,7 +12,7 @@ Historical experience is derived from professional profiles and public career hi
 
 ## Counts and coverage
 
-Each row represents one LinkedIn profile with an array of job positions. Not every contact has historical experience; fill rates are higher for recent roles and for people with detailed public profiles. Use the fill-rate query below to see coverage and average positions per profile.
+Each row represents one LinkedIn profile with nested arrays: a `jobs` array containing job objects, each with an `experience` array of position records. Not every contact has historical experience; fill rates are higher for recent roles and for people with detailed public profiles. Use the fill-rate query below to see coverage and average positions per profile.
 
 ## Table stats
 
@@ -23,7 +23,7 @@ Each row represents one LinkedIn profile with an array of job positions. Not eve
 | **Primary key** | `linkedin_url` |
 | **Main foreign keys** | Join to `person` table on `linkedin_url`, join to `organisation` table via `rbid_org` |
 
-## Data dictionary & fill rates
+## Data dictionary
 
 Fill rates for historical data are typically lower than for current-position data. Older positions, smaller companies, and non-US contacts tend to have less complete records. The table structure uses one row per LinkedIn profile with an array of job positions.
 
@@ -45,25 +45,38 @@ Each element in the `jobs` array is an object containing:
 | `rbid` | VARCHAR | RevenueBase person identifier (from person table) |
 | `rbid_pao` | VARCHAR | RevenueBase person-at-organization identifier |
 | `rbid_org` | VARCHAR | RevenueBase organization identifier |
-| `linkedin_id` | VARCHAR | LinkedIn company page ID (from organisation table) |
+| `linkedin_id` | INTEGER | LinkedIn company page ID (from organisation table) |
 | `email_address` | VARCHAR | Email address (from person table) |
-| `experience` | OBJECT | Experience details (title, company, dates, etc.) |
+| `experience` | ARRAY | Array of experience objects containing position details |
 
-<Info>**One row per LinkedIn profile with array of jobs.** Each row contains a `jobs` array with all positions for that profile. The `experience` object within each job contains the position details (title, company, start_date, end_date, etc.). Use array functions to query and filter individual positions.</Info>
+### Experience array structure
 
-<Note>The `experience` object structure may vary, but typically includes fields like `title`, `company_name`, `start_date`, `end_date`, `is_current`, and other position-related attributes. Query the array to access individual job positions.</Note>
+Each element in the `experience` array within a job object contains:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `job_title` | VARCHAR | Job title for this position |
+| `job_org_name` | VARCHAR | Company name for this position |
+| `job_org_linkedin_url` | VARCHAR | LinkedIn company page URL |
+| `job_function` | VARCHAR | Department or functional area |
+| `job_is_current` | BOOLEAN | Whether this is the person's current position |
+
+<Info>**One row per LinkedIn profile with nested arrays.** Each row contains a `jobs` array. Each job object contains an `experience` array with one or more position records. A person may have multiple positions at the same company (different roles over time), which is why `experience` is an array. Use nested array functions to query and filter individual positions.</Info>
+
+<Note>The `experience` array structure may include additional fields like `start_date`, `end_date`, and other position-related attributes depending on data availability. Query the nested arrays to access individual job positions.</Note>
 
 ### Joining to other tables
 
-The `jobs` array contains `rbid`, `rbid_org`, and `email_address` that you can use to join to other tables:
+The `jobs` array contains `rbid`, `rbid_org`, and `email_address` that you can use to join to other tables. The `experience` array within each job contains position-specific details:
 
 | Approach | When to use |
 |----------|-------------|
 | **Join to person table** | Use `jobs[].rbid` or join on `linkedin_url` to get current contact information |
 | **Join to organisation table** | Use `jobs[].rbid_org` to get company firmographics and HQ address for that employer |
-| **Contact's current location** | For "where does this person live now," use **contacts** (`CITY`, `STATE_NAME`, `COUNTRY_NAME`), not historical experience |
+| **Access position details** | Flatten both `jobs` and `experience` arrays to access individual position fields like `job_title`, `job_org_name`, `job_function`, `job_is_current` |
+| **Contact's current location** | For "where does this person live now," use **contacts** (`CITY_PER`, `STATE_NAME_PER`, `COUNTRY_NAME_PER`), not historical experience |
 
-<Tip>To analyze "contacts who worked in California" or "alumni of companies in EMEA," flatten the `jobs` array, join to `organisation` on `rbid_org`, and filter on company location fields.</Tip>
+<Tip>To analyze "contacts who worked in California" or "alumni of companies in EMEA," flatten both the `jobs` and `experience` arrays, join to `ORG_LATEST` on `rbid_org`, and filter on company location fields.</Tip>
 
 <Warning>**Fill rates for historical data are inherently lower** than for current-position data. Older positions, smaller companies, and non-US contacts tend to have less complete records. The `experience` object may not contain all fields for every position, and `rbid_org` may be null when the employer is not in the RevenueBase companies table.</Warning>
 
@@ -71,26 +84,26 @@ The `jobs` array contains `rbid`, `rbid_org`, and `email_address` that you can u
 
 <AccordionGroup>
   <Accordion title="Find recent job changers">
-    People who just started a new role are often more receptive to new tools. Flatten the `jobs` array and filter for positions where `experience.is_current = TRUE` and `experience.start_date` is within the last 90 days.
+    People who just started a new role are often more receptive to new tools. Flatten both the `jobs` and `experience` arrays and filter for positions where `experience.job_is_current = TRUE`. Join to the person table and filter by `UPDATED_AT_PER` to find recently updated profiles.
   </Accordion>
   <Accordion title="Company alumni targeting">
-    Find everyone who used to work at a specific company by flattening the `jobs` array and filtering for `experience.company_domain` or using `rbid_org` to join to the organisation table. Filter for `experience.is_current = FALSE`. Useful for selling to former champions who already know your space.
+    Find everyone who used to work at a specific company by flattening both arrays and filtering for `experience.job_org_linkedin_url` matching the target company, or use `jobs[].rbid_org` to join to the organisation table. Filter for `experience.job_is_current = FALSE`. Useful for selling to former champions who already know your space.
   </Accordion>
   <Accordion title="Career trajectory analysis">
-    Flatten the `jobs` array and compare titles and seniority across positions for a profile. Use `job_count` to identify profiles with multiple positions, then analyze the progression in the `jobs` array.
+    Flatten both arrays and compare `job_title`, `job_function`, and `job_org_name` across positions for a profile. Use `job_count` to identify profiles with multiple positions, then analyze the progression in the nested arrays.
   </Accordion>
-  <Accordion title="Tenure-based signals">
-    Calculate tenure from `experience.start_date` and `experience.end_date` in the flattened jobs array. Short average tenure can indicate high turnover; long tenure at current role can indicate stability and buying authority.
+  <Accordion title="Multiple positions at same company">
+    Some profiles may have multiple entries in the `experience` array within the same job object, representing different roles at the same company over time. Flatten both arrays to see all positions and their progression.
   </Accordion>
 </AccordionGroup>
 
 ## Joining this table
 
-Join **historical_experience** to **person** table on `linkedin_url` to get current contact info. Use the `jobs` array to access individual positions. Join to **organisation** table using `jobs[].rbid_org` when you need firmographics or HQ address for a specific role.
+Join **historical_experience** to **PER_LATEST** table on `linkedin_url` to get current contact info. Flatten both the `jobs` and `experience` arrays to access individual positions. Join to **ORG_LATEST** table using `jobs[].rbid_org` when you need firmographics or HQ address for a specific role.
 
-### Flattening the jobs array
+### Flattening the nested arrays
 
-To work with individual positions, you need to flatten the `jobs` array. Here's a pattern for Snowflake:
+To work with individual positions, you need to flatten both the `jobs` array and the `experience` array within each job. Here's a pattern for Snowflake:
 
 ```sql
 SELECT
@@ -98,54 +111,59 @@ SELECT
     he.unique_id,
     job.value:rbid AS rbid,
     job.value:rbid_org AS rbid_org,
+    job.value:rbid_pao AS rbid_pao,
     job.value:email_address AS email_address,
-    job.value:experience AS experience
+    job.value:linkedin_id AS linkedin_id,
+    exp.value:job_title AS job_title,
+    exp.value:job_org_name AS job_org_name,
+    exp.value:job_org_linkedin_url AS job_org_linkedin_url,
+    exp.value:job_function AS job_function,
+    exp.value:job_is_current AS job_is_current
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he,
-LATERAL FLATTEN(input => he.jobs) job
-WHERE job.value:experience IS NOT NULL;
+LATERAL FLATTEN(input => he.jobs) job,
+LATERAL FLATTEN(input => job.value:experience) exp
+WHERE exp.value IS NOT NULL;
 ```
 
 ### Historical experience + contacts (recent job changers with contact info)
 
 ```sql
 SELECT
-    per.FIRST_NAME,
-    per.LAST_NAME,
-    per.EMAIL_ADDRESS,
-    job.value:experience:title AS new_title,
-    job.value:experience:company_name AS new_company,
-    job.value:experience:start_date AS start_date,
-    per.JOB_TITLE AS current_title_in_feed
+    per.FIRST_NAME_PER,
+    per.LAST_NAME_PER,
+    per.EMAIL_ADDRESS_PER,
+    exp.value:job_title AS new_title,
+    exp.value:job_org_name AS new_company,
+    per.JOB_TITLE_PER AS current_title_in_feed
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he
-JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL
+JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL_PER
 , LATERAL FLATTEN(input => he.jobs) job
-WHERE job.value:experience:is_current = TRUE
-  AND job.value:experience:start_date >= DATEADD(day, -90, CURRENT_DATE())
-  AND per.EMAIL_ADDRESS IS NOT NULL
-ORDER BY job.value:experience:start_date DESC;
+, LATERAL FLATTEN(input => job.value:experience) exp
+WHERE exp.value:job_is_current = TRUE
+  AND per.EMAIL_ADDRESS_PER IS NOT NULL
+ORDER BY per.UPDATED_AT_PER DESC;
 ```
 
 ### Historical experience + contacts + companies (alumni with HQ location)
 
 ```sql
 SELECT
-    per.FIRST_NAME,
-    per.LAST_NAME,
-    per.EMAIL_ADDRESS,
-    job.value:experience:company_name AS former_employer,
-    job.value:experience:title AS former_title,
-    job.value:experience:start_date AS start_date,
-    job.value:experience:end_date AS end_date,
-    org.HEADQUARTERS_COUNTRY_NAME,
-    org.HEADQUARTERS_CITY
+    per.FIRST_NAME_PER,
+    per.LAST_NAME_PER,
+    per.EMAIL_ADDRESS_PER,
+    exp.value:job_org_name AS former_employer,
+    exp.value:job_title AS former_title,
+    org.HEADQUARTERS_COUNTRY_NAME_ORG,
+    org.HEADQUARTERS_CITY_ORG
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he
-JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL
+JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL_PER
 , LATERAL FLATTEN(input => he.jobs) job
+, LATERAL FLATTEN(input => job.value:experience) exp
 LEFT JOIN RELEASES.RELEASE.ORG_LATEST org ON job.value:rbid_org = org.RBID
-WHERE job.value:experience:company_domain = 'salesforce.com'
-  AND job.value:experience:is_current = FALSE
-  AND per.EMAIL_ADDRESS IS NOT NULL
-ORDER BY job.value:experience:end_date DESC;
+WHERE exp.value:job_org_linkedin_url LIKE '%salesforce%'
+  AND exp.value:job_is_current = FALSE
+  AND per.EMAIL_ADDRESS_PER IS NOT NULL
+ORDER BY per.UPDATED_AT_PER DESC;
 ```
 
 ## How to calculate fill rates
@@ -160,15 +178,17 @@ SELECT
     COUNT(DISTINCT linkedin_url) AS unique_profiles
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST;
 
--- To analyze individual positions, flatten the array first:
+-- To analyze individual positions, flatten both arrays:
 SELECT
     COUNT(*) AS total_positions,
     ROUND(COUNT(job.value:rbid_org) * 100.0 / COUNT(*), 1) AS rbid_org_fill_pct,
-    ROUND(COUNT(job.value:experience:title) * 100.0 / COUNT(*), 1) AS title_fill_pct,
-    ROUND(COUNT(job.value:experience:start_date) * 100.0 / COUNT(*), 1) AS start_date_fill_pct
+    ROUND(COUNT(exp.value:job_title) * 100.0 / COUNT(*), 1) AS job_title_fill_pct,
+    ROUND(COUNT(exp.value:job_org_name) * 100.0 / COUNT(*), 1) AS job_org_name_fill_pct,
+    ROUND(COUNT(exp.value:job_function) * 100.0 / COUNT(*), 1) AS job_function_fill_pct
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he,
-LATERAL FLATTEN(input => he.jobs) job
-WHERE job.value:experience IS NOT NULL;
+LATERAL FLATTEN(input => he.jobs) job,
+LATERAL FLATTEN(input => job.value:experience) exp
+WHERE exp.value IS NOT NULL;
 ```
 
 ## Sample queries
@@ -179,23 +199,24 @@ WHERE job.value:experience IS NOT NULL;
 
 **Why these fields:** We need current contact info from the person table and the new role from the flattened jobs array. Filter for current positions with recent start dates.
 
-**Logic:** Flatten the jobs array, filter to current positions (`is_current = TRUE`) with `start_date` in the last 90 days. Join to person table for contact info.
+**Logic:** Flatten both the jobs and experience arrays, filter to current positions (`job_is_current = TRUE`). Join to person table for contact info. Use `UPDATED_AT_PER` to identify recently updated profiles.
 
 ```sql
 SELECT
-    per.FIRST_NAME,
-    per.LAST_NAME,
-    per.EMAIL_ADDRESS,
-    job.value:experience:title AS new_title,
-    job.value:experience:company_name AS new_company,
-    job.value:experience:start_date AS start_date
+    per.FIRST_NAME_PER,
+    per.LAST_NAME_PER,
+    per.EMAIL_ADDRESS_PER,
+    exp.value:job_title AS new_title,
+    exp.value:job_org_name AS new_company,
+    per.UPDATED_AT_PER AS profile_updated_at
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he
-JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL
+JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL_PER
 , LATERAL FLATTEN(input => he.jobs) job
-WHERE job.value:experience:is_current = TRUE
-  AND job.value:experience:start_date >= DATEADD(day, -90, CURRENT_DATE())
-  AND per.EMAIL_ADDRESS IS NOT NULL
-ORDER BY job.value:experience:start_date DESC;
+, LATERAL FLATTEN(input => job.value:experience) exp
+WHERE exp.value:job_is_current = TRUE
+  AND per.UPDATED_AT_PER >= DATEADD(day, -90, CURRENT_DATE())
+  AND per.EMAIL_ADDRESS_PER IS NOT NULL
+ORDER BY per.UPDATED_AT_PER DESC;
 ```
 
 ### Alumni of a specific company
@@ -204,25 +225,26 @@ ORDER BY job.value:experience:start_date DESC;
 
 **Why these fields:** Filter the jobs array for the target company domain and non-current positions. Join to person table for current contact info.
 
-**Logic:** Flatten the jobs array, filter by target company domain and non-current positions. Join to person table for email and current context. Order by `end_date` descending so the most recent leavers appear first.
+**Logic:** Flatten both arrays, filter by target company LinkedIn URL pattern and non-current positions. Join to person table for email and current context. Order by profile update date descending.
 
 ```sql
 SELECT
-    per.FIRST_NAME,
-    per.LAST_NAME,
-    per.EMAIL_ADDRESS,
-    per.JOB_TITLE AS current_title,
-    per.COMPANY_NAME AS current_company,
-    job.value:experience:title AS former_title,
-    job.value:experience:start_date AS start_date,
-    job.value:experience:end_date AS end_date
+    per.FIRST_NAME_PER,
+    per.LAST_NAME_PER,
+    per.EMAIL_ADDRESS_PER,
+    per.JOB_TITLE_PER AS current_title,
+    per.COMPANY_NAME_ORG AS current_company,
+    exp.value:job_title AS former_title,
+    exp.value:job_org_name AS former_employer,
+    exp.value:job_org_linkedin_url AS former_company_linkedin
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he
-JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL
+JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL_PER
 , LATERAL FLATTEN(input => he.jobs) job
-WHERE job.value:experience:company_domain = 'salesforce.com'
-  AND job.value:experience:is_current = FALSE
-  AND per.EMAIL_ADDRESS IS NOT NULL
-ORDER BY job.value:experience:end_date DESC;
+, LATERAL FLATTEN(input => job.value:experience) exp
+WHERE exp.value:job_org_linkedin_url LIKE '%salesforce%'
+  AND exp.value:job_is_current = FALSE
+  AND per.EMAIL_ADDRESS_PER IS NOT NULL
+ORDER BY per.UPDATED_AT_PER DESC;
 ```
 
 ### Profiles with multiple positions
@@ -231,23 +253,23 @@ ORDER BY job.value:experience:end_date DESC;
 
 **Why these fields:** Use `job_count` to identify profiles with multiple positions, then flatten to see all positions.
 
-**Logic:** Filter for profiles with `job_count > 1`, then flatten the jobs array to see all positions.
+**Logic:** Filter for profiles with `job_count > 1`, then flatten both arrays to see all positions.
 
 ```sql
 SELECT
     he.linkedin_url,
     he.job_count,
-    per.FIRST_NAME,
-    per.LAST_NAME,
-    job.value:experience:title AS job_title,
-    job.value:experience:company_name AS company_name,
-    job.value:experience:start_date AS start_date,
-    job.value:experience:end_date AS end_date,
-    job.value:experience:is_current AS is_current
+    per.FIRST_NAME_PER,
+    per.LAST_NAME_PER,
+    exp.value:job_title AS job_title,
+    exp.value:job_org_name AS company_name,
+    exp.value:job_function AS job_function,
+    exp.value:job_is_current AS is_current
 FROM RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he
-JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL
+JOIN RELEASES.RELEASE.PER_LATEST per ON he.linkedin_url = per.LINKEDIN_URL_PER
 , LATERAL FLATTEN(input => he.jobs) job
+, LATERAL FLATTEN(input => job.value:experience) exp
 WHERE he.job_count > 1
-  AND job.value:experience IS NOT NULL
-ORDER BY he.linkedin_url, job.value:experience:start_date DESC;
+  AND exp.value IS NOT NULL
+ORDER BY he.linkedin_url, exp.value:job_is_current DESC;
 ```

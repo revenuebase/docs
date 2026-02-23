@@ -9,34 +9,112 @@ description: "Pre-joined view of contacts, companies, and insights"
 
 Use this view when you need contact, company, and company-level insight (e.g., technographics, hiring signals) columns in a single query. No need to join the three base tables yourself — the view is maintained for you. Note that all insights are company-level only.
 
-### Key columns (placeholder)
+## Data dictionary
 
-| Column           | Type     | Description                    |
-| ---------------- | -------- | ------------------------------ |
-| contact_id       | bigint   | Unique contact identifier.    |
-| company_id       | bigint   | Unique company identifier.    |
-| email            | string   | Contact email.                 |
-| company_name     | string   | Company name.                 |
-| insight_type     | string   | Type of insight.              |
-| insight_value    | string   | Insight value or score.       |
-| _..._            | _..._    | Other fields.                  |
+Field names, descriptions, and examples are sourced from the [Data dictionary](/data-feeds/data-dictionary). This pre-joined table includes all person fields (suffix `_PER`), all company fields (suffix `_ORG` from Companies category), and all insight fields (suffix `_ORG` from Company Insights category).
 
-Exact columns depend on your schema. Use the [Data dictionary](/data-feeds/data-dictionary) for the full list.
+### Identifiers
 
-### Example query
+| Field | Description | Example |
+| --- | --- | --- |
+| `RBID_PER` | RevenueBase's unique identification for the person. The RBID stays the same if someone changes their job. | rb-pabq6o2xf |
+| `RBID_ORG` | RevenueBase's unique identifier for a company | rb-oab75n3pe |
+| `RBID_PAO` | RevenueBase's unique identifier for the person at a specific company. | Revenue Base Internal field |
+
+### Key person fields
+
+| Field | Description | Example |
+| --- | --- | --- |
+| `FIRST_NAME_PER` | The person's first name | Marc |
+| `LAST_NAME_PER` | The person's last name | Rojas |
+| `FULL_NAME_PER` | The person's full name | Kathryn E. Gibson |
+| `EMAIL_ADDRESS_PER` | The person's work email address | kcollins@fortmckaygroup.com |
+| `JOB_TITLE_PER` | The person's current job title | Senior Technical Consultant |
+| `JOB_LEVEL_PER` | The seniority level of the person's job | Manager |
+| `JOB_FUNCTION_PER` | The department that the person works in. | Information Technology |
+
+<Note>
+For the complete list of person fields, see [People + Companies](/data-feeds/people-companies) documentation. This table includes all person fields with `_PER` suffix.
+</Note>
+
+### Key company fields
+
+| Field | Description | Example |
+| --- | --- | --- |
+| `COMPANY_NAME_ORG` | Name of the organization | Dell Technologies |
+| `DOMAIN_ORG` | Doman of the company's website | fsiservices.com |
+| `EMPLOYEE_COUNT_MAX` | Maximum number of employees | 10000 |
+| `EMPLOYEE_COUNT_RANGE_ORG` | Range of employee count | 5001 to 10000 |
+| `LINKEDIN_INDUSTRY_ORG` | Industry description from LinkedIn | [   ""Software Development"" ] |
+| `REVENUE_RANGE_ORG` | Range of the company's revenue | $50M to &lt;$100M |
+| `HEADQUARTERS_CITY_ORG` | City where the company HQ is located | New York |
+| `HEADQUARTERS_STATE_NAME_ORG` | State where the company HQ is located | NY |
+| `HEADQUARTERS_COUNTRY_NAME_ORG` | Country where the company HQ is located | United States |
+
+<Note>
+For the complete list of company fields, see [People + Companies](/data-feeds/people-companies) documentation. This table includes all company fields with `_ORG` suffix from the Companies category.
+</Note>
+
+### Insight fields
+
+| Field | Description | Example |
+| --- | --- | --- |
+| `ABM_TECH_ORG` | There is evidence of particular activity based management technologies in use | 6Sense;Demandbase;Uberflip;Terminus;Engagio;Triblio |
+| `ANALYTICS_TECH_ORG` | There is evidence of particular analytics technologies in use | Tableau;Power BI;Segment;Looker;Qlik |
+| `CRM_TECH_ORG` | There is evidence of particular customer relationship management technologies in use | Salesforce CRM;Hubspot;Microsoft Dynamics;Zoho;Pipedrive CRM;SugarCRM |
+| `SALES_ROLE_COUNT_ORG` | Number of people with sales titles associated with the organization | 4 |
+| `SALES_OPEN_ROLES_COUNT_ORG` | Number of open job postings for sales positions at the organization | 6 |
+| `LAST_FUNDING_AMOUNT_ORG` | If the organization received funding, the last funding amount | 15400000 |
+| `LAST_FUNDING_DATE_ORG` | If the organization received funding, the last funding date | 2022-09-22 |
+| `LAST_FUNDING_TYPE_ORG` | If the business received funding, the last funding type | Post-IPO Equity |
+| `TOTAL_FUNDING_AMOUNT_ORG` | If the organization received funding, the total amount of funding to date | 175500000 |
+| `EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG` | Percentage of latest month's employee growth rate as a percentage. | 4 |
+| `HAS_CIO_ORG` | If the business has a chief information officer | Yes |
+| `HAS_CISO_ORG` | If the business has a chief information security officer | Yes |
+
+<Note>
+For the complete list of insight fields, see [Insights](/data-feeds/insights) documentation. This table includes all insight fields with `_ORG` suffix from the Company Insights category.
+</Note>
+
+### Example queries
+
+#### Find contacts at companies using specific technologies
 
 ```sql
-SELECT RBID_PER, EMAIL_ADDRESS, COMPANY_NAME_ORG, CRM_TECH_ORG, SALES_ROLE_COUNT_ORG
+SELECT 
+    RBID_PER,
+    FIRST_NAME_PER,
+    LAST_NAME_PER,
+    EMAIL_ADDRESS_PER,
+    JOB_TITLE_PER,
+    COMPANY_NAME_ORG,
+    CRM_TECH_ORG,
+    SALES_ROLE_COUNT_ORG
 FROM RELEASES.RELEASE.VELOCITY_ENHANCED_UNLIMITED_LATEST
 WHERE CRM_TECH_ORG IS NOT NULL
+  AND SALES_ROLE_COUNT_ORG > 0
 LIMIT 100;
+```
+
+#### Find contacts at companies with recent funding
+
+```sql
+SELECT 
+    FIRST_NAME_PER,
+    LAST_NAME_PER,
+    EMAIL_ADDRESS_PER,
+    COMPANY_NAME_ORG,
+    LAST_FUNDING_AMOUNT_ORG,
+    LAST_FUNDING_DATE_ORG,
+    LAST_FUNDING_TYPE_ORG
+FROM RELEASES.RELEASE.VELOCITY_ENHANCED_UNLIMITED_LATEST
+WHERE LAST_FUNDING_DATE_ORG >= DATEADD(month, -12, CURRENT_DATE())
+  AND JOB_LEVEL_PER IN ('VP', 'Director', 'C-Suite')
+ORDER BY LAST_FUNDING_DATE_ORG DESC;
 ```
 
 ### See also
 
-- [People + Companies](/data-feeds/people-companies) when you don’t need insight fields.
+- [People + Companies](/data-feeds/people-companies) when you don't need insight fields.
 - [Pre-Joined Tables overview](/data-feeds/pre-joined-overview) for when to use each view.
-
-<Note>
-Placeholder: Replace with your actual view name, column list, and sample queries.
-</Note>
+- [Data dictionary](/data-feeds/data-dictionary) for the complete field reference.

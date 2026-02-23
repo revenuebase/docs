@@ -14,24 +14,28 @@ RevenueBase data is organized into separate tables that link together through sh
 Here's how the main tables connect:
 
 ```
-companies (1) ──── (many) contacts
+organisations (1) ──── (many) people/contacts
     │                        │
     │                        │
-    └──── (many) emails ─────┘
+    └──── (1) insights ──────┘
+    
+people ──── (1) historical_experience (via linkedin_url)
 ```
 
-{/* TODO: Update this diagram to reflect your actual table relationships */}
+**Key relationships:**
+- **People** join to **Organisations** via `RBID_ORG = RBID` (many-to-one)
+- **Insights** join to **Organisations** via `RBID_ORG = RBID` (one-to-one, company-level only)
+- **People** can join to **Insights** via `RBID_ORG = RBID_ORG` (many-to-one, gets company-level insights)
+- **Historical Experience** joins to **People** via `linkedin_url` (one-to-one)
 
 ## Join keys reference
 
-{/* TODO: Fill in with your actual join keys */}
-
 | From table | To table | Join key | Join type | Notes |
 |-----------|----------|----------|-----------|-------|
-| `contacts` | `companies` | `contacts.company_id = companies.company_id` | LEFT JOIN | Not all contacts have a company |
-| `contacts` | `emails` | `contacts.contact_id = emails.contact_id` | LEFT JOIN | A contact may have multiple emails |
-| `companies` | `emails` | `companies.company_id = emails.company_id` | LEFT JOIN | All emails associated with a company |
-| _TODO: Add more joins_ | | | | |
+| `PER_LATEST` | `ORG_LATEST` | `per.RBID_ORG = org.RBID` | LEFT JOIN | Not all contacts have a company |
+| `ORG_LATEST` | `INSIGHTS_LATEST` | `org.RBID = insights.RBID_ORG` | LEFT JOIN | All insights are company-level |
+| `PER_LATEST` | `INSIGHTS_LATEST` | `per.RBID_ORG = insights.RBID_ORG` | LEFT JOIN | Get company-level insights for contacts |
+| `PER_LATEST` | `HISTORICAL_EXPERIENCE_LATEST` | `per.LINKEDIN_URL = he.linkedin_url` | LEFT JOIN | One profile per LinkedIn URL |
 
 ## Common join patterns
 
@@ -55,27 +59,28 @@ LEFT JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
 WHERE c.EMAIL_ADDRESS IS NOT NULL;
 ```
 
-{/* TODO: Update column names to match your schema */}
-
 <Note>
   Use `LEFT JOIN` (not `INNER JOIN`) if you want to include contacts that don't have a company record. Use `INNER JOIN` if you only want contacts with a known company.
 </Note>
 
-### Contacts with their primary email verification details
+### Contacts with company-level insights
 
 ```sql
 SELECT
     c.FIRST_NAME,
     c.LAST_NAME,
     c.EMAIL_ADDRESS,
-    c.EMAIL_LAST_VERIFIED_AT
+    c.JOB_TITLE,
+    co.COMPANY_NAME,
+    i.CRM_TECH_ORG,
+    i.SALES_ROLE_COUNT_ORG
 FROM RELEASES.RELEASE.PER_LATEST c
+LEFT JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
+LEFT JOIN RELEASES.RELEASE.INSIGHTS_LATEST i ON c.RBID_ORG = i.RBID_ORG
 WHERE c.EMAIL_ADDRESS IS NOT NULL;
 ```
 
-{/* TODO: Update column names */}
-
-### Full join: contacts + companies + emails
+### Full join: contacts + companies + insights
 
 ```sql
 SELECT
@@ -86,34 +91,58 @@ SELECT
     co.INDUSTRY_LINKEDIN,
     co.EMPLOYEE_COUNT_MAX,
     c.EMAIL_ADDRESS,
-    c.EMAIL_STATUS,
-    c.EMAIL_LAST_VERIFIED_AT
+    c.EMAIL_LAST_VERIFIED_AT,
+    i.CRM_TECH_ORG,
+    i.LAST_FUNDING_AMOUNT_ORG
 FROM RELEASES.RELEASE.PER_LATEST c
 LEFT JOIN RELEASES.RELEASE.ORG_LATEST co ON c.RBID_ORG = co.RBID
+LEFT JOIN RELEASES.RELEASE.INSIGHTS_LATEST i ON c.RBID_ORG = i.RBID_ORG
 WHERE c.EMAIL_ADDRESS IS NOT NULL
 ORDER BY c.EMAIL_LAST_VERIFIED_AT DESC;
 ```
 
-{/* TODO: Update column names */}
+### Contacts with historical experience
+
+```sql
+SELECT
+    c.FIRST_NAME,
+    c.LAST_NAME,
+    c.EMAIL_ADDRESS,
+    he.job_count,
+    he.jobs
+FROM RELEASES.RELEASE.PER_LATEST c
+LEFT JOIN RELEASES.RELEASE.HISTORICAL_EXPERIENCE_LATEST he ON c.LINKEDIN_URL = he.linkedin_url
+WHERE c.EMAIL_ADDRESS IS NOT NULL;
+```
+
+<Note>
+Historical experience uses an array structure. Use `LATERAL FLATTEN` to work with individual positions. See [Historical Experience](/data-feeds/historical-experience) for details.
+</Note>
 
 ## Gotchas and tips
 
-{/* TODO: Fill these in based on what you've seen customers struggle with */}
-
-<Accordion title="Duplicate rows from one-to-many joins">
-  If a contact has multiple email records, joining `contacts` to `emails` will produce one row per email. To avoid duplicates, filter on `e.is_primary = TRUE` or use a subquery to pick one email per contact.
+<Accordion title="NULL RBID_ORG">
+  Not every contact has a linked company. If you use `INNER JOIN` on `ORG_LATEST`, you'll silently drop those contacts. Use `LEFT JOIN` unless you specifically want to exclude unmatched contacts. Check for `RBID_ORG IS NULL` to see how many contacts lack company associations.
 </Accordion>
 
-<Accordion title="NULL company_id">
-  Not every contact has a linked company. If you use `INNER JOIN` on `companies`, you'll silently drop those contacts. Use `LEFT JOIN` unless you specifically want to exclude unmatched contacts.
+<Accordion title="All emails are valid">
+  All emails in the dataset are verified as valid. You don't need to filter on `EMAIL_STATUS = 'VALID'` — if an email exists in the dataset, it's valid. Use `EMAIL_LAST_VERIFIED_AT` to prioritize recently verified addresses.
+</Accordion>
+
+<Accordion title="Insights are company-level only">
+  All insights are company-level only. When joining insights to contacts, you get the company-level insights associated with the contact's company (`RBID_ORG`). There are no contact-level insights.
+</Accordion>
+
+<Accordion title="Historical experience array structure">
+  The historical experience table stores one row per LinkedIn profile with a `jobs` array. Use `LATERAL FLATTEN` to work with individual positions. See [Historical Experience](/data-feeds/historical-experience) for examples.
 </Accordion>
 
 <Accordion title="Performance on large joins">
-  When joining across large tables, always include filter conditions (`WHERE` clauses) to reduce the working set before the join. Filtering on `EMAIL_LAST_VERIFIED_AT` or `INDUSTRY_LINKEDIN` early will significantly speed up queries.
+  When joining across large tables, always include filter conditions (`WHERE` clauses) to reduce the working set before the join. Filtering on `EMAIL_LAST_VERIFIED_AT`, `INDUSTRY_LINKEDIN`, or `EMPLOYEE_COUNT_MAX` early will significantly speed up queries.
 </Accordion>
 
-<Accordion title="TODO: Add more gotchas">
-  _Fill in based on common support questions and customer mistakes._
+<Accordion title="Pre-joined tables">
+  For common combinations (people + companies, or people + companies + insights), consider using pre-joined tables like `VELOCITY_BASE_UNLIMITED_LATEST` or `VELOCITY_ENHANCED_UNLIMITED_LATEST` instead of writing joins yourself. See [Pre-Joined Tables](/data-feeds/pre-joined-overview) for details.
 </Accordion>
 
 ## Joining with your own data
@@ -132,8 +161,6 @@ JOIN RELEASES.RELEASE.ORG_LATEST co
   ON LOWER(your_accounts.website_domain) = LOWER(co.DOMAIN);
 ```
 
-{/* TODO: Update schema/database names and column names */}
-
 <Tip>
-  Always normalize domains when joining — use `LOWER()` and strip `www.` prefixes to avoid mismatches.
+  Always normalize domains when joining — use `LOWER()` and strip `www.` prefixes to avoid mismatches. Consider using `TRIM()` to remove whitespace as well.
 </Tip>
