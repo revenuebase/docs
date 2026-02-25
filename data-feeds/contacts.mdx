@@ -85,6 +85,8 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 
 ### Addresses (contact location)
 
+The first set of address fields (`CITY`, `STATE_NAME`, `STATE_CODE`, `COUNTRY_NAME`, `COUNTRY_CODE`, `COUNTRY_REGION`, `CONTINENT`) describes **where the person is located** on their professional profile. The fields prefixed with `JOB_LOCATION_` describe **where the person works from** — usually the office location if they work from an office. These two address sets do not always match: someone might live in Boston, MA and work in Providence, RI. The person's location (the first set) typically has a higher fill rate, so use those fields when you search for people by location.
+
 | Field | Description | Example |
 | --- | --- | --- |
 | `CITY` | The city where the person lives | Lexington |
@@ -138,7 +140,7 @@ All emails in the dataset have been verified as valid by RevenueBase's email ver
 
 ## Joining this table
 
-Join `PER_LATEST` to **ORG_LATEST** on `RBID_ORG = RBID` when you need full firmographic or HQ address data. Join to **INSIGHTS_LATEST** on `RBID_ORG = RBID_ORG` when you need company-level insight or intent signals.
+Join `PER_LATEST` to `ORG_LATEST` on `RBID_ORG` = `RBID` when you need full firmographic or HQ address data. Join to `INSIGHTS_LATEST` on `RBID_ORG` = `RBID_ORG` when you need company-level insight or intent signals.
 
 ### Contacts + companies (full company attributes)
 

@@ -99,7 +99,7 @@ The `jobs` array contains `rbid`, `rbid_org`, and `email_address` that you can u
 
 ## Joining this table
 
-Join **historical_experience** to **PER_LATEST** table on `linkedin_url` to get current contact info. Flatten both the `jobs` and `experience` arrays to access individual positions. Join to **ORG_LATEST** table using `jobs[].rbid_org` when you need firmographics or HQ address for a specific role.
+Join `historical_experience` to `PER_LATEST` table on `linkedin_url` to get current contact info. Flatten both the `jobs` and `experience` arrays to access individual positions. Join to `ORG_LATEST` table using `jobs[].rbid_org` when you need firmographics or HQ address for a specific role.
 
 ### Flattening the nested arrays
 

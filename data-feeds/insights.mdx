@@ -131,7 +131,7 @@ Fill rates vary significantly by insight type. Technographic data is available f
 
 ## Joining this table
 
-Join **INSIGHTS_LATEST** to **ORG_LATEST** on `RBID_ORG = RBID` to attach firmographics. To get insights for contacts, join **PER_LATEST** to **INSIGHTS_LATEST** on `per.RBID_ORG = insights.RBID_ORG`.
+Join `INSIGHTS_LATEST` to `ORG_LATEST` on `RBID_ORG` = `RBID` to attach firmographics. To get insights for contacts, join `PER_LATEST` to `INSIGHTS_LATEST` on `per.RBID_ORG` = `insights.RBID_ORG`.
 
 ### Insights + companies (signals with firmographics)
 
