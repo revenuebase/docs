@@ -169,9 +169,8 @@ Run a query that counts non-null values and divides by total rows. Use this patt
 SELECT
     COUNT(*) AS total_records,
     ROUND(COUNT(EMAIL_ADDRESS) * 100.0 / COUNT(*), 1) AS email_fill_pct,
-    ROUND(COUNT(DIRECT_PHONE) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
+    ROUND(COUNT(CELLPHONE) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
     ROUND(COUNT(JOB_TITLE) * 100.0 / COUNT(*), 1) AS title_fill_pct,
-    ROUND(COUNT(JOB_LEVEL) * 100.0 / COUNT(*), 1) AS seniority_fill_pct,
     ROUND(COUNT(JOB_FUNCTION) * 100.0 / COUNT(*), 1) AS department_fill_pct
 FROM RELEASES.RELEASE.PER_LATEST;
 ```
@@ -198,7 +197,7 @@ SELECT
 FROM RELEASES.RELEASE.PER_LATEST AS PER
 INNER JOIN RELEASES.RELEASE.ORG_LATEST AS ORG
 ON PER.RBID_ORG = ORG.RBID
-WHERE JOB_LEVEL IN ('C-Suite', 'VP', 'Director')
+WHERE JOB_LEVEL IN ('C-Team', 'VP', 'Director')
   AND JOB_FUNCTION IN ('Engineering', 'Sales')
   AND LINKEDIN_INDUSTRY LIKE '%Software%'
   AND EMPLOYEE_COUNT_MAX BETWEEN 100 AND 1000
@@ -216,7 +215,7 @@ LIMIT 500;
 SELECT
     COUNT(*) AS total_records,
     ROUND(COUNT(EMAIL_ADDRESS) * 100.0 / COUNT(*), 1) AS email_fill_pct,
-    ROUND(COUNT(DIRECT_PHONE) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
+    ROUND(COUNT(CELLPHONE) * 100.0 / COUNT(*), 1) AS phone_fill_pct,
     ROUND(COUNT(JOB_TITLE) * 100.0 / COUNT(*), 1) AS title_fill_pct
 FROM RELEASES.RELEASE.PER_LATEST
 WHERE LINKEDIN_INDUSTRY LIKE '%Software%'
