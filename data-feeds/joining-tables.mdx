@@ -52,7 +52,7 @@ JOIN RELEASES.RELEASE.INSIGHTS_LATEST i ON c.RBID_ORG = i.RBID_ORG;
 ### Gotchas and best practices
 
 1. **Cardinality** — Contacts may have many rows per Company. Aggregating or limiting per entity can avoid duplicates in reporting.
-2. **Nulls** — Foreign key columns are usually non-null when the relationship is required; optional relationships may allow nulls. Check the [Data dictionary](/data-feeds/data-dictionary) and table pages.
+2. **Nulls** — Foreign key columns are usually non-null when the relationship is required; optional relationships may allow nulls. Check the table pages ([Contacts](/data-feeds/contacts), [Companies](/data-feeds/companies), [Insights](/data-feeds/insights)) for field-level detail.
 3. **Pre-joined views** — For common combinations (people + companies, or + insights), use [Pre-Joined Tables](/data-feeds/pre-joined-overview) instead of writing joins yourself.
 
 For table-specific details, see [Companies](/data-feeds/companies), [Contacts](/data-feeds/contacts), [Insights](/data-feeds/insights), and [Historical Experience](/data-feeds/historical-experience).
