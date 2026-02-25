@@ -64,6 +64,10 @@ RevenueBase accumulates job postings over a rolling 12 to 18 month window and ta
 
 We also surface role-based signals derived from the RevenueBase contact database. These include binary indicators like whether a company has a CISO on staff, as well as counts such as `IT_ROLE_COUNT_ORG` that reflect the number of contacts we've identified in a given function. These counts are based on current job titles in our database and will shift as contacts are added, updated, or removed. As with hiring signals, treat these data points as directional indicators of a company's organizational structure and investment areas rather than exact headcounts.
 
+<Warning>
+**Data lag and trend indicators:** All open position columns (`*_OPEN_ROLES_COUNT_ORG`) and role count columns (`*_ROLE_COUNT_ORG`) reflect trends, not real-time values. There is a 2-3 month lag between the data source and the dataset. These fields should be used to identify hiring trends and organizational patterns, not as real-time metrics for current job openings or exact team sizes. Use them for directional signals about company growth, investment areas, and organizational structure.
+</Warning>
+
 | Field | Description | Example |
 | --- | --- | --- |
 | `ACCOUNT_EXECUTIVE_OPEN_ROLES_COUNT_ORG` | Number of open job postings for account executives positions at the organization | 1 |
@@ -195,11 +199,11 @@ FROM RELEASES.RELEASE.INSIGHTS_LATEST;
 
 ### Find companies showing growth signals (hiring + headcount growth)
 
-**What you’re finding:** Companies that are growing headcount and actively hiring — strong candidates for sales or hiring tools.
+**What you're finding:** Companies that are growing headcount and actively hiring — strong candidates for sales or hiring tools.
 
-**Why these fields:** `headcount_growth_6m` and `is_hiring` are the main growth signals. We join to **companies** to filter by size (`employee_count`) and to get `company_name` and `domain`. `recent_funding` and `funding_round_type` add optional context for prioritization.
+**Why these fields:** `EMPLOYEE_ON_LINKEDIN_GROWTH_RATE_ORG` and `*_OPEN_ROLES_COUNT_ORG` fields are trend indicators that show hiring patterns. We join to **companies** to filter by size (`EMPLOYEE_COUNT_MAX`) and to get `COMPANY_NAME` and `DOMAIN`. `LAST_FUNDING_AMOUNT_ORG` and `LAST_FUNDING_TYPE_ORG` add optional context for prioritization.
 
-**Logic:** Require meaningful headcount growth and hiring, and limit to a mid-market size band. Order by growth rate so the hottest accounts are first.
+**Logic:** Require meaningful headcount growth and hiring trends, and limit to a mid-market size band. Order by growth rate so the hottest accounts are first. Note that open role counts reflect trends with a 2-3 month lag, not real-time job openings.
 
 ```sql
 SELECT
@@ -235,8 +239,7 @@ SELECT
     i.LAST_FUNDING_DATE_ORG
 FROM RELEASES.RELEASE.INSIGHTS_LATEST i
 JOIN RELEASES.RELEASE.ORG_LATEST co ON i.RBID_ORG = co.RBID
-WHERE i.DEVELOPMENT_TECH_ORG LIKE '%Snowflake%'
-  AND i.LAST_FUNDING_DATE_ORG >= DATEADD(month, -6, CURRENT_DATE())
+WHERE i.DEVELOPMENT_TECH_ORG ilike '%mongodb%'
 ORDER BY i.LAST_FUNDING_DATE_ORG DESC;
 ```
 
