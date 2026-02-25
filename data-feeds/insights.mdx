@@ -35,6 +35,8 @@ Fill rates vary significantly by insight type. Technographic data is available f
 
 ### Technographic signals
 
+RevenueBase derives technographic signals from a variety of sources across the web, primarily from skills and technologies listed in a company's job postings and from Google Play and Apple App Store listings. The presence of a technographic indicator means we detected that technology in use at some point in time. Because we don't currently have a reliable way to determine when a company stops using a particular technology, these signals are additive only — they expand over time but don't contract. A technology that appears in a company's profile may no longer be actively in use. Treat technographic data as a cumulative footprint of a company's technology stack rather than a real-time snapshot of what's deployed today.
+
 | Field | Description | Example |
 | --- | --- | --- |
 | `ABM_TECH_ORG` | There is evidence of particular activity based management technologies in use | 6Sense;Demandbase;Uberflip;Terminus;Engagio;Triblio |
@@ -57,6 +59,10 @@ Fill rates vary significantly by insight type. Technographic data is available f
 | `HAS_MOBILE_APP_ORG` | If the business has either a Google or Apple mobile app available | Yes |
 
 ### Hiring signals
+
+RevenueBase accumulates job postings over a rolling 12 to 18 month window and tallies the total number of posts for each job function. Postings older than 12 months are automatically sunset. Keep in mind that these values are directional rather than precise — job postings fluctuate daily as companies open, close, and re-list roles. A single posting may also represent multiple headcount for the same position.
+
+We also surface role-based signals derived from the RevenueBase contact database. These include binary indicators like whether a company has a CISO on staff, as well as counts such as `IT_ROLE_COUNT_ORG` that reflect the number of contacts we've identified in a given function. These counts are based on current job titles in our database and will shift as contacts are added, updated, or removed. As with hiring signals, treat these data points as directional indicators of a company's organizational structure and investment areas rather than exact headcounts.
 
 | Field | Description | Example |
 | --- | --- | --- |
@@ -110,12 +116,14 @@ Fill rates vary significantly by insight type. Technographic data is available f
 | `MONTHLY_ORGANIC_TRAFFIC_ORG` | Estimated monthly search result clicks | 4943 |
 | `MONTHLY_PAID_TRAFFIC_ORG` | Estimated monthly pay per click number | 372 |
 | `TOTAL_MONTHLY_TRAFFIC_ORG` | Estimated monthly web traffic | 5315 |
-| `TOTAL_REVIEWS_ORG` | Total reviews of the two top applications from Google and Apple. | 1373 |
 
-### Metadata
+### Mobile App Store Data
+
+We pull this data from the Google Play and Apple App Store several times per year.
 
 | Field | Description | Example |
 | --- | --- | --- |
+| `TOTAL_REVIEWS_ORG` | Total reviews of the two top applications from Google and Apple. | 1373 |
 | `LAST_APPSTORE_UPDATE_ORG` | The date of the last update to this particular application | 2021-12-24 |
 | `LAST_PLAYSTORE_UPDATE_ORG` | The last date of an update to the most frequently downloaded application | 2023-11-09 |
 | `APPSTORE_UPDATE_COUNT_ORG` | The number of updates to this top application | 8 |
