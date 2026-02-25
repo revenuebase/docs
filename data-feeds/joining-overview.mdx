@@ -14,7 +14,7 @@ RevenueBase data is organized into separate tables that link together through sh
 Here's how the main tables connect:
 
 ```
-organisations (1) ──── (many) people/contacts
+organizations (1) ──── (many) people/contacts
     │                        │
     │                        │
     └──── (1) insights ──────┘
@@ -23,8 +23,8 @@ people ──── (1) historical_experience (via linkedin_url)
 ```
 
 **Key relationships:**
-- **People** join to **Organisations** via `RBID_ORG = RBID` (many-to-one)
-- **Insights** join to **Organisations** via `RBID_ORG = RBID` (one-to-one, company-level only)
+- **People** join to **Organizations** via `RBID_ORG = RBID` (many-to-one)
+- **Insights** join to **Organizations** via `RBID_ORG = RBID` (one-to-one, company-level only)
 - **People** can join to **Insights** via `RBID_ORG = RBID_ORG` (many-to-one, gets company-level insights)
 - **Historical Experience** joins to **People** via `linkedin_url` (one-to-one)
 

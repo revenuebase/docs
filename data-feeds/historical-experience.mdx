@@ -21,7 +21,7 @@ Each row represents one LinkedIn profile with nested arrays: a `jobs` array cont
 | **Total records** | One row per LinkedIn profile (with array of jobs) |
 | **Update frequency** | Monthly (aligned with contacts release) |
 | **Primary key** | `linkedin_url` |
-| **Main foreign keys** | Join to `person` table on `linkedin_url`, join to `organisation` table via `rbid_org` |
+| **Main foreign keys** | Join to `person` table on `linkedin_url`, join to `organization` table via `rbid_org` |
 
 ## Data dictionary
 
@@ -45,7 +45,7 @@ Each element in the `jobs` array is an object containing:
 | `rbid` | VARCHAR | RevenueBase person identifier (from person table) |
 | `rbid_pao` | VARCHAR | RevenueBase person-at-organization identifier |
 | `rbid_org` | VARCHAR | RevenueBase organization identifier |
-| `linkedin_id` | INTEGER | LinkedIn company page ID (from organisation table) |
+| `linkedin_id` | INTEGER | LinkedIn company page ID (from organization table) |
 | `email_address` | VARCHAR | Email address (from person table) |
 | `experience` | ARRAY | Array of experience objects containing position details |
 
@@ -72,7 +72,7 @@ The `jobs` array contains `rbid`, `rbid_org`, and `email_address` that you can u
 | Approach | When to use |
 |----------|-------------|
 | **Join to person table** | Use `jobs[].rbid` or join on `linkedin_url` to get current contact information |
-| **Join to organisation table** | Use `jobs[].rbid_org` to get company firmographics and HQ address for that employer |
+| **Join to organization table** | Use `jobs[].rbid_org` to get company firmographics and HQ address for that employer |
 | **Access position details** | Flatten both `jobs` and `experience` arrays to access individual position fields like `job_title`, `job_org_name`, `job_function`, `job_is_current` |
 | **Contact's current location** | For "where does this person live now," use **contacts** (`CITY_PER`, `STATE_NAME_PER`, `COUNTRY_NAME_PER`), not historical experience |
 
@@ -87,7 +87,7 @@ The `jobs` array contains `rbid`, `rbid_org`, and `email_address` that you can u
     People who just started a new role are often more receptive to new tools. Flatten both the `jobs` and `experience` arrays and filter for positions where `experience.job_is_current = TRUE`. Join to the person table and filter by `UPDATED_AT_PER` to find recently updated profiles.
   </Accordion>
   <Accordion title="Company alumni targeting">
-    Find everyone who used to work at a specific company by flattening both arrays and filtering for `experience.job_org_linkedin_url` matching the target company, or use `jobs[].rbid_org` to join to the organisation table. Filter for `experience.job_is_current = FALSE`. Useful for selling to former champions who already know your space.
+    Find everyone who used to work at a specific company by flattening both arrays and filtering for `experience.job_org_linkedin_url` matching the target company, or use `jobs[].rbid_org` to join to the organization table. Filter for `experience.job_is_current = FALSE`. Useful for selling to former champions who already know your space.
   </Accordion>
   <Accordion title="Career trajectory analysis">
     Flatten both arrays and compare `job_title`, `job_function`, and `job_org_name` across positions for a profile. Use `job_count` to identify profiles with multiple positions, then analyze the progression in the nested arrays.
