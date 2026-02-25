@@ -32,7 +32,7 @@ The map below shows current contact counts by country. Use it to understand cove
 | **Primary key** | `RBID_PAO` |
 | **Main foreign key** | `RBID_ORG` → `COMPANIES.RBID` |
 
-## Data dictionary & fill rates
+## Data dictionary
 
 Fill rate is the percentage of rows where a field is non-null. Rates vary by segment (e.g. US and larger companies often have higher fill rates for phone and seniority).
 
@@ -42,7 +42,7 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 | --- | --- | --- |
 | `RBID` | RevenueBase's unique identification for the person. The RBID stays the same if someone changes their job. | rb-pabq6o2xf |
 | `RBID_ORG` | RevenueBase's unique identifier for a company | rb-oab75n3pe |
-| `RBID_PAO` | RevenueBase's unique identifier for the person at a specific company. | Revenue Base Internal field |
+| `RBID_PAO` | RevenueBase's unique identifier for the person at a specific company. | rb-pabq6o2xf-rb-oab75n3pe |
 | `LINKEDIN_URL` | The person's linkedin URL | https://www.linkedin.com/in/simon%c3%a9-burger-ca-sa-0a3a13158 |
 
 ### Name & demographics
@@ -76,8 +76,8 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 
 | Field | Description | Example |
 | --- | --- | --- |
-| `EMAIL_ADDRESS` | The person's work email address | kcollins@fortmckaygroup.com |
-| `EMAIL_DOMAIN` | The domain of the person's work email address | fortmckaygroup.com |
+| `EMAIL_ADDRESS` | The person's work email address | some_valid_email@somedomain.com |
+| `EMAIL_DOMAIN` | The domain of the person's work email address | somedomain.com |
 | `EMAIL_STATUS` | The verification status of the email. If an email exists in the dataset, it has been verified as valid. | VALID |
 | `EMAIL_LAST_VERIFIED_AT` | The contact's email last verified timestamp. Timestamp specifically designed to indicate last revalidation of email at RevenueBase side | 2013-01-01 00:00:00 |
 | `DIRECT_PHONE` | The direct office contact number | +1 612-876-4679 |
@@ -108,7 +108,7 @@ The first set of address fields (`CITY`, `STATE_NAME`, `STATE_CODE`, `COUNTRY_NA
 
 | Field | Description | Example |
 | --- | --- | --- |
-| `JOB_ORG_LINKEDIN_URL` | The company's LInkedin URL | https://www.linkedin.com/company/abbott- |
+| `JOB_ORG_LINKEDIN_URL` | The company's LInkedin URL | https://www.linkedin.com/company/company_url |
 | `COMPANY_NAME` | The company's name | Meta. Inc |
 
 ### Profile enrichments
@@ -122,7 +122,7 @@ The first set of address fields (`CITY`, `STATE_NAME`, `STATE_CODE`, `COUNTRY_NA
 | `INTERESTS` | Linkedin personal profile interests field | [   ""Playing Music"" ] |
 | `PATENTS` | Any patents listed on someone's Linkedin profile | [  &#123;   ""title"": ""Tagged Credit Profile System For Credit Applicants"",   ""url"": ""https://patents.google.com/patent/US20090327120A1/&urlhash=H5PF&trk=public_profile_patent-title""  &#125;,  &#123;    ""date"": ""2004-07-01"",   ""title"": ""On-line Distribution Of Per-use Media With Flexible Purchase Options"",    ""url"": ""http://www.google.com/patents/US20050027616&urlhash=HU_b&trk=public_profile_patent-title""  &#125;] |
 | `PUBLICATIONS` | Any publications listed on someone's Linkedin profile | [  &#123;   ""date"": ""2018-07-01"",   ""title"": ""Impact Des Assistantes Humanitaire Sur L'attentisme De Déplace Interne Dela Rdc""  &#125;] |
-| `WEBSITES` | The contact's personal website | [   &#123;     ""url"": ""http://www.dollerhide.com""   &#125;,   &#123;     ""url"": ""http://dollerhide.blogspot.com/""   &#125; ] |
+| `WEBSITES` | The contact's personal website | [   &#123;     ""url"": ""http://www.personal.website""   &#125;,   &#123;     ""url"": ""http://personal.blogspot.com/""   &#125; ] |
 | `LOGO_URL` | The person's linkedin profile picture URL | https://us.cdn.com/ca-sa-0a3a13158 |
 
 ### Metadata

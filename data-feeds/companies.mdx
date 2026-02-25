@@ -32,7 +32,7 @@ The map below shows current company counts by country. Use it to understand cove
 | **Primary key** | `RBID` |
 | **Main foreign key** | `contacts.rbid_org` and `insights.rbid_org` join here |
 
-## Data dictionary & fill rates
+## Data dictionary
 
 Fill rate is the percentage of rows where a field is non-null. Rates vary by segment (e.g. US and public companies often have higher fill rates for financials and industry).
 
@@ -41,9 +41,9 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 | Field | Description | Example |
 | --- | --- | --- |
 | `RBID` | RevenueBase's unique identifier for a company. The same value is placed in a field RBID_ORG of people dataset | rb-oacksydgz |
-| `DOMAIN` | Doman of the company's website | fsiservices.com |
-| `WEBSITE` | Company URL | https://www.fsiservices.com |
-| `LINKEDIN_URL` | LinkedIn URL for the company | https://www.linkedin.com/company/champify-data |
+| `DOMAIN` | Doman of the company's website | company.com |
+| `WEBSITE` | Company URL | https://www.company.com |
+| `LINKEDIN_URL` | LinkedIn URL for the company | https://www.linkedin.com/company/company.com |
 | `LINKEDIN_URL_ID` | LinkedIn unique identified for the company | 76647045 |
 
 ### Company basics
@@ -56,7 +56,7 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 | `COMPANY_ENTITY_TYPE` | Legal entity type of the company | Privately Held |
 | `COMPANY_LEGAL_TYPE` | Legal type of the company | [   ""Corporation"" ] |
 | `FOUNDED` | Year of the company's founding | 1997 |
-| `PHONE` | Contact phone number for the company | +1 972-577-0000 |
+| `PHONE` | Contact phone number for the company | +1 972-000-0000 |
 | `IS_LINKEDIN_URL_CLAIMED` | Indicates if the LinkedIN URL IS claimed by the company | TRUE |
 | `IS_WEBSITE_FOR_SALE` | Indicates if the website is listed for sale | FALSE |
 
@@ -69,6 +69,7 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 | `INDUSTRY_NAICS_DESCRIPTION` | NAICS Description | [   ""General Freight Trucking, Long-Distance, Truckload"",   ""Computer Systems Design Services"",   ""Custom Computer Programming Services"",   ""All Other Business Support Services"" ] |
 | `INDUSTRY_SIC_CODE` | Standard Industrial Classification code | [   ""7373"" ] |
 | `INDUSTRY_SIC_DESCRIPTION` | Standard Industrial classification description  | [   ""Computer systems design"" ] |
+| `SPECIALTIES` | Specialties or key areas of focus of the company | [   ""technology"",   ""education and implementation"",   ""data synchornization"",   ""product data management"",   ""advisory services"",   ""innovation"",   ""data quality analytics"" ] |
 
 ### Size & financials
 
@@ -81,6 +82,7 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 | `REVENUE_MIN` | Minimum revenue of the company | 1000000 |
 | `REVENUE_MAX` | Maximum revenue of the company | 9999999 |
 | `REVENUE_RANGE` | Range of the company's revenue | `$50M to <$100M` |
+| `LINKEDIN_FOLLOWERS` | Number of LinkedIn followers for the company | 2039 |
 
 ### Addresses
 
@@ -104,13 +106,6 @@ Fill rate is the percentage of rows where a field is non-null. Rates vary by seg
 <Note>
 **Location vs. Headquarters:** For small companies, location and HQ fields may point to the same address. For companies with multiple branches, the `LOCATION_*` fields represent one of the locations listed on the company's LinkedIn page, while `HEADQUARTERS_*` fields are derived from the headquarters information on the LinkedIn company page.
 </Note>
-
-### Technology
-
-| Field | Description | Example |
-| --- | --- | --- |
-| `SPECIALTIES` | Specialties or key areas of focus of the company | [   ""technology"",   ""education and implementation"",   ""data synchornization"",   ""product data management"",   ""advisory services"",   ""innovation"",   ""data quality analytics"" ] |
-| `LINKEDIN_FOLLOWERS` | Number of LinkedIn followers for the company | 2039 |
 
 ### Metadata
 
