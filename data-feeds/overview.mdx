@@ -4,7 +4,7 @@ sidebarTitle: "Getting Started"
 description: "Set up your RevenueBase data feed via AWS S3 or Snowflake and start querying person, company, and insight data."
 ---
 
-RevenueBase delivers structured B2B data through **Dynamic Data Feeds** — continuously updated datasets on a monthly cadence. Data is available in our **S3 bucket** (we grant your AWS account access), or we share it through the **Snowflake Marketplace** to your Snowflake account. This guide walks you through onboarding, accessing your data, and understanding the tables available in your feed.
+RevenueBase delivers structured B2B data through **Dynamic Data Feeds** — continuously updated datasets on a monthly cadence. Data is available in our **S3 bucket** (we grant your AWS account access), or we share it through **Snowflake Data Sharing** to your Snowflake account. This guide walks you through onboarding, accessing your data, and understanding the tables available in your feed.
 
 ---
 
@@ -86,11 +86,11 @@ To get started, provide a few details based on your chosen delivery method. Afte
       <Step title="Share your Snowflake account URL">
         Provide the full URL your organization uses to access Snowflake. This helps us ensure the share is routed correctly. For where to find your account identifier and URL, see <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank" rel="noopener noreferrer">Snowflake's account identifier documentation</a>.
       </Step>
-      <Step title="Accept the share via Snowflake Marketplace">
+      <Step title="Accept the share via Data Sharing">
         Once we've added you to the share, you'll see it in your Snowflake account. To access it:
 
-        1. Open the **Snowflake Marketplace** (or **Data Sharing** in the left panel of the Snowflake UI)
-        2. Find the RevenueBase listing or incoming share (e.g., `RELEASES_EXT_SHARE` or `RELEASES_RAW_SHARE`)
+        1. Open **Data Sharing** in the left panel of the Snowflake UI
+        2. Find the RevenueBase incoming share (e.g., `RELEASES_EXT_SHARE` or `RELEASES_RAW_SHARE`)
         3. Click **Get** or **Get Data** to add the shared database to your account (button at top right coner)
 
         This creates a new database called **RELEASES** in your Snowflake account containing the shared tables.
