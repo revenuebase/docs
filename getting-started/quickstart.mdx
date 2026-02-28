@@ -1,0 +1,134 @@
+---
+title: "Quickstart Guides"
+description: "Get up and running with RevenueBase — data feeds, Gigasheet, or API."
+---
+
+Choose how you want to access RevenueBase data and follow the steps below.
+
+<Tabs>
+  <Tab title="Data Feeds">
+    RevenueBase **Dynamic Data Feeds** deliver structured B2B data (contacts, companies, and insights)
+    to you in two ways: data is available in our **S3 bucket** (we grant your AWS account access),
+    or we share it through **Snowflake Data Sharing** to your Snowflake account.
+    Updates are delivered on a **monthly** cadence. The full [Data Feeds overview](/data-feeds/overview) has step-by-step onboarding for each
+    delivery method.
+
+    ## Choose your delivery method
+
+    <CardGroup cols={2}>
+      <Card title="AWS S3" icon="cloud" href="/data-feeds/overview">
+        Data is available in our S3 bucket. We grant your AWS account access so you can list and download
+        date-stamped delivery folders. When you get S3 access, you get access to all three formats:
+        CSV, JSON, and Parquet.
+      </Card>
+      <Card title="Snowflake" icon="database" href="/data-feeds/overview">
+        We share the data through **Data Sharing** to your Snowflake account. You get a database (e.g. **RELEASES**)
+        with tables you can query directly in SQL.
+      </Card>
+    </CardGroup>
+
+    <Info>
+      **Custom locations** — We can make data available in custom locations beyond S3 and Snowflake.
+      We can support almost any location; contact **support@revenuebase.ai** to discuss your requirements.
+      There may be an additional cost.
+    </Info>
+
+    ## Get your first data in three steps
+
+    <Steps>
+      <Step title="Share details with RevenueBase">
+        **S3:** Provide your 12-digit **AWS Account ID**. You get access to all three formats (CSV, JSON, Parquet)
+        when access is provisioned. **Snowflake:** Provide your **Snowflake Account Locator**, region, and account
+        URL. See <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank" rel="noopener noreferrer">
+        Snowflake's account identifier documentation</a> for where to find this information.
+        Contact your RevenueBase onboarding contact or **support@revenuebase.ai** to get started.
+      </Step>
+      <Step title="Get access">
+        **S3:** You'll receive a bucket alias (or ARN) and region. **Snowflake:** We'll add you to the Data Sharing listing; accept the share via Data Sharing and add the **RELEASES** database to your account.
+      </Step>
+      <Step title="Verify and query">
+        **S3:** Use the AWS CLI with `--request-payer requester` to list your delivery folder (see [Data Feeds overview](/data-feeds/overview) for exact commands). **Snowflake:** Run a query such as `SELECT * FROM RELEASES.RELEASE.PER_LATEST LIMIT 100;`
+      </Step>
+    </Steps>
+
+    <Warning>
+      Use the **AWS CLI** for S3 access — not the AWS Console. The Console does not support `--request-payer requester` and will return access errors.
+    </Warning>
+
+    ## Next steps
+
+    - **[Data Feeds overview](/data-feeds/overview)** — Full onboarding steps for S3 and Snowflake, path layout, and troubleshooting.
+    - **Table pages** ([Contacts](/data-feeds/contacts), [Companies](/data-feeds/companies), [Insights](/data-feeds/insights)) — Field definitions, types, and examples per table.
+    - **[Joining tables](/data-feeds/joining-overview)** — How to join person, organization, and insight tables correctly.
+  </Tab>
+
+  <Tab title="Gigasheet">
+    Log in, open your RevenueBase file, and start exploring in a few steps.
+
+    ## Prerequisites
+
+    - A RevenueBase account with Gigasheet access enabled. Need access? Contact your account manager or **support@revenuebase.ai**.
+    - Access to Gigasheet (invite or login provided by your admin).
+
+    ## Open your RevenueBase file
+
+    1. Log in to <a href="https://gigasheet.com" target="_blank" rel="noopener noreferrer">Gigasheet</a> (or your organization's Gigasheet URL if one was provided).
+    2. Under **Workspaces**, open the **Shared with me** section. Your RevenueBase file is listed there — click it to open your licensed dataset.
+    3. If you were not given a Gigasheet URL, go to <a href="https://gigasheet.com" target="_blank" rel="noopener noreferrer">Gigasheet</a>, log in, and navigate to **Workspaces** → **Shared with me** to find the RevenueBase file.
+
+    ## Explore your data
+
+    - Your sheet will show RevenueBase contacts and/or companies depending on your license.
+    - Use the column headers to see available fields (name, email, company, industry, verification status, etc.).
+
+    ## Next steps
+
+    - Read the [Gigasheet overview](/gigasheet/overview) to learn about all the features.
+      - [**Add Users**](/gigasheet/adding-users) - Add your team member to the dataset.
+      - [**Filter**](/gigasheet/filtering) — Apply filters on columns to build targeted lists.
+      - [**Export**](/gigasheet/exporting) — Export filtered results to CSV or another format.
+      - [**Enrich**](/gigasheet/enrichment) — Enrich your own uploads with RevenueBase data.
+
+  </Tab>
+
+  <Tab title="API">
+    Get an API key and make your first request.
+
+    <Warning>
+      **Create an account first.** You must have a RevenueBase account before you can use the API. If you don't have one yet, go to <a href="https://app.revenuebase.ai/" target="_blank" rel="noopener noreferrer">https://app.revenuebase.ai/</a> to create an account, then return here to get your API key.
+    </Warning>
+
+    ## Step 1: Get your API key
+
+    1. Sign in to the <a href="https://app.revenuebase.ai/dashboard" target="_blank" rel="noopener noreferrer">RevenueBase dashboard</a>.
+    2. Open **Settings** → **API Keys**.
+    3. Click **Create API key** and copy the key. Store it securely.
+
+    <Note>
+      Keep your API key secret. Do not commit it to version control or expose it in client-side code.
+    </Note>
+
+    ## Step 2: Make your first request
+
+    Send your API key in the `x-key` header. Example — check your credit balance:
+
+    ```bash
+    curl -X GET "https://api.revenuebase.ai/v1/credits" \
+      -H "x-key: YOUR_API_KEY"
+    ```
+
+    Example response:
+
+    ```json
+    {
+      "credits": 1000
+    }
+    ```
+
+    ## Next steps
+
+    - Explore the [API Reference](/api-reference/authentication) to learn about our endpoints.
+    - Get an API key and [Authenticate](/api-reference/authentication) with our API.
+    - Read more on [Rate limits and error codes](/api-reference/rate-limits) before going to production.
+  </Tab>
+</Tabs>

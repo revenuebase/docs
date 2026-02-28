@@ -1,0 +1,145 @@
+---
+title: "FAQ"
+description: "Answers to common questions about RevenueBase data organization, delivery, updates, and troubleshooting."
+---
+
+## Data organization & structure
+
+<AccordionGroup>
+
+<Accordion title="How is the data organized?">
+RevenueBase uses three core identifiers to track people, organizations, and the relationship between them:
+
+- **`RBID_PER`** — Unique person identifier. This follows the person across job changes. When someone moves to a new company, their `RBID_PER` stays the same.
+- **`RBID_ORG`** — Unique organization identifier.
+- **`RBID_PAO`** — Unique person-at-organization identifier. This is essentially `RBID_PER` combined with `RBID_ORG`, so it changes when a person moves to a new company.
+
+If someone holds multiple current positions, they will have **multiple rows** in the contacts table — each with a unique `RBID_PAO`, but sharing the same `RBID_PER`.
+</Accordion>
+
+<Accordion title="Why are RBID_ORG and RBID_PAO sometimes missing?">
+These fields may be null when a person's LinkedIn profile doesn't link to an existing company page. The company name field on LinkedIn is free text — people can type anything and may skip linking to a recognized company page. Without that link, we can't resolve the organization to a canonical `RBID_ORG`.
+</Accordion>
+
+<Accordion title="What are sparse or 'junk' profiles?">
+Some profiles in the dataset contain minimal information — a name and loose company association, but limited detail on title, seniority, or work history. These come from source profiles that simply contain less data. In some cases they may be incomplete or low-quality.
+
+**The strongest indicator that a person genuinely belongs to an organization is a valid company email address.** If a sparse profile has a verified email at the company domain, treat it as reliable. If it has no verified email, treat the association with lower confidence. See [Data Freshness & Quality](/data-feeds/data-freshness-quality) for more on assessing record quality.
+</Accordion>
+
+</AccordionGroup>
+
+## Data delivery & access
+
+<AccordionGroup>
+
+<Accordion title="What data delivery methods are available?">
+RevenueBase supports three delivery methods:
+
+- **Snowflake Data Sharing** — We share tables directly to your Snowflake account. No data movement required; query in place.
+- **AWS S3 bucket** — We deliver files to an S3 bucket (either one we provision for you, or your own). Access via AWS CLI.
+- **Gigasheet** — Browser-based spreadsheet UI for searching, filtering, and exporting data without code.
+
+Azure Blob Storage and Google Cloud Storage delivery are available on request. Contact your RevenueBase account representative to set up these delivery methods.
+
+For setup instructions, see the [Quickstart](/getting-started/quickstart).
+</Accordion>
+
+<Accordion title="What file formats are supported for S3 delivery?">
+RevenueBase supports sending dynamic feeds in three formats: **CSV**, **JSON**, and **Parquet**. When you get access to the data in S3, you get access to all three formats.
+
+- **CSV** — Best for spreadsheet tools, SQL imports, and lightweight pipelines
+- **JSON** — Best for programmatic ingestion and nested data structures
+- **Parquet** — Best for high-performance analytics and columnar query engines. Read more in <a href="https://parquet.apache.org/docs/" target="_blank" rel="noopener noreferrer">Parquet's official documentation</a>.
+</Accordion>
+
+<Accordion title="How do I access the Snowflake share?">
+Once we've provisioned the share:
+
+1. Navigate to **Data Sharing → Private Sharing** in the left panel of the Snowflake UI
+2. Click on the incoming share tabs (e.g., `RELEASES_EXT_SHARE` or `RELEASES_RAW_SHARE`)
+3. Click **Get Data** to add the shared database to your account
+
+This creates a `RELEASES` database in your Snowflake account containing the shared tables. See the [Quickstart](/getting-started/quickstart) for detailed setup steps.
+</Accordion>
+
+<Accordion title="Will credentials and paths stay the same across deliveries?">
+Yes. For S3 deliveries, your bucket name and access credentials are permanent — they don't change between monthly releases.
+
+Each delivery creates a new date-stamped folder following this path structure:
+
+```
+<delivery_date>/<dataset_name>/<file_format>/
+```
+
+- `delivery_date` — Date of delivery in `YYYYMMDD` format
+- `dataset_name` — Depends on your subscription (e.g., `per`, `org`)
+- `file_format` — One of `json`, `csv`, or `parquet`
+
+Previous deliveries remain accessible at their original paths and are never overwritten.
+</Accordion>
+
+</AccordionGroup>
+
+## Data updates & refresh
+
+<AccordionGroup>
+
+<Accordion title="When is the data refreshed?">
+New data releases target the **1st of each month**. Depending on weekends, the actual date may shift by ±2–3 days. We send an email notification when new data is posted and ready.
+</Accordion>
+
+<Accordion title="What is the verification cadence?">
+Two verification cycles run in parallel:
+
+- **Profile verification** — 95% of profiles are re-verified every **90 days**. "Re-verified" means the source profile was accessible and we were able to confirm or update at least the core profile information (name, title, company, location). Check the `updated_at` field for the most recent verification date on any record.
+- **Email verification** — All email addresses are re-verified every **60 days**. Check the `email_last_verified_at` field. A valid email is a strong signal that the associated work experience is still current.
+
+See [Data Freshness & Quality](/data-feeds/data-freshness-quality) for the full explanation of how verification works.
+</Accordion>
+
+<Accordion title="Why are some profiles outdated or not recently updated?">
+Profiles may have older `updated_at` dates for several reasons:
+
+- **Source accessibility issues** — The profile returned a 404 or was temporarily unreachable during the verification pass. Profiles that remain inaccessible for one year are deprecated and removed from the dataset.
+- **Platform scraping protections** — LinkedIn periodically hides full profiles or experience sections from public view. This affects random profiles and can last days to months.
+- **Delayed updates by individuals** — People often change jobs weeks or months before updating their profiles. Someone who starts a new role in May might not update LinkedIn until September, and we'd capture that change in October or November.
+
+See [Data Freshness & Quality](/data-feeds/data-freshness-quality) for detailed guidance on working with these records.
+</Accordion>
+
+</AccordionGroup>
+
+## Company data & verification
+
+<AccordionGroup>
+
+<Accordion title="How is 'claimed page' status calculated?">
+We detect whether a LinkedIn company page appears to be actively managed by checking for custom content such as a logo, website address, company size, and description.
+
+This method is not 100% accurate. Some pages may have extensive information (phone numbers, addresses, founding dates) but still appear unclaimed. The challenge is that checking pages without being logged in doesn't show LinkedIn's unclaimed banner, so our system relies on indirect signals. We're actively improving the accuracy of this detection.
+</Accordion>
+
+<Accordion title="Why do logo URLs return 403 errors?">
+LinkedIn periodically rotates logo URLs to protect their assets. Updated URLs are included in each monthly data refresh, though they may eventually face the same issue.
+
+The most reliable solution is to **build a logo cache on your end** and populate it incrementally with each delivery. This way you maintain persistent access regardless of URL rotation.
+</Accordion>
+
+</AccordionGroup>
+
+## Troubleshooting
+
+For S3 access errors, Snowflake share issues, missing RBID fields, and logo URL errors, see the dedicated [Troubleshooting](/data-feeds/troubleshooting) page.
+
+## Still have questions?
+
+<CardGroup cols={2}>
+  <Card title="Data Freshness & Quality" icon="chart-line" href="/data-feeds/data-freshness-quality">
+    How verification works, why records become stale, and how to assess quality programmatically.
+  </Card>
+
+  <Card title="Get Support" icon="headset" href="mailto:support@revenuebase.ai">
+    Email support@revenuebase.ai for help from the RevenueBase team.
+  </Card>
+</CardGroup>

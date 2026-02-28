@@ -1,125 +1,84 @@
 ---
-title: "Intro to RevenueBase"
-sidebarTitle: "Intro to RevenueBase"
-description: "Introduction to RevenueBase — data access, tools, and documentation."
+title: "Overview"
+sidebarTitle: "Overview"
+description: "375M+ verified B2B contacts and 60M+ companies — dynamically updated, deterministically filterable, delivered to your infrastructure."
 ---
 
-## Welcome
+## The data
 
-You're here because you care about data quality — not as a talking point, but as an engineering constraint. Bad data breaks pipelines, poisons models, bounces emails, and wastes your team's time. We built RevenueBase because we care about the same thing.
+RevenueBase is a **B2B data foundation** — 375M+ contacts and 60M+ companies, continuously verified 
+and refreshed. Every record ships with a verification timestamp and summary so you always know the 
+freshness of what you're working with.
 
-**RevenueBase is not just another data company selling contacts and companies. We're a data platform — one platform with three layers.** Start with clean data. Use tools to verify, merge, and enrich your own. Search the result. Each layer works on its own, but together they give you dynamically updated, enriched, searchable company and contact data, ready for whatever you run next.
+Three things that make the data useful for building:
 
-- **Data feeds** can be accessed **directly** — via S3, Snowflake, Google Cloud Storage, Azure Blob Storage, or Gigasheet — so you get the full dataset in your infrastructure or in a spreadsheet UI.
-- The **Trust layer** (verification, enrichment, and management tools) and the **Search layer** (discovery) are available **by API**, so you can clean your own data, merge it with RevenueBase, and find new contacts and companies programmatically.
+- **Dynamic updates** — Records are re-verified on a rolling schedule (profiles every 90 days, emails
+every 60 days). Your monthly delivery reflects the current state of the dataset, not a static snapshot.
+- **Deterministic filters** — Slice by headcount, revenue, funding stage, industry, job title, seniority,
+geography, tech stack, and more. Filters are field-level and exact — no black-box scoring.
+- **Semantic search** — Query by meaning, not just keywords. "Ambulatory care facilities in Texas" or 
+"the person responsible for data infrastructure at Series B fintechs" — blends natural language with 
+structured filters in a single query.
 
-**The Foundation (Data)** — 375M+ contacts and 60M+ companies, continuously refreshed and verified before they reach you. Every record includes a verification summary and timestamp. Clean, dynamic data you can build on immediately. Delivered via data feeds (S3, Snowflake, GCS, Azure, Gigasheet) or API. Flat subscription, unmetered access.
-
-**The Trust layer** — Verify emails, resolve messy company names to canonical IDs, detect job changes, reconnect with contacts who moved. Merge your cleaned data with RevenueBase feeds and enrich with firmographics, tech stack, hiring signals, and custom attributes. Per-outcome pricing.
-
-**The Search layer** — Find new companies and contacts using deterministic filters (headcount, funding, industry, job title, location) and semantic search that understands meaning (e.g. "ambulatory care facilities" or "the person who owns demand gen"). Combine both in a single query. Results come back enriched and verified. Per-outcome pricing.
-
-These docs cover accessing data (feeds and Gigasheet), using the tools (API), and reference material (schema, API reference).
-
-## How you access the data
-
-There are two ways to get RevenueBase data into your workflow. Pick the one that fits how you work — or use both.
+## Getting the data
 
 <CardGroup cols={2}>
-  <Card title="Direct Data Feeds" icon="database" href="/getting-started/quickstart-data-feeds">
-    **Full dataset, delivered to your infrastructure.**
+  <Card title="Direct Data Feeds" icon="database" href="/getting-started/quickstart">
+    **Full dataset in your infrastructure.**
 
-    Connect RevenueBase to your data warehouse or pipeline via Snowflake data share, Amazon S3, Google Cloud Storage, or Azure Blob Storage. You get the complete dataset — contacts, companies, firmographics, insight data — updating continuously. Set up the connection once, and your copy stays current as records are verified, updated, and added.
-
-    This is the right choice if you're building data pipelines, powering internal analytics, feeding AI systems, or embedding RevenueBase in a product you ship to your own customers.
-
-    Flat subscription. Unmetered access.
+    Delivered to Snowflake, S3, Google Cloud Storage, or Azure Blob Storage on a monthly cadence. 
+    Contacts, companies, insights, and pre-joined views — query with standard SQL. Flat subscription, 
+    unmetered access.
   </Card>
-  <Card title="Gigasheet" icon="table" href="/getting-started/quickstart-gigasheet">
-    **Spreadsheet-style access for your whole team.**
+  <Card title="Gigasheet" icon="table" href="/getting-started/quickstart">
+    **Browser UI, no code required.**
 
-    Gigasheet gives you a browser-based UI on top of the full RevenueBase dataset. Search, filter, segment, enrich, and export — no SQL, no code, no engineering tickets. Add team members so sales, marketing, and ops can pull the data they need directly.
-
-    This is the right choice if you want to explore the dataset before committing to a programmatic integration, run proof-of-concepts, or give non-technical team members direct access to verified contact and company data.
-
-    Gigasheet is a flat subscription with unmetered access. The data feeds you use inside Gigasheet are separate subscriptions — you can subscribe to Gigasheet and add data feeds, or add Gigasheet to your existing data feed subscription.
+    Search, filter, segment, and export the full dataset in a spreadsheet interface. The right starting 
+    point for non-technical teams or pre-integration exploration.
   </Card>
 </CardGroup>
 
-Most customers use both. Data feeds power your systems and products. Gigasheet gives your people a window into the same data without waiting on engineering.
+## Building on the data
 
-## How you work with the data
-
-On top of the core dataset, RevenueBase provides tools you access through our [REST API](/getting-started/quickstart-api). These fall into two categories:
+The [REST API](/getting-started/quickstart) gives you two additional layers on top of the Foundation:
 
 <CardGroup cols={2}>
   <Card title="Verification & Enrichment Tools" icon="wrench" href="/api-reference/overview">
     **Clean and enhance your own data.**
 
-    These tools operate on whatever you send — your CRM records, third-party lists, product databases. Email verification validates deliverability in real time or in batch. Company Match resolves messy company names to canonical IDs. Reconnect detects job changes and finds where contacts moved. Contextual Enrichment adds firmographics, tech stack, hiring signals, or custom attributes.
-
-    Run these against your first-party data, then merge the cleaned result with RevenueBase feeds for a complete, deduplicated dataset.
-
-    Per-outcome pricing.
+    Verify emails in real time or batch, resolve company names to canonical IDs, detect job changes, and 
+    enrich your records with firmographics, tech stack, and hiring signals. Operates on whatever you send
+     — your CRM, third-party lists, product data. Per-outcome pricing.
   </Card>
   <Card title="Discovery" icon="magnifying-glass" href="/api-reference/company-match-overview">
-    **Find new contacts and companies.**
+    **Find net-new contacts and companies.**
 
-    Discovery combines deterministic filters (headcount, funding stage, industry code, job title, geography) with semantic search that interprets meaning. "Ambulatory care facilities in Texas with 200+ employees" blends semantic understanding with structured filters in a single query. "The person responsible for data infrastructure at Series B fintechs" blends a semantic role with deterministic company attributes.
-
-    Results return enriched and verified by default — they flow through the same data and verification infrastructure underneath.
-
+    Combine deterministic filters (headcount, funding stage, industry, job title, geography) with 
+    semantic search that interprets meaning — "ambulatory care facilities in Texas" or "the person 
+    responsible for data infrastructure at Series B fintechs." Results come back verified and enriched. 
     Per-outcome pricing.
   </Card>
 </CardGroup>
 
-## What ships with every record
-
-Every record in RevenueBase — whether it comes from a feed, an API call, or a discovery query — includes verification metadata. This is the default, not a premium tier.
-
-<Accordion title="Verification fields on every record">
-  - **Source provenance** — Where the record originated (LinkedIn profile, company website, public filing, etc.)
-  - **Verification timestamp** — When the record was last checked, in UTC
-  - **Verification summary** — A human-readable and machine-parseable summary of verification status across contact fields
-
-  See [Verification Summaries](/data-feeds/verification-summaries) for the full schema and how to use these fields in filters, scoring logic, or agent decision workflows.
-</Accordion>
-
-This matters because your systems are making decisions based on this data. If you're building a product, your users and your compliance team can audit any record end-to-end. If you're feeding data to AI agents, the verification timestamp and verification summary give your automation a programmatic signal to act on a record or flag it for review.
-
 ## Quickstarts
 
-<Steps>
-  <Step title="Connect data feeds">
-    [Data Feeds Quickstart](/getting-started/quickstart-data-feeds) — Configure delivery via Snowflake or S3, understand the table schema (contacts, companies, insights, and pre-joined views), and learn how joins work across tables.
-  </Step>
-  <Step title="Explore in Gigasheet">
-    [Gigasheet Quickstart](/getting-started/quickstart-gigasheet) — Search, filter, enrich, and export RevenueBase data in a browser. Add team members, build segments, and verify data quality — no code required.
-  </Step>
-  <Step title="Integrate via API">
-    [API Quickstart](/getting-started/quickstart-api) — Get an API key, make your first verification call, and see the response schema. Covers authentication, endpoints, rate limits, and error handling.
-  </Step>
-</Steps>
+<Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+  Data Feeds, Gigasheet, and API — pick your path and get started.
+</Card>
 
 ## Key references
 
 <CardGroup cols={2}>
-  <Card title="API Reference & Playground" icon="square-terminal" href="/api-reference/overview">
-    Authentication, endpoints, request/response schemas, rate limits, and error codes.
-  </Card>
   <Card title="Data Feed Schema" icon="database" href="/data-feeds/overview">
-    Table definitions, field types, join relationships, and delivery configuration.
-  </Card>
-  <Card title="Email Verification" icon="envelope" href="/api-reference/email-verification-overview">
-    Real-time and batch verification, result codes, accuracy methodology, and deliverability scoring.
-  </Card>
-  <Card title="Company Match" icon="building" href="/api-reference/company-match-overview">
-    Resolve company names to canonical IDs, run company semantic search to find companies, and match against RevenueBase's company graph.
-  </Card>
-  <Card title="Gigasheet" icon="table" href="/gigasheet/overview">
-    Searching, filtering, enriching your data with RevenueBase data, team access, and data export.
+    Table definitions, field types, join relationships, and delivery setup.
   </Card>
   <Card title="Joining Tables" icon="link" href="/data-feeds/joining-overview">
-    How contacts, companies, insights, and pre-joined views relate and how to join them correctly.
+    How contacts, companies, insights, and pre-joined views relate.
+  </Card>
+  <Card title="Data Freshness & Quality" icon="clock" href="/data-feeds/data-freshness-quality">
+    Verification cycle, staleness thresholds, and recommended filters.
+  </Card>
+  <Card title="API Reference" icon="square-terminal" href="/api-reference/overview">
+    Authentication, endpoints, rate limits, and error codes.
   </Card>
 </CardGroup>
