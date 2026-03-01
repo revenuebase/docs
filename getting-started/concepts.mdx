@@ -1,0 +1,47 @@
+---
+title: "RevenueBase Concepts"
+description: "Core concepts for understanding how RevenueBase data is structured, updated, and accessed."
+---
+
+## Core tables
+
+RevenueBase is built on three core tables:
+
+| Table | Description |
+| ----- | ----------- |
+| **People** | Person-level records — contacts, job titles, emails, seniority, location, and verification status. |
+| **Companies** | Organization-level records — firmographics, industry, headcount, revenue, tech stack, and hiring signals. |
+| **Company Insights** | Enriched company signals — technographics, funding events, growth indicators, and hiring activity. |
+
+Every table uses a consistent set of identifiers (`RBID_PER`, `RBID_ORG`, `RBID_PAO`) so records can be reliably joined across tables. See [Joining Tables](/data-feeds/joining-overview) for how these relationships work.
+
+## Update cadence
+
+All three tables are updated on a **monthly cadence**, targeting the 1st of each month (±2–3 days depending on weekends). Each update reflects the latest verified state of the dataset — new records added, existing records re-verified, and stale records deprecated.
+
+## How updates reach you
+
+Depending on how you access RevenueBase data, updates are delivered differently:
+
+**Data Feeds**
+
+RevenueBase pushes updated data directly to your point of interest — your Snowflake account via Data Sharing, or your S3, Google Cloud Storage, or Azure Blob Storage bucket. Each monthly update lands in a new date-stamped folder or refreshed tables; previous deliveries remain accessible and are never overwritten. You receive an email notification when new data is ready.
+
+**Gigasheet**
+
+Your Gigasheet file is updated shortly after each monthly data release. The sheet contains a pre-joined dataset combining all three core tables — People, Companies, and Company Insights — so you can search, filter, and export across all fields without writing any SQL.
+
+**API**
+
+The API is used to enhance, filter, discover, and search through RevenueBase data programmatically. Use it to verify emails, resolve company names to canonical IDs, enrich your own records with RevenueBase data, and run deterministic or semantic searches to find net-new contacts and companies. See the [API overview](/api-reference/overview) for available endpoints.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+    Get up and running with data feeds, Gigasheet, or the API.
+  </Card>
+  <Card title="FAQ" icon="circle-question" href="/getting-started/faq">
+    Common questions about data organization, delivery, and updates.
+  </Card>
+</CardGroup>

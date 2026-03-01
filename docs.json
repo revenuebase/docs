@@ -37,6 +37,7 @@
             "group": "Getting Started",
             "pages": [
               "index",
+              "getting-started/concepts",
               "getting-started/quickstart",
               "getting-started/faq"
             ]
